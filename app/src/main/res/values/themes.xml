@@ -2,4 +2,9 @@
 <resources>
 
     <style name="Theme.GroceryGenius" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.GroceryGenius.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_inset</item>
+        <item name="postSplashScreenTheme">@style/Theme.GroceryGenius</item>
+    </style>
 </resources>
