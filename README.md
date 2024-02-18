@@ -4,11 +4,11 @@
   <img alt="Grocery Genious logo" src="images/app_logo_rounded_corners.png" height="150px">
 </div>
 
-<h3 align="center" line-height:1"><b>Not existing project, just a plan</b></h3>
+<h3 align="center" line-height:1"><b>Not a complete project, the outlined features are under development.</b></h3>
 
 <br />
 
-A shopping list app that predicts what products you’re running out of.
+Grocery Genious is a shopping list app that anticipates products you're running low on before they run out. After you've indicated the purchase of a certain item at least twice, the app determines the duration until you'll need to buy this product again. The more you interact with the app the more accurate these predictions will be. Apart from that, Grocery Genious offers a visually appealing interface featuring grocery images, autocomplete suggestions, and an intuitive user experience.
 
 ## Motivation
 
