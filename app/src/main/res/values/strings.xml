@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Grocery Genius</string>
+    <string name="not_purchased_groceries_group_title">Recently used</string>
 </resources>
