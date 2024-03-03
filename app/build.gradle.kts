@@ -56,21 +56,26 @@ android {
 
 dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.8.2")
-    implementation(platform("androidx.compose:compose-bom:2023.08.00"))
+
+    val androidLifecycle = "2.7.0"
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$androidLifecycle")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$androidLifecycle")
+
+    implementation(platform("androidx.compose:compose-bom:2024.02.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.ui:ui-util")
+    implementation("androidx.activity:activity-compose:1.8.2")
+
     implementation("androidx.compose.material3:material3")
     implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
-    testImplementation(platform("org.junit:junit-bom:5.10.1"))
+    testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-params")
-    testImplementation("com.google.truth:truth:1.1.5")
+    testImplementation("com.google.truth:truth:1.4.2")
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
