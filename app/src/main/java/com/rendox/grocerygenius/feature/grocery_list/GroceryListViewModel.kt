@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.feature
+package com.rendox.grocerygenius.feature.grocery_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
