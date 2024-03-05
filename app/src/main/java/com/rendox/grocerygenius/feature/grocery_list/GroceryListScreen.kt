@@ -3,7 +3,9 @@ package com.rendox.grocerygenius.feature.grocery_list
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -24,6 +26,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
@@ -35,6 +38,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextMotion
@@ -44,11 +49,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbar
-import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbarScaffold
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbarScaffoldScrollableState
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.CollapsingToolbarNestedScrollConnection
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.ToolbarState
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.rememberExitUntilCollapsedToolbarState
+import kotlinx.coroutines.cancelChildren
 
 @Composable
 fun GroceryListRoute(
@@ -90,35 +95,55 @@ private fun GroceryListScreen(
         }
     }
 
-    CollapsingToolbarScaffold(
-        modifier = modifier.navigationBarsPadding(),
-        nestedScrollConnection = CollapsingToolbarNestedScrollConnection(
+    val nestedScrollConnection = remember {
+        CollapsingToolbarNestedScrollConnection(
             toolbarState = toolbarState,
             scrollState = scrollState,
             coroutineScope = coroutineScope,
-        ),
-        toolbar = {
+        )
+    }
+
+    Scaffold(
+        modifier = modifier.navigationBarsPadding()
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .nestedScroll(nestedScrollConnection)
+        ) {
+            LazyGroceryGrid(
+                modifier = Modifier
+                    .graphicsLayer {
+                        translationY = toolbarState.height + toolbarState.offset
+                    }
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onPress = {
+                                coroutineScope.coroutineContext.cancelChildren()
+                            }
+                        )
+                    },
+                lazyGridState = lazyGridState,
+                groceries = groceries,
+                onGroceryItemClick = onGroceryItemClick,
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = collapsedToolbarHeight + 16.dp,
+                ),
+                columns = GridCells.Adaptive(104.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            )
             GroceryListCollapsingToolbar(
+                modifier = Modifier.graphicsLayer {
+                    translationY = toolbarState.offset
+                },
                 listName = listName,
                 toolbarHeightRange = toolbarHeightRange,
                 toolbarState = toolbarState,
             )
-        },
-        toolbarHeightRange = toolbarHeightRange,
-    ) { bottomPadding ->
-        LazyGroceryGrid(
-            lazyGridState = lazyGridState,
-            groceries = groceries,
-            onGroceryItemClick = onGroceryItemClick,
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                bottom = bottomPadding + 16.dp,
-            ),
-            columns = GridCells.Adaptive(104.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        )
+        }
     }
 }
 

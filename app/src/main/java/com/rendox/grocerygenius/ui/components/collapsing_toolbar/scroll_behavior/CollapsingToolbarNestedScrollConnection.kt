@@ -12,9 +12,9 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 
 class CollapsingToolbarNestedScrollConnection(
-    val toolbarState: ToolbarState,
+    private val toolbarState: ToolbarState,
     private val scrollState: CollapsingToolbarScaffoldScrollableState,
-    val coroutineScope: CoroutineScope,
+    private val coroutineScope: CoroutineScope,
 ) : NestedScrollConnection {
     override fun onPreScroll(
         available: Offset,
