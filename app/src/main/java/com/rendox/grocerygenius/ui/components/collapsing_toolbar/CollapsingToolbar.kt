@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
@@ -60,7 +59,6 @@ fun CollapsingToolbar(
             .drawBehind {
                 drawRect(color = toolbarColor)
             }
-            .statusBarsPadding()
             .height(dynamicToolbarHeight)
     ) {
         MaterialTheme.typography.headlineMedium

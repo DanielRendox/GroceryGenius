@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources >
 
-    <style name="Theme.GroceryGenius" parent="Theme.Material3.DayNight" />
+    <style name="Theme.GroceryGenius" parent="Theme.Material3.DayNight">
+        <item name="enableEdgeToEdge">true</item>
+    </style>
 
     <style name="Theme.GroceryGenius.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_inset</item>

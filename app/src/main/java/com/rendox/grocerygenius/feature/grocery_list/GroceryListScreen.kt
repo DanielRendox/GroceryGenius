@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -40,13 +41,13 @@ import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.ToolbarState
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbar
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbarScaffold
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbarScaffoldScrollableState
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.CollapsingToolbarNestedScrollConnection
+import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.ToolbarState
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.rememberExitUntilCollapsedToolbarState
 
 @Composable
@@ -90,7 +91,7 @@ private fun GroceryListScreen(
     }
 
     CollapsingToolbarScaffold(
-        modifier = modifier,
+        modifier = modifier.navigationBarsPadding(),
         nestedScrollConnection = CollapsingToolbarNestedScrollConnection(
             toolbarState = toolbarState,
             scrollState = scrollState,
