@@ -2,7 +2,7 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="app">
+      <entry key="BottomSheetScaffoldPreview">
         <State>
           <targetSelectedWithDropDown>
             <Target>
@@ -15,7 +15,23 @@
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-03-05T10:10:37.436266800Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-03-05T13:13:24.512168400Z" />
+        </State>
+      </entry>
+      <entry key="app">
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\danie\.android\avd\7.6_Fold-in_with_outer_display_API_33.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-03-06T11:10:13.315700Z" />
         </State>
       </entry>
     </value>
