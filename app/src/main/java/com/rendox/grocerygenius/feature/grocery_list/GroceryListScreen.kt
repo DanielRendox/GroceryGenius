@@ -263,7 +263,7 @@ private fun GroceryListScreen(
                     top = systemBarOffset,
                     start = 16.dp,
                     end = 16.dp,
-                    bottom = 32.dp,
+                    bottom = collapsedToolbarHeight + 16.dp,
                 ),
                 columns = GridCells.Adaptive(104.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
