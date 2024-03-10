@@ -227,7 +227,11 @@ private fun GroceryListScreen(
         scaffoldState = scaffoldState,
     ) { paddingValues ->
         val topAppBarOffset by animateFloatAsState(
-            targetValue = if (sheetIsExpanding) toolbarState.height else 0F,
+            targetValue = if (sheetIsExpanding) {
+                toolbarState.height + WindowInsets.systemBars.getTop(LocalDensity.current)
+            } else {
+                0F
+            },
             label = "animateFloatAsState",
             animationSpec = tween(
                 easing = LinearEasing,
@@ -268,7 +272,6 @@ private fun GroceryListScreen(
 
             GroceryListCollapsingToolbar(
                 modifier = Modifier
-                    .systemBarsPadding()
                     .graphicsLayer {
                         translationY = toolbarState.offset - topAppBarOffset
                     },
