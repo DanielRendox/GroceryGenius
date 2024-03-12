@@ -1,0 +1,47 @@
+[versions]
+activityCompose = "1.8.2"
+androidLifecycle = "2.7.0"
+agp = "8.2.1"
+coreKtx = "1.12.0"
+composeBom = "2024.02.01"
+coreSplashscreen = "1.0.1"
+espressoCore = "3.5.1"
+junit = "1.1.5"
+material = "1.11.0"
+junitBom = "5.10.2"
+truth = "1.4.2"
+kotlin = "1.9.0"
+
+[libraries]
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidLifecycle" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidLifecycle" }
+
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+
+material = { module = "com.google.android.material:material", version.ref = "material" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+
+org-junit-bom = { module = "org.junit:junit-bom", version.ref = "junitBom" }
+org-junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api" }
+org-junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine" }
+org-junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params" }
+
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
+
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junit" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
+androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+
+[plugins]
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+jetbrainsKotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
