@@ -22,7 +22,7 @@ class CollapsingToolbarNestedScrollConnection(
     ): Offset {
         toolbarState.scrollTopLimitReached =
             scrollState.firstVisibleItemIndex == 0 && scrollState.firstVisibleItemScrollOffset == 0
-        toolbarState.scrollOffset = toolbarState.scrollOffset - available.y
+        toolbarState.scrollOffset -= available.y
         return Offset(0f, toolbarState.consumed)
     }
 
@@ -40,9 +40,7 @@ class CollapsingToolbarNestedScrollConnection(
                     toolbarState.scrollTopLimitReached =
                         scrollState.firstVisibleItemIndex == 0 &&
                                 scrollState.firstVisibleItemScrollOffset == 0
-                    toolbarState.scrollOffset =
-                        toolbarState.scrollOffset -
-                                (value - (toolbarState.height + toolbarState.offset))
+                    toolbarState.scrollOffset -= (value - (toolbarState.height + toolbarState.offset))
                     if (toolbarState.scrollOffset == 0f) coroutineScope.coroutineContext.cancelChildren()
                 }
             }
@@ -58,7 +56,7 @@ class CollapsingToolbarNestedScrollConnection(
     ): Offset {
         toolbarState.scrollTopLimitReached =
             scrollState.firstVisibleItemIndex == 0 && scrollState.firstVisibleItemScrollOffset == 0
-        toolbarState.scrollOffset = toolbarState.scrollOffset - available.y
+        toolbarState.scrollOffset -= available.y
         return Offset(0f, toolbarState.consumed)
     }
 }
