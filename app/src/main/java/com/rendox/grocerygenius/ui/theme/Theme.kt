@@ -83,7 +83,7 @@ private val DarkColors = darkColorScheme(
 fun GroceryGeniusTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
     disableDynamicColor: Boolean = false,
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     val dynamicColorIsSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val dynamicColor = dynamicColorIsSupported && !disableDynamicColor
