@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.feature.grocery_list
+package com.rendox.grocerygenius.screens.grocery_list.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
@@ -8,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -19,8 +18,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -52,6 +49,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.rendox.grocerygenius.screens.grocery_list.bottom_sheet.AddGroceryBottomSheetContent
+import com.rendox.grocerygenius.screens.grocery_list.bottom_sheet.Scrim
+import com.rendox.grocerygenius.screens.grocery_list.bottom_sheet.SheetDragHandle
+import com.rendox.grocerygenius.screens.grocery_list.bottom_sheet.rememberAddGroceryBottomSheetContentState
+import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
+import com.rendox.grocerygenius.ui.components.grocery_list.GroceryList
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbar
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbarScaffoldScrollableState
@@ -82,7 +85,7 @@ fun GroceryListRoute(
 private fun GroceryListScreen(
     modifier: Modifier = Modifier,
     listName: String,
-    groceries: Map<Boolean, List<Grocery>>,
+    groceries: List<GroceryGroup>,
     onGroceryItemClick: (Grocery) -> Unit,
 ) {
     val collapsedToolbarHeight = 64.dp
@@ -248,26 +251,6 @@ private fun GroceryListScreen(
             )
         }
     }
-}
-
-@Composable
-private fun GroceryList(
-    modifier: Modifier = Modifier,
-    lazyGridState: LazyGridState,
-    groceries: Map<Boolean, List<Grocery>>,
-    onGroceryItemClick: (Grocery) -> Unit,
-    contentPadding: PaddingValues,
-) {
-    LazyGroceryGrid(
-        modifier = modifier,
-        lazyGridState = lazyGridState,
-        groceries = groceries,
-        onGroceryItemClick = onGroceryItemClick,
-        contentPadding = contentPadding,
-        columns = GridCells.Adaptive(104.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-    )
 }
 
 @Composable

@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.feature.grocery_list
+package com.rendox.grocerygenius.ui.components.grocery_list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -37,7 +37,7 @@ fun LazyGroceryGrid(
     columns: GridCells,
     horizontalArrangement: Arrangement.Horizontal,
     verticalArrangement: Arrangement.Vertical,
-    groceries: Map<Boolean, List<Grocery>>,
+    groceryGroups: List<GroceryGroup>,
     onGroceryItemClick: (Grocery) -> Unit,
 ) {
     LazyVerticalGrid(
@@ -50,6 +50,7 @@ fun LazyGroceryGrid(
     ) {
         // Add dummy item to prevent automatic scroll when the first item is clicked
         // (this is a workaround for an internal bug in LazyVerticalGrid)
+
         item(
             key = -1,
             span = { GridItemSpan(maxLineSpan) },
@@ -58,10 +59,13 @@ fun LazyGroceryGrid(
             Spacer(modifier = Modifier.height(0.dp))
         }
 
-        for (group in groceries) {
-            if (group.key) {
+        groceryGroups.forEachIndexed { groupIndex, group ->
+            if (group.titleId != null) {
                 item(
-                    key = -2,
+                    // negative indices as positive ones are occupied by items
+                    // subtract 1 as indices start from zero
+                    // subtract 1 again as -1 is occupied by the dummy item
+                    key = -groupIndex - 2,
                     span = { GridItemSpan(maxLineSpan) },
                     contentType = "Title"
                 ) {
@@ -77,7 +81,7 @@ fun LazyGroceryGrid(
                 }
             }
             items(
-                items = group.value,
+                items = group.groceries,
                 key = { it.id.toInt() },
                 contentType = { "Grocery" }
             ) { grocery ->

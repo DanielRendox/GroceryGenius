@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.feature.grocery_list
+package com.rendox.grocerygenius.screens.grocery_list.bottom_sheet
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue

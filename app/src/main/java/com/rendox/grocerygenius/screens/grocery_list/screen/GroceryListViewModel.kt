@@ -1,7 +1,9 @@
-package com.rendox.grocerygenius.feature.grocery_list
+package com.rendox.grocerygenius.screens.grocery_list.screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rendox.grocerygenius.R
+import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
 import com.rendox.grocerygenius.model.Grocery
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,11 +15,21 @@ class GroceryListScreenViewModel : ViewModel() {
     private val _groceriesFlow = MutableStateFlow(sampleGroceryList.sortedBy { it.name }.sortedBy { it.purchased })
     val groceriesFlow = _groceriesFlow
         .map { groceryList ->
-            groceryList.groupBy { it.purchased }
+            groceryList
+                .groupBy { it.purchased }
+                .map {
+                    val purchased = it.key
+                    val titleId =
+                        if (purchased) R.string.not_purchased_groceries_group_title else null
+                    GroceryGroup(
+                        titleId = titleId,
+                        groceries = it.value,
+                    )
+                }
         }
         .stateIn(
             scope = viewModelScope,
-            initialValue = emptyMap(),
+            initialValue = emptyList(),
             started = SharingStarted.WhileSubscribed(5_000),
         )
 
