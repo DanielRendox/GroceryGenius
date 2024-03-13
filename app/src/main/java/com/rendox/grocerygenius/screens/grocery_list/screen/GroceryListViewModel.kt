@@ -3,19 +3,24 @@ package com.rendox.grocerygenius.screens.grocery_list.screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rendox.grocerygenius.R
-import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
 import com.rendox.grocerygenius.model.Grocery
+import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class GroceryListScreenViewModel : ViewModel() {
-    private val _groceriesFlow = MutableStateFlow(sampleGroceryList.sortedBy { it.name }.sortedBy { it.purchased })
+    private val _groceriesFlow = MutableStateFlow(sampleGroceryList)
     val groceriesFlow = _groceriesFlow
         .map { groceryList ->
             groceryList
+                .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name })
+                .sortedBy { it.purchased }
                 .groupBy { it.purchased }
                 .map {
                     val purchased = it.key
@@ -33,6 +38,22 @@ class GroceryListScreenViewModel : ViewModel() {
             started = SharingStarted.WhileSubscribed(5_000),
         )
 
+    private val _grocerySearchResults = MutableStateFlow<List<Grocery>>(emptyList())
+    val grocerySearchResults: StateFlow<List<GroceryGroup>> = _grocerySearchResults
+        .map { groceries ->
+            listOf(
+                GroceryGroup(
+                    titleId = null,
+                    groceries = groceries,
+                )
+            )
+        }
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = emptyList(),
+            started = SharingStarted.WhileSubscribed(5_000),
+        )
+
     fun toggleItemPurchased(item: Grocery) {
         _groceriesFlow.update { groceryList ->
             groceryList.toMutableList()
@@ -42,9 +63,69 @@ class GroceryListScreenViewModel : ViewModel() {
                         set(indexOfItem, item.copy(purchased = !item.purchased))
                     }
                 }
-                .sortedBy { it.name }
-                .sortedBy { it.purchased }
         }
+    }
+
+    fun onSearchInputChanged(searchInput: String) {
+        if (searchInput.isNotEmpty()) {
+            val searchResults = findGroceriesByName(searchInput)
+                .sortedWith(
+                    compareBy(
+                        { !it.name.startsWith(searchInput, ignoreCase = true) },
+                        { it.name }
+                    )
+                )
+
+            val customGrocery = Grocery(
+                id = searchResults.maxOfOrNull { it.id }?.plus(1) ?: 0,
+                name = searchInput,
+                purchased = true,
+            )
+
+            val isPerfectMatch =
+                searchResults.firstOrNull()?.name.equals(searchInput, ignoreCase = true)
+
+            _grocerySearchResults.update {
+                if (isPerfectMatch) searchResults else searchResults + customGrocery
+            }
+        }
+    }
+
+    fun onBottomSheetCollapsing() {
+        _grocerySearchResults.update { emptyList() }
+    }
+
+    fun onGrocerySearchResultClick(grocery: Grocery) {
+        addGrocery(grocery)
+    }
+
+    fun onSearchInputKeyboardDone() {
+        if (_grocerySearchResults.value.isNotEmpty()) {
+            addGrocery(_grocerySearchResults.value.last())
+        }
+    }
+
+    private fun addGrocery(grocery: Grocery) {
+        _groceriesFlow.update { groceries ->
+            groceries.toMutableList().apply {
+                add(
+                    grocery.copy(
+                        id = groceries.maxOf { it.id } + 1,
+                        purchased = false,
+                    )
+                )
+            }
+        }
+        viewModelScope.launch {
+            delay(100) // otherwise, the item goes off screen too quickly
+            _grocerySearchResults.update { emptyList() }
+        }
+    }
+
+    private fun findGroceriesByName(name: String): List<Grocery> {
+        val escapedInput = Regex.escape(name)
+        val pattern = Regex(".*$escapedInput.*", RegexOption.IGNORE_CASE)
+        return sampleGroceryList.filter { pattern.matches(it.name) }
     }
 
     companion object {
@@ -75,7 +156,7 @@ class GroceryListScreenViewModel : ViewModel() {
             Grocery(name = "Cod", purchased = false, id = 29),
             Grocery(name = "Haddock", purchased = false, id = 30),
             Grocery(name = "Halibut", purchased = false, id = 31),
-            Grocery(name = "Swordfish", purchased = false, id = 32),
+            Grocery(name = "Bwordfish", purchased = false, id = 32),
             Grocery(name = "Mackerel", purchased = false, id = 33),
             Grocery(name = "Sardines", purchased = false, id = 34),
         )

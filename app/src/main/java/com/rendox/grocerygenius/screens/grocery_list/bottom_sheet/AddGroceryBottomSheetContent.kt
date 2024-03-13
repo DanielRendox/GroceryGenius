@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +27,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,11 +47,19 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rendox.grocerygenius.R
+import com.rendox.grocerygenius.model.Grocery
+import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
+import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGrid
+import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
 
 
 @Composable
 fun AddGroceryBottomSheetContent(
     modifier: Modifier = Modifier,
+    onSearchInputChanged: (String) -> Unit,
+    onGrocerySearchResultClick: (Grocery) -> Unit,
+    grocerySearchResults: List<GroceryGroup>,
+    onKeyboardDone: () -> Unit,
     state: AddGroceryBottomSheetContentState = rememberAddGroceryBottomSheetContentState(),
     searchBarFocusRequester: FocusRequester,
 ) {
@@ -59,12 +73,18 @@ fun AddGroceryBottomSheetContent(
                 modifier = Modifier.weight(1F),
                 searchBarFocusRequester = searchBarFocusRequester,
                 searchInput = state.searchInput,
-                onSearchInputChanged = state::updateSearchInput,
+                onSearchInputChanged = { searchInput ->
+                    state.updateSearchInput(searchInput)
+                    onSearchInputChanged(searchInput)
+                },
                 onFocusChanged = state::onSearchBarFocusChanged,
                 useExpandedPlaceholderText = state.useExpandedPlaceholderText,
                 clearSearchInputButtonIsShown = state.clearSearchInputButtonIsShown,
                 onClearSearchInputClicked = state::clearSearchInput,
-                onKeyboardDone = state::onKeyboardDone,
+                onKeyboardDone = {
+                    state.onKeyboardDone()
+                    onKeyboardDone()
+                },
             )
             Fab(
                 showCancelButtonInsteadOfFab = state.showCancelButtonInsteadOfFab,
@@ -72,6 +92,26 @@ fun AddGroceryBottomSheetContent(
                 onFabClicked = state::fabOnClick,
             )
         }
+        LazyGroceryGrid(
+            modifier = Modifier.padding(top = 16.dp),
+            groceryGroups = grocerySearchResults,
+            groceryItem = { grocery ->
+                LazyGroceryGridItem(
+                    modifier = Modifier.fillMaxSize(),
+                    purchasedColor = MaterialTheme.colorScheme.surfaceColorAtElevation(12.dp),
+                    grocery = grocery,
+                    onClick = {
+                        onGrocerySearchResultClick(grocery)
+                        state.clearSearchInput()
+                    },
+                )
+            },
+            contentPadding = PaddingValues(
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 16.dp,
+            ),
+        )
     }
 }
 
@@ -169,15 +209,6 @@ private fun Fab(
 }
 
 @Composable
-@Preview
-private fun AddGroceryBottomSheetContentPreview() {
-    AddGroceryBottomSheetContent(
-        state = rememberAddGroceryBottomSheetContentState(),
-        searchBarFocusRequester = FocusRequester(),
-    )
-}
-
-@Composable
 fun Scrim(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
@@ -200,4 +231,31 @@ fun SheetDragHandle(modifier: Modifier = Modifier) {
             )
         )
     }
+}
+
+@Composable
+@Preview
+private fun AddGroceryBottomSheetContentPreview() {
+    var customGrocery by remember { mutableStateOf<Grocery?>(null) }
+    AddGroceryBottomSheetContent(
+        state = rememberAddGroceryBottomSheetContentState(),
+        searchBarFocusRequester = FocusRequester(),
+        onSearchInputChanged = { searchInput ->
+            if (searchInput.isNotEmpty()) {
+                customGrocery = Grocery(
+                    id = 1,
+                    name = searchInput,
+                    purchased = true,
+                )
+            }
+        },
+        onGrocerySearchResultClick = {},
+        grocerySearchResults = listOf(
+            GroceryGroup(
+                titleId = null,
+                groceries = customGrocery?.let { listOf(it) } ?: emptyList(),
+            )
+        ),
+        onKeyboardDone = {},
+    )
 }

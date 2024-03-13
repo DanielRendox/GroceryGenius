@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
@@ -54,13 +55,14 @@ import com.rendox.grocerygenius.screens.grocery_list.bottom_sheet.Scrim
 import com.rendox.grocerygenius.screens.grocery_list.bottom_sheet.SheetDragHandle
 import com.rendox.grocerygenius.screens.grocery_list.bottom_sheet.rememberAddGroceryBottomSheetContentState
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
-import com.rendox.grocerygenius.ui.components.grocery_list.GroceryList
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbar
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbarScaffoldScrollableState
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.CollapsingToolbarNestedScrollConnection
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.ToolbarState
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.rememberExitUntilCollapsedToolbarState
+import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGrid
+import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
 import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
@@ -71,12 +73,18 @@ fun GroceryListRoute(
     viewModel: GroceryListScreenViewModel = viewModel(),
 ) {
     val groceries by viewModel.groceriesFlow.collectAsState()
+    val grocerySearchResults by viewModel.grocerySearchResults.collectAsState()
 
     GroceryListScreen(
         modifier = modifier,
         listName = "Grocery List",
         groceries = groceries,
         onGroceryItemClick = viewModel::toggleItemPurchased,
+        onSearchInputChanged = viewModel::onSearchInputChanged,
+        grocerySearchResults = grocerySearchResults,
+        onBottomSheetCollapsing = viewModel::onBottomSheetCollapsing,
+        onGrocerySearchResultClick = viewModel::onGrocerySearchResultClick,
+        onSearchInputKeyboardDone = viewModel::onSearchInputKeyboardDone,
     )
 }
 
@@ -86,7 +94,12 @@ private fun GroceryListScreen(
     modifier: Modifier = Modifier,
     listName: String,
     groceries: List<GroceryGroup>,
+    grocerySearchResults: List<GroceryGroup>,
     onGroceryItemClick: (Grocery) -> Unit,
+    onSearchInputChanged: (String) -> Unit,
+    onBottomSheetCollapsing: () -> Unit,
+    onGrocerySearchResultClick: (Grocery) -> Unit,
+    onSearchInputKeyboardDone: () -> Unit,
 ) {
     val collapsedToolbarHeight = 64.dp
     val expandedToolbarHeight = 112.dp
@@ -133,6 +146,7 @@ private fun GroceryListScreen(
         if (!sheetIsExpanding) {
             focusManager.clearFocus()
             bottomSheetContentState.clearSearchInput()
+            onBottomSheetCollapsing()
         } else if (sheetStateIsExpanded) {
             searchBarFocusRequester.requestFocus()
         }
@@ -176,6 +190,10 @@ private fun GroceryListScreen(
                     ),
                 state = bottomSheetContentState,
                 searchBarFocusRequester = searchBarFocusRequester,
+                onSearchInputChanged = onSearchInputChanged,
+                onGrocerySearchResultClick = onGrocerySearchResultClick,
+                grocerySearchResults = grocerySearchResults,
+                onKeyboardDone = onSearchInputKeyboardDone,
             )
         },
         sheetDragHandle = {
@@ -201,7 +219,7 @@ private fun GroceryListScreen(
                 .padding(paddingValues)
                 .nestedScroll(nestedScrollConnection)
         ) {
-            GroceryList(
+            LazyGroceryGrid(
                 modifier = Modifier
                     .graphicsLayer {
                         translationY =
@@ -215,9 +233,17 @@ private fun GroceryListScreen(
                             }
                         )
                     },
-                groceries = groceries,
                 lazyGridState = lazyGridState,
-                onGroceryItemClick = onGroceryItemClick,
+                groceryGroups = groceries,
+                groceryItem = { grocery ->
+                    LazyGroceryGridItem(
+                        modifier = Modifier.fillMaxSize(),
+                        grocery = grocery,
+                        onClick = {
+                            onGroceryItemClick(grocery)
+                        },
+                    )
+                },
                 contentPadding = PaddingValues(
                     top = systemBarOffset,
                     start = 16.dp,

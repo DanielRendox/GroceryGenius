@@ -3,6 +3,7 @@ package com.rendox.grocerygenius.ui.components.grocery_list
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -22,6 +24,7 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -32,21 +35,18 @@ import com.rendox.grocerygenius.model.Grocery
 @Composable
 fun LazyGroceryGrid(
     modifier: Modifier = Modifier,
-    lazyGridState: LazyGridState,
+    lazyGridState: LazyGridState = rememberLazyGridState(),
     contentPadding: PaddingValues,
-    columns: GridCells,
-    horizontalArrangement: Arrangement.Horizontal,
-    verticalArrangement: Arrangement.Vertical,
     groceryGroups: List<GroceryGroup>,
-    onGroceryItemClick: (Grocery) -> Unit,
+    groceryItem: @Composable (Grocery) -> Unit,
 ) {
     LazyVerticalGrid(
         modifier = modifier,
         state = lazyGridState,
         contentPadding = contentPadding,
-        columns = columns,
-        horizontalArrangement = horizontalArrangement,
-        verticalArrangement = verticalArrangement,
+        columns = GridCells.Adaptive(104.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         // Add dummy item to prevent automatic scroll when the first item is clicked
         // (this is a workaround for an internal bug in LazyVerticalGrid)
@@ -85,33 +85,29 @@ fun LazyGroceryGrid(
                 key = { it.id.toInt() },
                 contentType = { "Grocery" }
             ) { grocery ->
-                GroceryCard(
+                Box(
                     modifier = Modifier
                         .aspectRatio(1F)
-                        .animateItemPlacement(),
-                    grocery = grocery,
-                    onClick = {
-                        onGroceryItemClick(grocery)
-                    },
-                )
+                        .animateItemPlacement()
+                ) {
+                    groceryItem(grocery)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun GroceryCard(
+fun LazyGroceryGridItem(
     modifier: Modifier = Modifier,
     grocery: Grocery,
+    purchasedColor: Color = MaterialTheme.colorScheme.surfaceColorAtElevation(elevation = 1.dp),
+    notPurchasedColor: Color = MaterialTheme.colorScheme.primaryContainer,
     onClick: () -> Unit,
 ) {
     Surface(
         modifier = modifier.clickable(onClick = onClick),
-        color = if (grocery.purchased) {
-            MaterialTheme.colorScheme.surfaceColorAtElevation(elevation = 1.dp)
-        } else {
-            MaterialTheme.colorScheme.primaryContainer
-        }
+        color = if (grocery.purchased) purchasedColor else notPurchasedColor,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.padding(start = 8.dp)) {
