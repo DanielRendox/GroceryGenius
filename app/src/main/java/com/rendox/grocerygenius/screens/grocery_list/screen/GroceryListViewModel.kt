@@ -159,6 +159,9 @@ class GroceryListScreenViewModel : ViewModel() {
             Grocery(name = "Bwordfish", purchased = false, id = 32),
             Grocery(name = "Mackerel", purchased = false, id = 33),
             Grocery(name = "Sardines", purchased = false, id = 34),
+            Grocery(name = "0 Pasta", description = "Gourmet Pasta Collection", purchased = false, id = 35),
+            Grocery(name = "1 Dishwashing liquid", description = "Fresh Lemon Scent", purchased = false, id = 36),
+            Grocery(name = "2 Echo Glow Smart Lamp with Alexa", description = "for kids room", purchased = false, id = 37),
         )
     }
 }

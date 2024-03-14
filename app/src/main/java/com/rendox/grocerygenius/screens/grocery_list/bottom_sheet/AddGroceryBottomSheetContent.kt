@@ -27,7 +27,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -98,7 +97,6 @@ fun AddGroceryBottomSheetContent(
             groceryItem = { grocery ->
                 LazyGroceryGridItem(
                     modifier = Modifier.fillMaxSize(),
-                    purchasedColor = MaterialTheme.colorScheme.surfaceColorAtElevation(12.dp),
                     grocery = grocery,
                     onClick = {
                         onGrocerySearchResultClick(grocery)
@@ -194,7 +192,7 @@ private fun Fab(
                 modifier = Modifier
                     .aspectRatio(1F)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .background(MaterialTheme.colorScheme.primary)
                     .clickable(onClick = onFabClicked),
                 contentAlignment = Alignment.Center,
             ) {
@@ -202,6 +200,7 @@ private fun Fab(
                     modifier = Modifier.size(24.dp),
                     imageVector = Icons.Default.Add,
                     contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                 )
             }
         }

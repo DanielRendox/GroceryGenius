@@ -4,30 +4,42 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Grocery
 
@@ -101,29 +113,93 @@ fun LazyGroceryGrid(
 fun LazyGroceryGridItem(
     modifier: Modifier = Modifier,
     grocery: Grocery,
-    purchasedColor: Color = MaterialTheme.colorScheme.surfaceColorAtElevation(elevation = 1.dp),
-    notPurchasedColor: Color = MaterialTheme.colorScheme.primaryContainer,
+    notPurchasedColor: Color = MaterialTheme.colorScheme.primary,
+    purchasedColor: Color = MaterialTheme.colorScheme.tertiary,
     onClick: () -> Unit,
 ) {
     Surface(
         modifier = modifier.clickable(onClick = onClick),
         color = if (grocery.purchased) purchasedColor else notPurchasedColor,
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(modifier = Modifier.padding(start = 8.dp)) {
-                Text(
-                    text = "Name: ${grocery.name}",
-                    style = MaterialTheme.typography.bodySmall,
+        Column(
+            modifier = Modifier.padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Box(modifier = Modifier.weight(1F)) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    imageVector = Icons.Outlined.ShoppingCart,
+                    contentDescription = null,
                 )
-                Text(
-                    text = "ID: ${grocery.id}",
-                    style = MaterialTheme.typography.bodySmall,
-                )
-                Text(
-                    text = "Purchased: ${grocery.purchased}",
-                    style = MaterialTheme.typography.bodySmall,
-                )
+            }
+            BoxWithConstraints(
+                modifier = Modifier.heightIn(min = 44.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                val boxWithConstraintsScope = this
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    val textMeasurer = rememberTextMeasurer()
+                    val titleStyle = MaterialTheme.typography.labelMedium
+                    val titleMaxLines = if (grocery.description != null) 2 else 3
+                    val textLayoutResult = remember(grocery.name) {
+                        textMeasurer.measure(
+                            text = grocery.name,
+                            style = titleStyle,
+                            constraints = boxWithConstraintsScope.constraints,
+                            maxLines = titleMaxLines,
+                        )
+                    }
+
+                    val titleFontSize = if (textLayoutResult.hasVisualOverflow) 12.sp else 14.sp
+                    Text(
+                        modifier = Modifier.padding(top = 4.dp),
+                        text = grocery.name,
+                        style = titleStyle.copy(fontSize = titleFontSize),
+                        lineHeight = titleFontSize,
+                        textAlign = TextAlign.Center,
+                        maxLines = titleMaxLines,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    if (grocery.description != null) {
+                        Text(
+                            modifier = Modifier.padding(top = 2.dp),
+                            text = grocery.description,
+                            style = MaterialTheme.typography.bodySmall,
+                            lineHeight = 12.sp,
+                            textAlign = TextAlign.Center,
+                            maxLines = if (textLayoutResult.lineCount == 1) 2 else 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
             }
         }
     }
+}
+
+class NameParameterProvider : PreviewParameterProvider<Pair<String, String>> {
+    override val values: Sequence<Pair<String, String>>
+        get() = sequenceOf(
+            "Pasta" to "Gourmet Pasta Collection",
+            "Dishwashing liquid" to "Fresh Lemon Scent",
+            "Echo Glow Smart Lamp" to "for kids room",
+        )
+}
+
+@Preview
+@Composable
+private fun LazyGroceryGridItemPreview(
+    @PreviewParameter(NameParameterProvider::class) titleAndDescription: Pair<String, String>,
+) {
+    LazyGroceryGridItem(
+        modifier = Modifier.size(104.dp),
+        grocery = Grocery(
+            id = 0,
+            name = titleAndDescription.first,
+            purchased = false,
+            description = titleAndDescription.second,
+        ),
+        onClick = {},
+    )
 }

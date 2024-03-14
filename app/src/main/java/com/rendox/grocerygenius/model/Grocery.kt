@@ -4,4 +4,5 @@ data class Grocery(
     val id: Long,
     val name: String,
     val purchased: Boolean,
+    val description: String? = null,
 )
