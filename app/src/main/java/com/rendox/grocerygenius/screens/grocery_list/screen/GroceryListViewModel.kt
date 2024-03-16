@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -40,6 +41,7 @@ class GroceryListScreenViewModel : ViewModel() {
 
     private val _grocerySearchResults = MutableStateFlow<List<Grocery>>(emptyList())
     val grocerySearchResults: StateFlow<List<GroceryGroup>> = _grocerySearchResults
+        .onEach { println("Debug bottom sheet _grocerySearchResults = $it") }
         .map { groceries ->
             listOf(
                 GroceryGroup(
@@ -91,7 +93,7 @@ class GroceryListScreenViewModel : ViewModel() {
         }
     }
 
-    fun onBottomSheetCollapsing() {
+    fun onBottomSheetCollapsed() {
         _grocerySearchResults.update { emptyList() }
     }
 
@@ -117,7 +119,6 @@ class GroceryListScreenViewModel : ViewModel() {
             }
         }
         viewModelScope.launch {
-            delay(100) // otherwise, the item goes off screen too quickly
             _grocerySearchResults.update { emptyList() }
         }
     }

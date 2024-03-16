@@ -48,7 +48,7 @@ import com.rendox.grocerygenius.model.Grocery
 fun LazyGroceryGrid(
     modifier: Modifier = Modifier,
     lazyGridState: LazyGridState = rememberLazyGridState(),
-    contentPadding: PaddingValues,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
     groceryGroups: List<GroceryGroup>,
     groceryItem: @Composable (Grocery) -> Unit,
 ) {
@@ -94,7 +94,7 @@ fun LazyGroceryGrid(
             }
             items(
                 items = group.groceries,
-                key = { it.id.toInt() },
+                key = { it.id },
                 contentType = { "Grocery" }
             ) { grocery ->
                 Box(

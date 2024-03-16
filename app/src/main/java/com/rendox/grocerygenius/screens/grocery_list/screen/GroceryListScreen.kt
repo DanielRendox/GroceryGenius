@@ -53,9 +53,9 @@ import androidx.compose.ui.unit.times
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.screens.grocery_list.bottom_sheet.AddGroceryBottomSheetContent
-import com.rendox.grocerygenius.screens.grocery_list.bottom_sheet.Scrim
 import com.rendox.grocerygenius.screens.grocery_list.bottom_sheet.SheetDragHandle
 import com.rendox.grocerygenius.screens.grocery_list.bottom_sheet.rememberAddGroceryBottomSheetContentState
+import com.rendox.grocerygenius.ui.components.Scrim
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbar
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbarScaffoldScrollableState
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.CollapsingToolbarNestedScrollConnection
@@ -83,7 +83,7 @@ fun GroceryListRoute(
         onGroceryItemClick = viewModel::toggleItemPurchased,
         onSearchInputChanged = viewModel::onSearchInputChanged,
         grocerySearchResults = grocerySearchResults,
-        onBottomSheetCollapsing = viewModel::onBottomSheetCollapsing,
+        onBottomSheetCollapsed = viewModel::onBottomSheetCollapsed,
         onGrocerySearchResultClick = viewModel::onGrocerySearchResultClick,
         onSearchInputKeyboardDone = viewModel::onSearchInputKeyboardDone,
     )
@@ -98,7 +98,7 @@ private fun GroceryListScreen(
     grocerySearchResults: List<GroceryGroup>,
     onGroceryItemClick: (Grocery) -> Unit,
     onSearchInputChanged: (String) -> Unit,
-    onBottomSheetCollapsing: () -> Unit,
+    onBottomSheetCollapsed: () -> Unit,
     onGrocerySearchResultClick: (Grocery) -> Unit,
     onSearchInputKeyboardDone: () -> Unit,
 ) {
@@ -134,21 +134,26 @@ private fun GroceryListScreen(
     val searchBarFocusRequester = remember { FocusRequester() }
     val bottomSheetContentState = rememberAddGroceryBottomSheetContentState()
 
+    val bottomSheetCurrentState = scaffoldState.bottomSheetState.currentValue
+    val bottomSheetTargetState = scaffoldState.bottomSheetState.targetValue
     val focusManager = LocalFocusManager.current
-    val sheetStateIsExpanded =
-        scaffoldState.bottomSheetState.currentValue == SheetValue.Expanded
-    val sheetIsExpanding =
-        scaffoldState.bottomSheetState.targetValue == SheetValue.Expanded
+    val sheetStateIsExpanded = bottomSheetCurrentState == SheetValue.Expanded
+    val sheetIsExpanding = bottomSheetTargetState == SheetValue.Expanded
 
     LaunchedEffect(sheetStateIsExpanded, sheetIsExpanding) {
-        bottomSheetContentState.showCancelButtonInsteadOfFab = sheetIsExpanding
-        bottomSheetContentState.useExpandedPlaceholderText = sheetIsExpanding
+        bottomSheetContentState.sheetIsExpanding = sheetIsExpanding
+        bottomSheetContentState.sheetIsCollapsed = !sheetStateIsExpanded
         if (!sheetIsExpanding) {
             focusManager.clearFocus()
             bottomSheetContentState.clearSearchInput()
-            onBottomSheetCollapsing()
         } else if (sheetStateIsExpanded) {
             searchBarFocusRequester.requestFocus()
+        }
+    }
+
+    LaunchedEffect(scaffoldState.bottomSheetState.currentValue) {
+        if (scaffoldState.bottomSheetState.currentValue == SheetValue.PartiallyExpanded) {
+            onBottomSheetCollapsed()
         }
     }
 

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="BottomSheetScaffoldPreview">
+      <entry key="AddGroceryBottomSheetContentPreview">
         <State>
           <targetSelectedWithDropDown>
             <Target>
@@ -15,7 +15,7 @@
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-03-05T13:13:24.512168400Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-03-15T18:17:18.602485600Z" />
         </State>
       </entry>
       <entry key="app">
