@@ -1,6 +1,6 @@
 package com.rendox.grocerygenius.screens.grocery_list.bottom_sheet
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text2.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
@@ -46,6 +45,7 @@ import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -58,102 +58,114 @@ import com.rendox.grocerygenius.ui.components.SearchField
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGrid
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
+import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
+import com.rendox.grocerygenius.ui.helpers.UiEvent
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import kotlin.random.Random
-
 
 @Composable
 fun AddGroceryBottomSheetContent(
     modifier: Modifier = Modifier,
-    onSearchInputChanged: (String) -> Unit,
-    onGrocerySearchResultClick: (Grocery) -> Unit,
+    searchInput: String,
+    useExpandedPlaceholderText: Boolean,
+    clearSearchInputButtonIsShown: Boolean,
+    showCancelButtonInsteadOfFab: Boolean,
     grocerySearchResults: List<GroceryGroup>,
+    handleBackButtonPress: Boolean,
+    changeSearchFieldFocusEvent: UiEvent<Boolean>?,
+    contentType: BottomSheetContentType,
+    previousGroceryName: String?,
+    showExtendedContent: Boolean,
+    onGrocerySearchResultClick: (Grocery) -> Unit,
+    onSearchFieldFocusChanged: (FocusState) -> Unit,
+    onBackButtonClicked: () -> Unit,
     onKeyboardDone: () -> Unit,
-    state: AddGroceryBottomSheetContentState = rememberAddGroceryBottomSheetContentState(),
-    searchBarFocusRequester: FocusRequester,
+    cancelButtonOnClick: () -> Unit,
+    fabOnClick: () -> Unit,
+    onSearchInputChanged: (String) -> Unit,
+    clearSearchInput: () -> Unit,
 ) {
+    BackHandler(
+        enabled = handleBackButtonPress,
+        onBack = onBackButtonClicked,
+    )
+
+    val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
+    ObserveUiEvent(changeSearchFieldFocusEvent) { isFocused ->
+        if (isFocused) {
+            focusRequester.requestFocus()
+        } else {
+            focusManager.clearFocus()
+        }
+    }
+
     Column(modifier = modifier) {
         BottomSheetHeader(
-            searchInput = state.searchInput,
-            useExpandedPlaceholderText = state.useExpandedPlaceholderText,
-            clearSearchInputButtonIsShown = state.clearSearchInputButtonIsShown,
-            showCancelButtonInsteadOfFab = state.showCancelButtonInsteadOfFab,
-            onFocusChanged = state::onSearchBarFocusChanged,
-            updateSearchInput = { searchInput ->
-                state.updateSearchInput(searchInput)
-                onSearchInputChanged(searchInput)
-            },
-            clearSearchInput = state::clearSearchInput,
-            cancelButtonOnClick = state::cancelButtonOnClick,
-            fabOnClick = state::fabOnClick,
-            searchBarFocusRequester = searchBarFocusRequester,
+            searchInput = searchInput,
+            useExpandedPlaceholderText = useExpandedPlaceholderText,
+            clearSearchInputButtonIsShown = clearSearchInputButtonIsShown,
+            showCancelButtonInsteadOfFab = showCancelButtonInsteadOfFab,
+            onFocusChanged = onSearchFieldFocusChanged,
+            onKeyboardDone = onKeyboardDone,
+            cancelButtonOnClick = cancelButtonOnClick,
+            fabOnClick = fabOnClick,
+            focusRequester = focusRequester,
             onSearchInputChanged = onSearchInputChanged,
-            onKeyboardDone = {
-                onKeyboardDone()
-                state.onKeyboardDone()
-            },
+            clearSearchInput = clearSearchInput,
         )
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            when (state.contentType) {
-                BottomSheetContentType.HeaderOnly -> {}
-                BottomSheetContentType.Suggestions -> {}
+        if (showExtendedContent) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                when (contentType) {
+                    BottomSheetContentType.Suggestions -> {}
 
-                BottomSheetContentType.SearchResults -> {
-                    SearchResults(
-                        grocerySearchResults = grocerySearchResults,
-                        onGrocerySearchResultClick = { grocery ->
-                            onGrocerySearchResultClick(grocery)
-                            state.onGroceryItemClick(grocery)
-                        },
-                    )
-                }
+                    BottomSheetContentType.SearchResults -> {
+                        SearchResults(
+                            grocerySearchResults = grocerySearchResults,
+                            onGrocerySearchResultClick = onGrocerySearchResultClick,
+                        )
+                    }
 
-                BottomSheetContentType.RefineItemOptions -> {
-                    RefineItemOptions(
-                        groceryName = state.previousGroceryName ?: "",
-                    )
+                    BottomSheetContentType.RefineItemOptions -> {
+                        RefineItemOptions(
+                            groceryName = previousGroceryName ?: "",
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun BottomSheetHeader(
     searchInput: String,
     useExpandedPlaceholderText: Boolean,
     clearSearchInputButtonIsShown: Boolean,
     showCancelButtonInsteadOfFab: Boolean,
+    focusRequester: FocusRequester,
     onFocusChanged: (FocusState) -> Unit,
-    updateSearchInput: (String) -> Unit,
-    clearSearchInput: () -> Unit,
     cancelButtonOnClick: () -> Unit,
     fabOnClick: () -> Unit,
-    searchBarFocusRequester: FocusRequester,
+    onKeyboardDone: () -> Unit,
     onSearchInputChanged: (String) -> Unit,
-    onKeyboardDone: () -> Unit
+    clearSearchInput: () -> Unit,
 ) {
     Row(
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxWidth(),
     ) {
-        val searchFieldState = rememberTextFieldState()
         SearchField(
             modifier = Modifier
                 .weight(1F)
                 .onFocusChanged(onFocusChanged = onFocusChanged)
-                .focusRequester(focusRequester = searchBarFocusRequester),
-    //            onSearchInputChanged = { searchInput ->
-    //                updateSearchInput(searchInput)
-    //                onSearchInputChanged(searchInput)
-    //            },
-            textFieldState = searchFieldState,
+                .focusRequester(focusRequester),
+            searchInput = searchInput,
             placeholder = {
                 Text(
                     text = if (useExpandedPlaceholderText) {
@@ -165,9 +177,8 @@ private fun BottomSheetHeader(
             },
             clearSearchInputButtonIsShown = clearSearchInputButtonIsShown,
             onClearSearchInputClicked = clearSearchInput,
-            onKeyboardDone = {
-                onKeyboardDone()
-            },
+            onKeyboardDone = onKeyboardDone,
+            onSearchInputChanged = onSearchInputChanged,
         )
         Fab(
             showCancelButtonInsteadOfFab = showCancelButtonInsteadOfFab,
@@ -333,7 +344,7 @@ private fun Fab(
             TextButton(
                 onClick = onCancelButtonClicked
             ) {
-                Text(text = stringResource(id = R.string.done))
+                Text(text = stringResource(id = android.R.string.cancel))
             }
         } else {
             Box(

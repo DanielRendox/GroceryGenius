@@ -10,7 +10,4 @@
     <string name="add_grocery_add_new_category_chip_title">Add new category</string>
     <string name="add_grocery_add_new_category_chip_description">Selected</string>
     <string name="add_grocery_edit_item_button_title">Enter item details</string>
-
-    <!-- General -->
-    <string name="done">Done</string>
 </resources>

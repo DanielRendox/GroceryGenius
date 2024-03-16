@@ -1,16 +1,23 @@
 package com.rendox.grocerygenius.screens.grocery_list.screen
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Grocery
+import com.rendox.grocerygenius.screens.grocery_list.bottom_sheet.BottomSheetContentType
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -39,9 +46,8 @@ class GroceryListScreenViewModel : ViewModel() {
             started = SharingStarted.WhileSubscribed(5_000),
         )
 
-    private val _grocerySearchResults = MutableStateFlow<List<Grocery>>(emptyList())
-    val grocerySearchResults: StateFlow<List<GroceryGroup>> = _grocerySearchResults
-        .onEach { println("Debug bottom sheet _grocerySearchResults = $it") }
+    private val _grocerySearchResultsFlow = MutableStateFlow<List<Grocery>>(emptyList())
+    val grocerySearchResultsFlow: StateFlow<List<GroceryGroup>> = _grocerySearchResultsFlow
         .map { groceries ->
             listOf(
                 GroceryGroup(
@@ -56,6 +62,50 @@ class GroceryListScreenViewModel : ViewModel() {
             started = SharingStarted.WhileSubscribed(5_000),
         )
 
+    var searchInput by mutableStateOf<String?>(null)
+        private set
+
+    private val searchInputFlow = snapshotFlow { searchInput }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    var clearSearchInputButtonIsShownFlow: StateFlow<Boolean> =
+        searchInputFlow
+            .mapLatest { it?.isNotEmpty() ?: false }
+            .stateIn(
+                scope = viewModelScope,
+                initialValue = false,
+                started = SharingStarted.WhileSubscribed(5_000),
+            )
+
+    private val _bottomSheetContentTypeFlow = MutableStateFlow(BottomSheetContentType.Suggestions)
+    val bottomSheetContentTypeFlow = _bottomSheetContentTypeFlow.asStateFlow()
+
+    private val _previousGroceryName = MutableStateFlow<String?>(null)
+    val previousGroceryName: StateFlow<String?> = _previousGroceryName.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            searchInputFlow.collectLatest { searchInput ->
+                if (!searchInput.isNullOrEmpty()) {
+                    updateSearchResults(searchInput)
+                    _bottomSheetContentTypeFlow.update {
+                        BottomSheetContentType.SearchResults
+                    }
+                } else {
+                    _grocerySearchResultsFlow.update {
+                        emptyList()
+                    }
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            _bottomSheetContentTypeFlow.collect {
+                println("Bottom sheet content type: $it")
+            }
+        }
+    }
+
     fun toggleItemPurchased(item: Grocery) {
         _groceriesFlow.update { groceryList ->
             groceryList.toMutableList()
@@ -68,65 +118,103 @@ class GroceryListScreenViewModel : ViewModel() {
         }
     }
 
-    fun onSearchInputChanged(searchInput: String) {
-        if (searchInput.isNotEmpty()) {
-            val searchResults = findGroceriesByName(searchInput)
-                .sortedWith(
-                    compareBy(
-                        { !it.name.startsWith(searchInput, ignoreCase = true) },
-                        { it.name }
-                    )
-                )
-
-            val customGrocery = Grocery(
-                id = searchResults.maxOfOrNull { it.id }?.plus(1) ?: 0,
-                name = searchInput,
-                purchased = true,
-            )
-
-            val isPerfectMatch =
-                searchResults.firstOrNull()?.name.equals(searchInput, ignoreCase = true)
-
-            _grocerySearchResults.update {
-                if (isPerfectMatch) searchResults else searchResults + customGrocery
+    fun updateSearchInput(searchInput: String) {
+        this.searchInput = searchInput
+        if (searchInput.isEmpty()) {
+            _bottomSheetContentTypeFlow.update {
+                BottomSheetContentType.Suggestions
             }
         }
-    }
-
-    fun onBottomSheetCollapsed() {
-        _grocerySearchResults.update { emptyList() }
     }
 
     fun onGrocerySearchResultClick(grocery: Grocery) {
         addGrocery(grocery)
+        searchInput = null
+        _previousGroceryName.update { grocery.name }
+        _bottomSheetContentTypeFlow.update {
+            BottomSheetContentType.RefineItemOptions
+        }
     }
 
     fun onSearchInputKeyboardDone() {
-        if (_grocerySearchResults.value.isNotEmpty()) {
-            addGrocery(_grocerySearchResults.value.last())
+        if (_grocerySearchResultsFlow.value.isNotEmpty()) {
+            addGrocery(_grocerySearchResultsFlow.value.last())
+        }
+    }
+
+    fun onClearSearchInput() {
+        searchInput = null
+        _bottomSheetContentTypeFlow.update {
+            BottomSheetContentType.Suggestions
+        }
+    }
+
+    fun onBottomSheetCollapsing() {
+        searchInput = null
+        _bottomSheetContentTypeFlow.update {
+            BottomSheetContentType.Suggestions
         }
     }
 
     private fun addGrocery(grocery: Grocery) {
-        _groceriesFlow.update { groceries ->
-            groceries.toMutableList().apply {
-                add(
-                    grocery.copy(
-                        id = groceries.maxOf { it.id } + 1,
-                        purchased = false,
+        _groceriesFlow.update {  groceryList ->
+            groceryList.toMutableList().also { groceries ->
+                val groceryIndex = groceries.indexOfFirst { it.id == grocery.id }
+                if (groceryIndex == -1) {
+                    groceries.add(
+                        grocery.copy(
+                            id = groceries.maxOf { it.id } + 1,
+                            purchased = !grocery.purchased,
+                        )
                     )
-                )
+                } else {
+                    groceries[groceryIndex] = groceries[groceryIndex].copy(
+                        purchased = !groceries[groceryIndex].purchased
+                    )
+                }
             }
         }
         viewModelScope.launch {
-            _grocerySearchResults.update { emptyList() }
+            _grocerySearchResultsFlow.update { emptyList() }
         }
     }
 
     private fun findGroceriesByName(name: String): List<Grocery> {
         val escapedInput = Regex.escape(name)
         val pattern = Regex(".*$escapedInput.*", RegexOption.IGNORE_CASE)
-        return sampleGroceryList.filter { pattern.matches(it.name) }
+        return sampleGroceryList
+            .filter { pattern.matches(it.name) }
+            .map { grocery ->
+                Grocery(
+                    id = grocery.id,
+                    name = grocery.name,
+                    purchased = _groceriesFlow.value.find { grocery.id == it.id }?.purchased ?: true,
+                    description = grocery.description,
+                )
+            }
+    }
+
+    private fun updateSearchResults(searchInput: String) {
+        val searchResults = findGroceriesByName(searchInput)
+            .sortedWith(
+                compareBy(
+                    { !it.name.startsWith(searchInput, ignoreCase = true) },
+                    { it.name }
+                )
+            )
+
+        val customGrocery = Grocery(
+            id = searchResults.maxOfOrNull { it.id }?.plus(1) ?: 0,
+            name = searchInput,
+            purchased = true,
+        )
+
+        val isPerfectMatch =
+            searchResults.firstOrNull()?.name.equals(searchInput, ignoreCase = true)
+
+        _grocerySearchResultsFlow.update {
+            if (isPerfectMatch) searchResults else searchResults + customGrocery
+        }
     }
 
     companion object {
@@ -137,9 +225,7 @@ class GroceryListScreenViewModel : ViewModel() {
             Grocery(name = "Apples", purchased = false, id = 4),
             Grocery(name = "Bananas", purchased = false, id = 5),
             Grocery(name = "Oranges", purchased = false, id = 6),
-            Grocery(name = "Bread", purchased = false, id = 8),
             Grocery(name = "Pasta", purchased = false, id = 9),
-            Grocery(name = "Rice", purchased = false, id = 10),
             Grocery(name = "Cheese", purchased = true, id = 11),
             Grocery(name = "Bread", purchased = true, id = 12),
             Grocery(name = "Pasta", purchased = true, id = 13),
@@ -160,9 +246,24 @@ class GroceryListScreenViewModel : ViewModel() {
             Grocery(name = "Bwordfish", purchased = false, id = 32),
             Grocery(name = "Mackerel", purchased = false, id = 33),
             Grocery(name = "Sardines", purchased = false, id = 34),
-            Grocery(name = "0 Pasta", description = "Gourmet Pasta Collection", purchased = false, id = 35),
-            Grocery(name = "1 Dishwashing liquid", description = "Fresh Lemon Scent", purchased = false, id = 36),
-            Grocery(name = "2 Echo Glow Smart Lamp with Alexa", description = "for kids room", purchased = false, id = 37),
+            Grocery(
+                name = "0 Pasta",
+                description = "Gourmet Pasta Collection",
+                purchased = false,
+                id = 35
+            ),
+            Grocery(
+                name = "1 Dishwashing liquid",
+                description = "Fresh Lemon Scent",
+                purchased = false,
+                id = 36
+            ),
+            Grocery(
+                name = "2 Echo Glow Smart Lamp with Alexa",
+                description = "for kids room",
+                purchased = false,
+                id = 37
+            ),
         )
     }
 }
