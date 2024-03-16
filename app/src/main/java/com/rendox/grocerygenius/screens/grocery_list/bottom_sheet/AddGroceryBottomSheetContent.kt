@@ -1,5 +1,6 @@
 package com.rendox.grocerygenius.screens.grocery_list.bottom_sheet
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text2.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
@@ -50,10 +51,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Grocery
+import com.rendox.grocerygenius.ui.components.SearchField
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGrid
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
@@ -87,10 +88,15 @@ fun AddGroceryBottomSheetContent(
             fabOnClick = state::fabOnClick,
             searchBarFocusRequester = searchBarFocusRequester,
             onSearchInputChanged = onSearchInputChanged,
-            onKeyboardDone = onKeyboardDone,
+            onKeyboardDone = {
+                onKeyboardDone()
+                state.onKeyboardDone()
+            },
         )
         Box(
-            modifier = Modifier.fillMaxSize().padding(16.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
             when (state.contentType) {
                 BottomSheetContentType.HeaderOnly -> {}
@@ -116,6 +122,7 @@ fun AddGroceryBottomSheetContent(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun BottomSheetHeader(
     searchInput: String,
@@ -136,20 +143,25 @@ private fun BottomSheetHeader(
             .padding(horizontal = 16.dp)
             .fillMaxWidth(),
     ) {
+        val searchFieldState = rememberTextFieldState()
         SearchField(
             modifier = Modifier
                 .weight(1F)
                 .onFocusChanged(onFocusChanged = onFocusChanged)
                 .focusRequester(focusRequester = searchBarFocusRequester),
-            searchInput = searchInput,
-            onSearchInputChanged = { searchInput ->
-                updateSearchInput(searchInput)
-                onSearchInputChanged(searchInput)
-            },
-            placeHolderText = if (useExpandedPlaceholderText) {
-                stringResource(R.string.add_grocery_search_field_placeholder_expanded)
-            } else {
-                stringResource(R.string.add_grocery_search_field_placeholder_collapsed)
+    //            onSearchInputChanged = { searchInput ->
+    //                updateSearchInput(searchInput)
+    //                onSearchInputChanged(searchInput)
+    //            },
+            textFieldState = searchFieldState,
+            placeholder = {
+                Text(
+                    text = if (useExpandedPlaceholderText) {
+                        stringResource(R.string.add_grocery_search_field_placeholder_expanded)
+                    } else {
+                        stringResource(R.string.add_grocery_search_field_placeholder_collapsed)
+                    },
+                )
             },
             clearSearchInputButtonIsShown = clearSearchInputButtonIsShown,
             onClearSearchInputClicked = clearSearchInput,
