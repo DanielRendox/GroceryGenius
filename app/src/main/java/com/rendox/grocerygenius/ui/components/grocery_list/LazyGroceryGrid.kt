@@ -112,8 +112,8 @@ fun LazyGroceryGrid(
 fun LazyGroceryGridItem(
     modifier: Modifier = Modifier,
     grocery: Grocery,
-    notPurchasedColor: Color = MaterialTheme.colorScheme.primary,
-    purchasedColor: Color = MaterialTheme.colorScheme.tertiary,
+    notPurchasedColor: Color = MaterialTheme.colorScheme.primaryContainer,
+    purchasedColor: Color = MaterialTheme.colorScheme.tertiaryContainer,
 ) {
     Surface(
         modifier = modifier,

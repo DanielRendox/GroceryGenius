@@ -293,7 +293,7 @@ private fun Fab(
                 modifier = Modifier
                     .aspectRatio(1F)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.primary)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
                     .clickable(onClick = onFabClicked),
                 contentAlignment = Alignment.Center,
             ) {
@@ -301,7 +301,7 @@ private fun Fab(
                     modifier = Modifier.size(24.dp),
                     imageVector = Icons.Default.Add,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
         }

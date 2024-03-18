@@ -2,16 +2,13 @@ package com.rendox.grocerygenius.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.surfaceColorAtElevation
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 
 
 private val LightColors = lightColorScheme(
@@ -91,9 +88,9 @@ fun GroceryGeniusTheme(
     val colors = when {
         dynamicColor && useDarkTheme -> dynamicDarkColorScheme(LocalContext.current)
         dynamicColor && !useDarkTheme ->
-            dynamicLightColorScheme(LocalContext.current).darkenSurface()
+            dynamicLightColorScheme(LocalContext.current)
         useDarkTheme -> DarkColors
-        else -> LightColors.darkenSurface()
+        else -> LightColors
     }
 
     MaterialTheme(
@@ -101,8 +98,3 @@ fun GroceryGeniusTheme(
         content = content
     )
 }
-
-fun ColorScheme.darkenSurface(): ColorScheme = this.copy(
-    surface = surfaceColorAtElevation(1.dp),
-    background = surfaceColorAtElevation(1.dp),
-)
