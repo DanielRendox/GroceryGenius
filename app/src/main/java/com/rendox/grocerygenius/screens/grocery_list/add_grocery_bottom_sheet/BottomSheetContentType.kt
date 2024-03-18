@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.screens.grocery_list.bottom_sheet
+package com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet
 
 enum class BottomSheetContentType {
     Suggestions,

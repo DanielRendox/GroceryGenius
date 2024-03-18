@@ -7,8 +7,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rendox.grocerygenius.R
+import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.Grocery
-import com.rendox.grocerygenius.screens.grocery_list.bottom_sheet.BottomSheetContentType
+import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.BottomSheetContentType
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class GroceryListScreenViewModel : ViewModel() {
     private val _groceriesFlow = MutableStateFlow(sampleGroceryList)
@@ -80,8 +82,26 @@ class GroceryListScreenViewModel : ViewModel() {
     private val _bottomSheetContentTypeFlow = MutableStateFlow(BottomSheetContentType.Suggestions)
     val bottomSheetContentTypeFlow = _bottomSheetContentTypeFlow.asStateFlow()
 
-    private val _previousGroceryName = MutableStateFlow<String?>(null)
-    val previousGroceryName: StateFlow<String?> = _previousGroceryName.asStateFlow()
+    private val _previousGroceryFlow = MutableStateFlow<Grocery?>(null)
+    val previousGroceryFlow = _previousGroceryFlow.asStateFlow()
+
+    private val _editGroceryFlow = MutableStateFlow<Grocery?>(null)
+    val editGroceryFlow = _editGroceryFlow.asStateFlow()
+
+    val groceryCategories = sampleCategories
+
+    var editGroceryDescription by mutableStateOf<String?>(null)
+        private set
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val clearEditGroceryDescriptionButtonIsShown =
+        snapshotFlow { editGroceryDescription }
+            .mapLatest { !it.isNullOrEmpty() }
+            .stateIn(
+                scope = viewModelScope,
+                initialValue = false,
+                started = SharingStarted.WhileSubscribed(5_000),
+            )
 
     init {
         viewModelScope.launch {
@@ -130,7 +150,7 @@ class GroceryListScreenViewModel : ViewModel() {
     fun onGrocerySearchResultClick(grocery: Grocery) {
         addGrocery(grocery)
         searchInput = null
-        _previousGroceryName.update { grocery.name }
+        _previousGroceryFlow.update { grocery }
         _bottomSheetContentTypeFlow.update {
             BottomSheetContentType.RefineItemOptions
         }
@@ -154,6 +174,26 @@ class GroceryListScreenViewModel : ViewModel() {
         _bottomSheetContentTypeFlow.update {
             BottomSheetContentType.Suggestions
         }
+    }
+
+    fun updateEditGroceryDescription(description: String) {
+        editGroceryDescription = description
+    }
+
+    fun onClearEditGroceryDescription() {
+        editGroceryDescription = null
+    }
+
+    fun onEditGrocery(grocery: Grocery) {
+        _editGroceryFlow.update { grocery }
+    }
+
+    fun onEditGroceryCategoryClick(category: Category) {
+
+    }
+
+    fun onEditGroceryBottomSheetHidden() {
+        editGroceryDescription = null
     }
 
     private fun addGrocery(grocery: Grocery) {
@@ -190,6 +230,8 @@ class GroceryListScreenViewModel : ViewModel() {
                     name = grocery.name,
                     purchased = _groceriesFlow.value.find { grocery.id == it.id }?.purchased ?: true,
                     description = grocery.description,
+                    iconUri = grocery.iconUri,
+                    category = grocery.category,
                 )
             }
     }
@@ -207,6 +249,13 @@ class GroceryListScreenViewModel : ViewModel() {
             id = searchResults.maxOfOrNull { it.id }?.plus(1) ?: 0,
             name = searchInput,
             purchased = true,
+            category = Category(
+                id = 2,
+                name = "Custom groceries",
+                iconUri = "",
+            ),
+            description = null,
+            iconUri = "",
         )
 
         val isPerfectMatch =
@@ -218,51 +267,36 @@ class GroceryListScreenViewModel : ViewModel() {
     }
 
     companion object {
-        val sampleGroceryList = listOf(
-            Grocery(name = "Milk", purchased = false, id = 1),
-            Grocery(name = "Eggs", purchased = false, id = 2),
-            Grocery(name = "Butter", purchased = false, id = 3),
-            Grocery(name = "Apples", purchased = false, id = 4),
-            Grocery(name = "Bananas", purchased = false, id = 5),
-            Grocery(name = "Oranges", purchased = false, id = 6),
-            Grocery(name = "Pasta", purchased = false, id = 9),
-            Grocery(name = "Cheese", purchased = true, id = 11),
-            Grocery(name = "Bread", purchased = true, id = 12),
-            Grocery(name = "Pasta", purchased = true, id = 13),
-            Grocery(name = "Rice", purchased = true, id = 14),
-            Grocery(name = "Chicken", purchased = false, id = 15),
-            Grocery(name = "Shrimp", purchased = true, id = 20),
-            Grocery(name = "Crab", purchased = true, id = 21),
-            Grocery(name = "Lobster", purchased = true, id = 22),
-            Grocery(name = "Beef", purchased = true, id = 23),
-            Grocery(name = "Pork", purchased = false, id = 24),
-            Grocery(name = "Lamb", purchased = true, id = 25),
-            Grocery(name = "Salmon", purchased = false, id = 26),
-            Grocery(name = "Tuna", purchased = false, id = 27),
-            Grocery(name = "Trout", purchased = false, id = 28),
-            Grocery(name = "Cod", purchased = false, id = 29),
-            Grocery(name = "Haddock", purchased = false, id = 30),
-            Grocery(name = "Halibut", purchased = false, id = 31),
-            Grocery(name = "Bwordfish", purchased = false, id = 32),
-            Grocery(name = "Mackerel", purchased = false, id = 33),
-            Grocery(name = "Sardines", purchased = false, id = 34),
+        private val sampleGroceryList = listOf(
+            "Milk", "Eggs", "Butter", "Apples", "Bananas", "Oranges", "Pasta",
+            "Cheese", "Bread", "Pasta", "Rice", "Chicken", "Shrimp", "Crab",
+            "Lobster", "Beef", "Pork", "Lamb", "Salmon", "Tuna", "Sardines",
+            "Mackerel", "Herring", "Trout", "Cod", "Haddock", "Halibut", "Flounder",
+        ).mapIndexed { index, name ->
             Grocery(
-                name = "0 Pasta",
-                description = "Gourmet Pasta Collection",
-                purchased = false,
-                id = 35
+                id = index,
+                name = name,
+                purchased = Random.nextBoolean(),
+                description = null,
+                iconUri = "",
+                category = Category(
+                    id = 1,
+                    name = "Sample",
+                    iconUri = "",
+                )
+            )
+        }
+
+        private val sampleCategories = listOf(
+            Category(
+                id = 1,
+                name = "Sample",
+                iconUri = "",
             ),
-            Grocery(
-                name = "1 Dishwashing liquid",
-                description = "Fresh Lemon Scent",
-                purchased = false,
-                id = 36
-            ),
-            Grocery(
-                name = "2 Echo Glow Smart Lamp with Alexa",
-                description = "for kids room",
-                purchased = false,
-                id = 37
+            Category(
+                id = 2,
+                name = "Custom groceries",
+                iconUri = "",
             ),
         )
     }

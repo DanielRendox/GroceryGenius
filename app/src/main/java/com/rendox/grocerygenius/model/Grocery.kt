@@ -5,4 +5,6 @@ data class Grocery(
     val name: String,
     val purchased: Boolean,
     val description: String? = null,
+    val iconUri: String,
+    val category: Category,
 )

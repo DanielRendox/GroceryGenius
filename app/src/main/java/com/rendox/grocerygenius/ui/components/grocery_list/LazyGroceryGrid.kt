@@ -1,7 +1,6 @@
 package com.rendox.grocerygenius.ui.components.grocery_list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -20,8 +19,6 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -31,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +39,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rendox.grocerygenius.R
+import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.Grocery
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -115,10 +114,9 @@ fun LazyGroceryGridItem(
     grocery: Grocery,
     notPurchasedColor: Color = MaterialTheme.colorScheme.primary,
     purchasedColor: Color = MaterialTheme.colorScheme.tertiary,
-    onClick: () -> Unit,
 ) {
     Surface(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier,
         color = if (grocery.purchased) purchasedColor else notPurchasedColor,
     ) {
         Column(
@@ -128,7 +126,7 @@ fun LazyGroceryGridItem(
             Box(modifier = Modifier.weight(1F)) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
-                    imageVector = Icons.Outlined.ShoppingCart,
+                    painter = painterResource(R.drawable.sample_grocery_icon),
                     contentDescription = null,
                 )
             }
@@ -199,7 +197,8 @@ private fun LazyGroceryGridItemPreview(
             name = titleAndDescription.first,
             purchased = false,
             description = titleAndDescription.second,
+            iconUri = "",
+            category = Category(1, "Category", ""),
         ),
-        onClick = {},
     )
 }

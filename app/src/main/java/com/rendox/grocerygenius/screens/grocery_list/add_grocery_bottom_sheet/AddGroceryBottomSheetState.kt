@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.screens.grocery_list.bottom_sheet
+package com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
@@ -20,7 +20,7 @@ class AddGroceryBottomSheetState(
     val bottomSheetState: SheetState,
     private val coroutineScope: CoroutineScope,
 ) {
-    private val sheetIsExpanding = bottomSheetState.targetValue == SheetValue.Expanded
+    val sheetIsExpanding = bottomSheetState.targetValue == SheetValue.Expanded
     val sheetIsCollapsing = bottomSheetState.targetValue == SheetValue.PartiallyExpanded
     private val sheetIsFullyExpanded = bottomSheetState.currentValue == SheetValue.Expanded
 
