@@ -7,6 +7,10 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rendox.grocerygenius.R
+import com.rendox.grocerygenius.data.category.CategoryRepository
+import com.rendox.grocerygenius.data.grocery.GroceryRepository
+import com.rendox.grocerygenius.data.grocery_list.GroceryListRepository
+import com.rendox.grocerygenius.data.product.ProductRepository
 import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.BottomSheetContentType
@@ -27,7 +31,12 @@ import javax.inject.Inject
 import kotlin.random.Random
 
 @HiltViewModel
-class GroceryListScreenViewModel @Inject constructor() : ViewModel() {
+class GroceryListScreenViewModel @Inject constructor(
+    private val categoryRepository: CategoryRepository,
+    private val groceryRepository: GroceryRepository,
+    private val groceryListRepository: GroceryListRepository,
+    private val productRepository: ProductRepository,
+) : ViewModel() {
     private val _groceriesFlow = MutableStateFlow(sampleGroceryList)
     val groceriesFlow = _groceriesFlow
         .map { groceryList ->
@@ -127,15 +136,21 @@ class GroceryListScreenViewModel @Inject constructor() : ViewModel() {
         when (intent) {
             is GroceryListScreenIntent.OnGroceryItemClick -> toggleItemPurchased(intent.item)
             is GroceryListScreenIntent.UpdateSearchInput -> updateSearchInput(intent.searchInput)
-            is GroceryListScreenIntent.OnGrocerySearchResultClick -> onGrocerySearchResultClick(intent.grocery)
+            is GroceryListScreenIntent.OnGrocerySearchResultClick -> onGrocerySearchResultClick(
+                intent.grocery
+            )
+
             is GroceryListScreenIntent.OnSearchInputKeyboardDone -> onSearchInputKeyboardDone()
             is GroceryListScreenIntent.OnClearSearchInput -> resetBottomSheet()
             is GroceryListScreenIntent.OnBottomSheetCollapsing -> resetBottomSheet()
-            is GroceryListScreenIntent.UpdateGroceryDescription -> editGroceryDescription = intent.description
+            is GroceryListScreenIntent.UpdateGroceryDescription -> editGroceryDescription =
+                intent.description
+
             is GroceryListScreenIntent.OnClearGroceryDescription -> editGroceryDescription = null
             is GroceryListScreenIntent.OnEditGroceryClick -> _editGroceryFlow.update { intent.grocery }
-            is GroceryListScreenIntent.OnEditGroceryCategoryClick -> { }
-            is GroceryListScreenIntent.OnEditGroceryBottomSheetHidden -> editGroceryDescription = null
+            is GroceryListScreenIntent.OnEditGroceryCategoryClick -> {}
+            is GroceryListScreenIntent.OnEditGroceryBottomSheetHidden -> editGroceryDescription =
+                null
         }
     }
 
@@ -183,7 +198,7 @@ class GroceryListScreenViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun addGrocery(grocery: Grocery) {
-        _groceriesFlow.update {  groceryList ->
+        _groceriesFlow.update { groceryList ->
             groceryList.toMutableList().also { groceries ->
                 val groceryIndex = groceries.indexOfFirst { it.productId == grocery.productId }
                 if (groceryIndex == -1) {
@@ -214,7 +229,8 @@ class GroceryListScreenViewModel @Inject constructor() : ViewModel() {
                 Grocery(
                     productId = grocery.productId,
                     name = grocery.name,
-                    purchased = _groceriesFlow.value.find { grocery.productId == it.productId }?.purchased ?: true,
+                    purchased = _groceriesFlow.value.find { grocery.productId == it.productId }?.purchased
+                        ?: true,
                     description = grocery.description,
                     iconUri = grocery.iconUri,
                     chosenCategoryId = grocery.chosenCategoryId,
