@@ -11,6 +11,7 @@ import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.BottomSheetContentType
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,9 +23,11 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.random.Random
 
-class GroceryListScreenViewModel : ViewModel() {
+@HiltViewModel
+class GroceryListScreenViewModel @Inject constructor() : ViewModel() {
     private val _groceriesFlow = MutableStateFlow(sampleGroceryList)
     val groceriesFlow = _groceriesFlow
         .map { groceryList ->
@@ -199,11 +202,11 @@ class GroceryListScreenViewModel : ViewModel() {
     private fun addGrocery(grocery: Grocery) {
         _groceriesFlow.update {  groceryList ->
             groceryList.toMutableList().also { groceries ->
-                val groceryIndex = groceries.indexOfFirst { it.id == grocery.id }
+                val groceryIndex = groceries.indexOfFirst { it.productId == grocery.productId }
                 if (groceryIndex == -1) {
                     groceries.add(
                         grocery.copy(
-                            id = groceries.maxOf { it.id } + 1,
+                            productId = groceries.maxOf { it.productId } + 1,
                             purchased = !grocery.purchased,
                         )
                     )
@@ -226,12 +229,12 @@ class GroceryListScreenViewModel : ViewModel() {
             .filter { pattern.matches(it.name) }
             .map { grocery ->
                 Grocery(
-                    id = grocery.id,
+                    productId = grocery.productId,
                     name = grocery.name,
-                    purchased = _groceriesFlow.value.find { grocery.id == it.id }?.purchased ?: true,
+                    purchased = _groceriesFlow.value.find { grocery.productId == it.productId }?.purchased ?: true,
                     description = grocery.description,
                     iconUri = grocery.iconUri,
-                    category = grocery.category,
+                    chosenCategoryId = grocery.chosenCategoryId,
                 )
             }
     }
@@ -246,14 +249,10 @@ class GroceryListScreenViewModel : ViewModel() {
             )
 
         val customGrocery = Grocery(
-            id = searchResults.maxOfOrNull { it.id }?.plus(1) ?: 0,
+            productId = searchResults.maxOfOrNull { it.productId }?.plus(1) ?: 0,
             name = searchInput,
             purchased = true,
-            category = Category(
-                id = 2,
-                name = "Custom groceries",
-                iconUri = "",
-            ),
+            chosenCategoryId = 2,
             description = null,
             iconUri = "",
         )
@@ -274,16 +273,12 @@ class GroceryListScreenViewModel : ViewModel() {
             "Mackerel", "Herring", "Trout", "Cod", "Haddock", "Halibut", "Flounder",
         ).mapIndexed { index, name ->
             Grocery(
-                id = index,
+                productId = index,
                 name = name,
                 purchased = Random.nextBoolean(),
                 description = null,
                 iconUri = "",
-                category = Category(
-                    id = 1,
-                    name = "Sample",
-                    iconUri = "",
-                )
+                chosenCategoryId = 1,
             )
         }
 

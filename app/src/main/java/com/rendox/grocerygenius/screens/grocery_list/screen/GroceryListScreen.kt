@@ -237,7 +237,7 @@ private fun GroceryListScreen(
                     .fillMaxHeight(),
                 groceryName = editGrocery?.name ?: "",
                 groceryDescription = editGroceryDescription ?: "",
-                chosenCategoryId = editGrocery?.category?.id ?: -1,
+                chosenCategoryId = editGrocery?.chosenCategoryId ?: -1,
                 clearGroceryDescriptionButtonIsShown = clearEditGroceryDescriptionButtonIsShown,
                 onGroceryDescriptionChanged = updateEditGroceryDescription,
                 onClearGroceryDescription = onClearGroceryDescription,
@@ -413,16 +413,12 @@ fun GroceryListScreenPreview() {
                 titleId = null,
                 groceries = List(21) { index ->
                     Grocery(
-                        id = index,
+                        productId = index,
                         name = "Grocery $index",
                         purchased = Random.nextBoolean(),
                         description = "Description $index",
                         iconUri = "",
-                        category = Category(
-                            id = 1,
-                            name = "Sample",
-                            iconUri = "",
-                        ),
+                        chosenCategoryId = 1,
                     )
                 }
             )

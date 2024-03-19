@@ -39,7 +39,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rendox.grocerygenius.R
-import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.Grocery
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -93,7 +92,7 @@ fun LazyGroceryGrid(
             }
             items(
                 items = group.groceries,
-                key = { it.id },
+                key = { it.productId },
                 contentType = { "Grocery" }
             ) { grocery ->
                 Box(
@@ -193,12 +192,12 @@ private fun LazyGroceryGridItemPreview(
     LazyGroceryGridItem(
         modifier = Modifier.size(104.dp),
         grocery = Grocery(
-            id = 0,
+            productId = 0,
             name = titleAndDescription.first,
             purchased = false,
             description = titleAndDescription.second,
             iconUri = "",
-            category = Category(1, "Category", ""),
+            chosenCategoryId = 1,
         ),
     )
 }

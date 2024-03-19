@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlin)
+    alias(libs.plugins.hiltPlugin)
+    alias(libs.plugins.roomPlugin)
+    kotlin("kapt")
 }
 
 android {
@@ -42,7 +45,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.10"
     }
     packaging {
         resources {
@@ -51,6 +54,9 @@ android {
     }
     testOptions {
         unitTests.all { it.useJUnitPlatform() }
+    }
+    room {
+        schemaDirectory("$projectDir/schemas")
     }
 }
 
@@ -70,6 +76,15 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.core.splashscreen)
 
+    implementation(libs.com.google.dagger.hilt.android)
+    kapt(libs.com.google.dagger.hilt.android.compiler)
+
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    annotationProcessor(libs.androidx.room.compiler)
+    // noinspection KaptUsageInsteadOfKsp (because hilt requires kapt anyway)
+    kapt(libs.androidx.room.compiler)
+
     testImplementation(platform(libs.org.junit.bom))
     testImplementation(libs.org.junit.jupiter.api)
     testImplementation(libs.org.junit.jupiter.engine)
@@ -84,4 +99,8 @@ dependencies {
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+kapt {
+    correctErrorTypes = true
 }

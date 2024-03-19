@@ -35,7 +35,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rendox.grocerygenius.R
-import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.ui.components.SearchField
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
@@ -231,16 +230,12 @@ private fun SearchResultsPreview() {
                 titleId = null,
                 groceries = List(8) { index ->
                     Grocery(
-                        id = index,
+                        productId = index,
                         name = "Grocery $index",
                         purchased = Random.nextBoolean(),
                         description = "Description $index",
                         iconUri = "",
-                        category = Category(
-                            id = 1,
-                            name = "Sample",
-                            iconUri = "",
-                        ),
+                        chosenCategoryId = 1,
                     )
                 }
             )
