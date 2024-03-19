@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.screens.grocery_list.screen
+package com.rendox.grocerygenius.screens.grocery_list
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -121,15 +121,25 @@ class GroceryListScreenViewModel @Inject constructor() : ViewModel() {
                 }
             }
         }
+    }
 
-        viewModelScope.launch {
-            _bottomSheetContentTypeFlow.collect {
-                println("Bottom sheet content type: $it")
-            }
+    fun onIntent(intent: GroceryListScreenIntent) {
+        when (intent) {
+            is GroceryListScreenIntent.OnGroceryItemClick -> toggleItemPurchased(intent.item)
+            is GroceryListScreenIntent.UpdateSearchInput -> updateSearchInput(intent.searchInput)
+            is GroceryListScreenIntent.OnGrocerySearchResultClick -> onGrocerySearchResultClick(intent.grocery)
+            is GroceryListScreenIntent.OnSearchInputKeyboardDone -> onSearchInputKeyboardDone()
+            is GroceryListScreenIntent.OnClearSearchInput -> resetBottomSheet()
+            is GroceryListScreenIntent.OnBottomSheetCollapsing -> resetBottomSheet()
+            is GroceryListScreenIntent.UpdateGroceryDescription -> editGroceryDescription = intent.description
+            is GroceryListScreenIntent.OnClearGroceryDescription -> editGroceryDescription = null
+            is GroceryListScreenIntent.OnEditGroceryClick -> _editGroceryFlow.update { intent.grocery }
+            is GroceryListScreenIntent.OnEditGroceryCategoryClick -> { }
+            is GroceryListScreenIntent.OnEditGroceryBottomSheetHidden -> editGroceryDescription = null
         }
     }
 
-    fun toggleItemPurchased(item: Grocery) {
+    private fun toggleItemPurchased(item: Grocery) {
         _groceriesFlow.update { groceryList ->
             groceryList.toMutableList()
                 .apply {
@@ -141,7 +151,7 @@ class GroceryListScreenViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun updateSearchInput(searchInput: String) {
+    private fun updateSearchInput(searchInput: String) {
         this.searchInput = searchInput
         if (searchInput.isEmpty()) {
             _bottomSheetContentTypeFlow.update {
@@ -150,7 +160,7 @@ class GroceryListScreenViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun onGrocerySearchResultClick(grocery: Grocery) {
+    private fun onGrocerySearchResultClick(grocery: Grocery) {
         addGrocery(grocery)
         searchInput = null
         _previousGroceryFlow.update { grocery }
@@ -159,44 +169,17 @@ class GroceryListScreenViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun onSearchInputKeyboardDone() {
+    private fun onSearchInputKeyboardDone() {
         if (_grocerySearchResultsFlow.value.isNotEmpty()) {
             addGrocery(_grocerySearchResultsFlow.value.last())
         }
     }
 
-    fun onClearSearchInput() {
+    private fun resetBottomSheet() {
         searchInput = null
         _bottomSheetContentTypeFlow.update {
             BottomSheetContentType.Suggestions
         }
-    }
-
-    fun onBottomSheetCollapsing() {
-        searchInput = null
-        _bottomSheetContentTypeFlow.update {
-            BottomSheetContentType.Suggestions
-        }
-    }
-
-    fun updateEditGroceryDescription(description: String) {
-        editGroceryDescription = description
-    }
-
-    fun onClearEditGroceryDescription() {
-        editGroceryDescription = null
-    }
-
-    fun onEditGrocery(grocery: Grocery) {
-        _editGroceryFlow.update { grocery }
-    }
-
-    fun onEditGroceryCategoryClick(category: Category) {
-
-    }
-
-    fun onEditGroceryBottomSheetHidden() {
-        editGroceryDescription = null
     }
 
     private fun addGrocery(grocery: Grocery) {
