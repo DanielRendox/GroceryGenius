@@ -2,7 +2,15 @@
     <!-- GroceryListScreen -->
     <string name="app_name">Grocery Genius</string>
     <string name="not_purchased_groceries_group_title">Recently used</string>
-    <string name="add_grocery_text_field_placeholder_collapsed">Add a grocery</string>
-    <string name="add_grocery_text_field_placeholder_expanded">e.g. bread</string>
-    <string name="add_grocery_text_field_trailing_icon_description">Clear text in search bar</string>
+    <string name="add_grocery_search_field_placeholder_collapsed">Add a grocery</string>
+    <string name="add_grocery_search_field_placeholder_expanded">e.g. bread</string>
+    <string name="add_grocery_search_field_trailing_icon_description">Clear text in search bar</string>
+    <string name="add_grocery_item_description_placeholder">Quantity, description</string>
+    <string name="add_grocery_refine_item_options_title">Refine «%s»</string>
+    <string name="add_grocery_add_new_category_chip_title">Add new category</string>
+    <string name="add_grocery_add_new_category_chip_description">Selected</string>
+    <string name="add_grocery_edit_item_button_title">Enter item details</string>
+
+    <!-- General -->
+    <string name="done">Done</string>
 </resources>
