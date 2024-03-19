@@ -77,7 +77,6 @@ import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
 import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
@@ -217,8 +216,6 @@ private fun GroceryListScreen(
 
     LaunchedEffect(editBottomSheetState.isVisible) {
         if (editBottomSheetState.isVisible) {
-            // otherwise, the app may crash with not initialized focus requester exception
-            delay(100)
             itemDescriptionFocusRequester.requestFocus()
         } else {
             onEditGroceryBottomSheetHidden()
