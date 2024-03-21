@@ -12,6 +12,9 @@ interface ProductDao {
     @Insert
     suspend fun insertProduct(product: ProductEntity)
 
+    @Insert
+    suspend fun insertProducts(products: List<ProductEntity>)
+
     @Query("""
         SELECT product.id, product.name, product.iconUri, category.id as categoryId, product.deletable
         FROM ProductEntity product, CategoryEntity category
@@ -26,6 +29,9 @@ interface ProductDao {
         WHERE LOWER(product.name) LIKE LOWER(:name)
     """)
     suspend fun getProductsByName(name: String): List<Product>
+
+    @Query("SELECT * FROM ProductEntity")
+    suspend fun getAllProducts(): List<ProductEntity>
 
     @Update
     suspend fun updateProduct(product: ProductEntity)

@@ -1,8 +1,9 @@
 package com.rendox.grocerygenius.data.product
 
+import com.rendox.grocerygenius.data.Syncable
 import com.rendox.grocerygenius.model.Product
 
-interface ProductRepository {
+interface ProductRepository : Syncable {
     suspend fun insertProduct(product: Product)
     suspend fun getProductsByCategory(categoryId: Int): List<Product>
     suspend fun getProductsByName(name: String): List<Product>

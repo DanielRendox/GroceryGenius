@@ -17,7 +17,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.rendox.grocerygenius.testing.GroceryGeniusTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -78,12 +78,18 @@ dependencies {
 
     implementation(libs.com.google.dagger.hilt.android)
     kapt(libs.com.google.dagger.hilt.android.compiler)
+    kapt(libs.androidx.hilt.compiler)
+    implementation(libs.com.google.dagger.hilt.android.testing)
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     annotationProcessor(libs.androidx.room.compiler)
     // noinspection KaptUsageInsteadOfKsp (because hilt requires kapt anyway)
     kapt(libs.androidx.room.compiler)
+
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    implementation(libs.androidx.test.runner)
 
     testImplementation(platform(libs.org.junit.bom))
     testImplementation(libs.org.junit.jupiter.api)
@@ -96,6 +102,9 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.work.testing)
+    androidTestImplementation(libs.com.google.dagger.hilt.android.testing)
+    androidTestImplementation(libs.truth)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)

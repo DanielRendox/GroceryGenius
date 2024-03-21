@@ -7,10 +7,12 @@ fun CategoryEntity.asExternalModel() = Category(
     id = id,
     name = name,
     iconUri = iconUri,
+    sortingPriority = sortingPriority,
 )
 
 fun Category.asEntity() = CategoryEntity(
     id = id,
     name = name,
     iconUri = iconUri,
+    sortingPriority = sortingPriority,
 )

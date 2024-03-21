@@ -37,8 +37,9 @@ class GroceryListScreenViewModel @Inject constructor(
     private val groceryListRepository: GroceryListRepository,
     private val productRepository: ProductRepository,
 ) : ViewModel() {
-    private val _groceriesFlow = MutableStateFlow(sampleGroceryList)
-    val groceriesFlow = _groceriesFlow
+    private val groceryListId = 1
+
+    val groceriesFlow = groceryRepository.getGroceriesFromList(groceryListId)
         .map { groceryList ->
             groceryList
                 .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name })
@@ -155,14 +156,12 @@ class GroceryListScreenViewModel @Inject constructor(
     }
 
     private fun toggleItemPurchased(item: Grocery) {
-        _groceriesFlow.update { groceryList ->
-            groceryList.toMutableList()
-                .apply {
-                    val indexOfItem = indexOf(item)
-                    if (indexOfItem != -1) {
-                        set(indexOfItem, item.copy(purchased = !item.purchased))
-                    }
-                }
+        viewModelScope.launch {
+            groceryRepository.updatePurchased(
+                productId = item.productId,
+                listId = groceryListId,
+                purchased = !item.purchased,
+            )
         }
     }
 
@@ -198,44 +197,49 @@ class GroceryListScreenViewModel @Inject constructor(
     }
 
     private fun addGrocery(grocery: Grocery) {
-        _groceriesFlow.update { groceryList ->
-            groceryList.toMutableList().also { groceries ->
-                val groceryIndex = groceries.indexOfFirst { it.productId == grocery.productId }
-                if (groceryIndex == -1) {
-                    groceries.add(
-                        grocery.copy(
-                            productId = groceries.maxOf { it.productId } + 1,
-                            purchased = !grocery.purchased,
-                        )
-                    )
-                } else {
-                    groceries[groceryIndex] = groceries[groceryIndex].copy(
-                        purchased = !groceries[groceryIndex].purchased
-                    )
-                }
-            }
-        }
-        viewModelScope.launch {
-            _grocerySearchResultsFlow.update { emptyList() }
-        }
+//        viewModelScope.launch {
+//            val groceryIsAlreadyInList = groceryRepository.
+//            groceryListRepository.addGroceryToList(grocery, groceryListId)
+//        }
+//        _groceriesFlow.update { groceryList ->
+//            groceryList.toMutableList().also { groceries ->
+//                val groceryIndex = groceries.indexOfFirst { it.productId == grocery.productId }
+//                if (groceryIndex == -1) {
+//                    groceries.add(
+//                        grocery.copy(
+//                            productId = groceries.maxOf { it.productId } + 1,
+//                            purchased = !grocery.purchased,
+//                        )
+//                    )
+//                } else {
+//                    groceries[groceryIndex] = groceries[groceryIndex].copy(
+//                        purchased = !groceries[groceryIndex].purchased
+//                    )
+//                }
+//            }
+//        }
+//        viewModelScope.launch {
+//            _grocerySearchResultsFlow.update { emptyList() }
+//        }
     }
 
     private fun findGroceriesByName(name: String): List<Grocery> {
-        val escapedInput = Regex.escape(name)
-        val pattern = Regex(".*$escapedInput.*", RegexOption.IGNORE_CASE)
-        return sampleGroceryList
-            .filter { pattern.matches(it.name) }
-            .map { grocery ->
-                Grocery(
-                    productId = grocery.productId,
-                    name = grocery.name,
-                    purchased = _groceriesFlow.value.find { grocery.productId == it.productId }?.purchased
-                        ?: true,
-                    description = grocery.description,
-                    iconUri = grocery.iconUri,
-                    chosenCategoryId = grocery.chosenCategoryId,
-                )
-            }
+//        val escapedInput = Regex.escape(name)
+//        val pattern = Regex(".*$escapedInput.*", RegexOption.IGNORE_CASE)
+//        return sampleGroceryList
+//            .filter { pattern.matches(it.name) }
+//            .map { grocery ->
+//                Grocery(
+//                    productId = grocery.productId,
+//                    name = grocery.name,
+//                    purchased = _groceriesFlow.value.find { grocery.productId == it.productId }?.purchased
+//                        ?: true,
+//                    description = grocery.description,
+//                    iconUri = grocery.iconUri,
+//                    chosenCategoryId = grocery.chosenCategoryId,
+//                )
+//            }
+        return emptyList()
     }
 
     private fun updateSearchResults(searchInput: String) {
@@ -286,11 +290,13 @@ class GroceryListScreenViewModel @Inject constructor(
                 id = 1,
                 name = "Sample",
                 iconUri = "",
+                sortingPriority = 1,
             ),
             Category(
                 id = 2,
                 name = "Custom groceries",
                 iconUri = "",
+                sortingPriority = 2,
             ),
         )
     }
