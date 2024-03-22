@@ -206,14 +206,6 @@ private fun GroceryListScreen(
         }
     }
 
-    LaunchedEffect(editBottomSheetState.isVisible) {
-        if (editBottomSheetState.isVisible) {
-            itemDescriptionFocusRequester.requestFocus()
-        } else {
-            onIntent(GroceryListScreenIntent.OnEditGroceryBottomSheetHidden)
-        }
-    }
-
     if (editGroceryBottomSheetIsVisible) {
         ModalBottomSheet(
             modifier = Modifier.padding(top = 60.dp),
@@ -222,6 +214,13 @@ private fun GroceryListScreen(
             scrimColor = Color.Transparent,
             dragHandle = { BottomSheetDragHandle() }
         ) {
+            LaunchedEffect(editBottomSheetState.isVisible) {
+                if (editBottomSheetState.isVisible) {
+                    itemDescriptionFocusRequester.requestFocus()
+                } else {
+                    onIntent(GroceryListScreenIntent.OnEditGroceryBottomSheetHidden)
+                }
+            }
             if (editGrocery != null) {
                 EditGroceryBottomSheetContent(
                     modifier = Modifier
