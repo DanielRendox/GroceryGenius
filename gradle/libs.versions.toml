@@ -1,16 +1,21 @@
 [versions]
 activityCompose = "1.8.2"
+andoridxHilt = "1.2.0"
 androidLifecycle = "2.7.0"
+androidxWork = "2.9.0"
+androidxTestRunner = "1.5.2"
 agp = "8.2.1"
 coreKtx = "1.12.0"
 composeBom = "2024.02.01"
 coreSplashscreen = "1.0.1"
 espressoCore = "3.5.1"
 junit = "1.1.5"
+hilt = "2.51"
 material = "1.11.0"
 junitBom = "5.10.2"
 truth = "1.4.2"
-kotlin = "1.9.0"
+kotlin = "1.9.22"
+room = "2.6.1"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -27,6 +32,21 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 
 material = { module = "com.google.android.material:material", version.ref = "material" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+
+com-google-dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+com-google-dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+com-google-dagger-hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
+
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "androidxWork" }
+androidx-work-testing = { module = "androidx.work:work-testing", version.ref = "androidxWork" }
+androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "andoridxHilt" }
+androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "andoridxHilt" }
+
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
 
 org-junit-bom = { module = "org.junit:junit-bom", version.ref = "junitBom" }
 org-junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api" }
@@ -45,3 +65,5 @@ androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+hiltPlugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+roomPlugin = { id = "androidx.room", version.ref = "room" }

@@ -10,9 +10,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.rendox.grocerygenius.screens.grocery_list.screen.GroceryListRoute
+import com.rendox.grocerygenius.screens.grocery_list.GroceryListRoute
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()

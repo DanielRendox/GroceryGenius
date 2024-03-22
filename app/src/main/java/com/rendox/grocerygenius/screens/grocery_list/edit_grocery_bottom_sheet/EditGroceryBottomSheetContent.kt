@@ -38,7 +38,6 @@ fun EditGroceryBottomSheetContent(
     modifier: Modifier = Modifier,
     groceryName: String,
     groceryDescription: String?,
-    chosenCategoryId: Int,
     clearGroceryDescriptionButtonIsShown: Boolean,
     onGroceryDescriptionChanged: (String) -> Unit,
     onClearGroceryDescription: () -> Unit,
@@ -46,6 +45,7 @@ fun EditGroceryBottomSheetContent(
     onKeyboardDone: () -> Unit,
     onCategoryClick: (Category) -> Unit,
     categories: List<Category>,
+    chosenCategory: Category,
     itemDescriptionFocusRequester: FocusRequester,
 ) {
     Column(modifier = modifier) {
@@ -104,7 +104,7 @@ fun EditGroceryBottomSheetContent(
                             contentDescription = null,
                         )
                     },
-                    backgroundColor = if (category.id == chosenCategoryId) {
+                    backgroundColor = if (category == chosenCategory) {
                         MaterialTheme.colorScheme.primaryContainer
                     } else {
                         MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
@@ -130,14 +130,14 @@ private fun EditGroceryBottomSheetContentPreview() {
                 groceryName = "Tea",
                 groceryDescription = "Green, 32 bags",
                 clearGroceryDescriptionButtonIsShown = false,
-                chosenCategoryId = 2,
                 onGroceryDescriptionChanged = {},
                 onClearGroceryDescription = {},
                 onKeyboardDone = {},
                 categories = sampleCategories,
                 onDoneButtonClick = {},
                 onCategoryClick = {},
-                itemDescriptionFocusRequester = remember { FocusRequester() }
+                itemDescriptionFocusRequester = remember { FocusRequester() },
+                chosenCategory = sampleCategories[2],
             )
         }
     }

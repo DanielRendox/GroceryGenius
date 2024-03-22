@@ -13,4 +13,8 @@
 
     <!-- General -->
     <string name="done">Done</string>
+
+    <string name="sync_work_notification_channel_name">Sync</string>
+    <string name="sync_work_notification_channel_description">Background tasks for Grocery Genius</string>
+    <string name="sync_work_notification_title">Syncing your groceries</string>
 </resources>

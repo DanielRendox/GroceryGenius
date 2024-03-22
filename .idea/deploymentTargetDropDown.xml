@@ -2,10 +2,7 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="EditGroceryBottomSheetContentPreview">
-        <State />
-      </entry>
-      <entry key="app">
+      <entry key="SyncWorkerTest">
         <State>
           <targetSelectedWithDropDown>
             <Target>
@@ -13,12 +10,28 @@
               <deviceKey>
                 <Key>
                   <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\danie\.android\avd\Medium_Phone_API_25.avd" />
+                  <value value="C:\Users\danie\.android\avd\Pixel_5_API_33.avd" />
                 </Key>
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-03-18T13:09:07.861274800Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-03-21T13:20:41.907201Z" />
+        </State>
+      </entry>
+      <entry key="app">
+        <State>
+          <runningDeviceTargetSelectedWithDropDown>
+            <Target>
+              <type value="RUNNING_DEVICE_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\danie\.android\avd\Pixel_5_API_33.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </runningDeviceTargetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-03-22T21:17:52.099755400Z" />
         </State>
       </entry>
     </value>
