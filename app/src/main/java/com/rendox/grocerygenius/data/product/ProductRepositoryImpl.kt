@@ -2,6 +2,7 @@ package com.rendox.grocerygenius.data.product
 
 import com.rendox.grocerygenius.data.Synchronizer
 import com.rendox.grocerygenius.data.model.asEntity
+import com.rendox.grocerygenius.data.model.asExternalModel
 import com.rendox.grocerygenius.database.product.ProductDao
 import com.rendox.grocerygenius.model.Product
 import com.rendox.grocerygenius.network.product.ProductNetworkDataSource
@@ -16,11 +17,11 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getProductsByCategory(categoryId: Int): List<Product> {
-        return productDao.getProductsByCategory(categoryId)
+        return productDao.getProductsByCategory(categoryId).map { it.asExternalModel() }
     }
 
     override suspend fun getProductsByName(name: String): List<Product> {
-        return productDao.getProductsByName(name)
+        return productDao.getProductsByName(name).map { it.asExternalModel() }
     }
 
     override suspend fun updateProduct(product: Product) {

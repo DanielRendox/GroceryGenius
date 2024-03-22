@@ -1,6 +1,7 @@
 package com.rendox.grocerygenius.screens.grocery_list
 
 import com.rendox.grocerygenius.model.Category
+import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.model.Grocery
 
 sealed class GroceryListScreenIntent {
@@ -15,4 +16,5 @@ sealed class GroceryListScreenIntent {
     data class OnEditGroceryClick(val grocery: Grocery) : GroceryListScreenIntent()
     data class OnEditGroceryCategoryClick(val category: Category) : GroceryListScreenIntent()
     data object OnEditGroceryBottomSheetHidden : GroceryListScreenIntent()
+    data class OnCustomProductClick(val customProduct: CustomProduct) : GroceryListScreenIntent()
 }

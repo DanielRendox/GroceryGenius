@@ -88,6 +88,7 @@ val sampleCategoryList = listOf(
         name = "Custom",
         iconUri = "",
         sortingPriority = 14,
+        isDefault = true,
     )
 )
 

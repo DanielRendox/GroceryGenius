@@ -32,4 +32,8 @@ class CategoryRepositoryImpl @Inject constructor(
             categoryDao.insertCategories(categories.map { it.asEntity() })
         }
     }
+
+    override suspend fun getDefaultCategory(): Category? {
+        return categoryDao.getDefaultCategory()?.asExternalModel()
+    }
 }

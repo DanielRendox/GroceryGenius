@@ -7,4 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface CategoryRepository : Syncable {
     suspend fun insertCategories(categories: List<Category>)
     fun getAllCategories(): Flow<List<Category>>
+    suspend fun getDefaultCategory(): Category?
 }

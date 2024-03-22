@@ -19,8 +19,8 @@ class GroceryListRepositoryImpl @Inject constructor(
         groceryListDao.insertGroceryList(groceryList.asEntity())
     }
 
-    override fun getGroceryListById(id: Int): Flow<GroceryList> {
-        return groceryListDao.getGroceryListById(id).map { it.asExternalModel() }
+    override fun getGroceryListById(id: Int): Flow<GroceryList?> {
+        return groceryListDao.getGroceryListById(id).map { it?.asExternalModel() }
     }
 
     override fun getAllGroceryLists(): Flow<List<GroceryList>> {

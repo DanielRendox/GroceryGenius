@@ -3,13 +3,44 @@ package com.rendox.grocerygenius.database.grocery
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
+import com.rendox.grocerygenius.database.product.ProductEntity
 import com.rendox.grocerygenius.model.Grocery
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface GroceryDao {
+abstract class GroceryDao {
     @Insert
-    suspend fun insertGrocery(grocery: GroceryEntity)
+    abstract suspend fun insertGrocery(grocery: GroceryEntity)
+
+    @Insert
+    protected abstract suspend fun insertProduct(product: ProductEntity): Long
+
+    @Transaction
+    open suspend fun insertProductAndGrocery(
+        name: String,
+        iconUri: String?,
+        categoryId: Int,
+        groceryListId: Int,
+        description: String?,
+        purchased: Boolean,
+        purchasedLastModified: Long = System.currentTimeMillis(),
+    ) {
+        val product = ProductEntity(
+            name = name,
+            iconUri = iconUri,
+            categoryId = categoryId,
+        )
+        val productId = insertProduct(product)
+        val grocery = GroceryEntity(
+            productId = productId.toInt(),
+            groceryListId = groceryListId,
+            description = description,
+            purchased = purchased,
+            purchasedLastModified = purchasedLastModified,
+        )
+        insertGrocery(grocery)
+    }
 
     @Query(
         """
@@ -19,34 +50,39 @@ interface GroceryDao {
             grocery.purchased,
             grocery.description,
             product.iconUri,
-            category.id as chosenCategoryId
+            product.categoryId,
+            grocery.purchasedLastModified
         FROM GroceryEntity grocery
         INNER JOIN ProductEntity product ON grocery.productId = product.id
-        INNER JOIN CategoryEntity category ON product.categoryId = category.id
         WHERE grocery.groceryListId = :listId
     """
     )
-    fun getGroceriesFromList(listId: Int): Flow<List<Grocery>>
+    abstract fun getGroceriesFromList(listId: Int): Flow<List<Grocery>>
 
     @Query(
         "SELECT DISTINCT description FROM GroceryEntity WHERE productId = :productId"
     )
-    suspend fun getGroceryDescriptions(productId: Int): List<String>
+    abstract suspend fun getGroceryDescriptions(productId: Int): List<String>
 
     @Query("""
         UPDATE GroceryEntity
-        SET purchased = :purchased
+        SET purchased = :purchased, purchasedLastModified = :purchasedLastModified
         WHERE productId = :productId AND groceryListId = :listId
     """)
-    suspend fun updatePurchased(productId: Int, listId: Int, purchased: Boolean)
+    abstract suspend fun updatePurchased(
+        productId: Int,
+        listId: Int,
+        purchased: Boolean,
+        purchasedLastModified: Long,
+    )
 
     @Query("""
         UPDATE GroceryEntity
         SET description = :description
         WHERE productId = :productId AND groceryListId = :listId
     """)
-    suspend fun updateDescription(productId: Int, listId: Int, description: String)
+    abstract suspend fun updateDescription(productId: Int, listId: Int, description: String)
 
     @Query("DELETE FROM GroceryEntity WHERE productId = :productId AND groceryListId = :listId")
-    suspend fun deleteGrocery(productId: Int, listId: Int)
+    abstract suspend fun deleteGrocery(productId: Int, listId: Int)
 }

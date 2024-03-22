@@ -11,7 +11,7 @@ import com.rendox.grocerygenius.data.category.CategoryRepository
 import com.rendox.grocerygenius.data.grocery.GroceryRepository
 import com.rendox.grocerygenius.data.grocery_list.GroceryListRepository
 import com.rendox.grocerygenius.data.product.ProductRepository
-import com.rendox.grocerygenius.model.Category
+import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.BottomSheetContentType
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
@@ -28,30 +28,42 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.random.Random
 
 @HiltViewModel
 class GroceryListScreenViewModel @Inject constructor(
     private val categoryRepository: CategoryRepository,
     private val groceryRepository: GroceryRepository,
-    private val groceryListRepository: GroceryListRepository,
+    groceryListRepository: GroceryListRepository,
     private val productRepository: ProductRepository,
 ) : ViewModel() {
     private val groceryListId = 1
 
+    val groceryListFlow = groceryListRepository.getGroceryListById(groceryListId)
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = null,
+            started = SharingStarted.WhileSubscribed(5_000),
+        )
+
     val groceriesFlow = groceryRepository.getGroceriesFromList(groceryListId)
         .map { groceryList ->
             groceryList
-                .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name })
                 .sortedBy { it.purchased }
                 .groupBy { it.purchased }
-                .map {
-                    val purchased = it.key
+                .map { group ->
+                    val purchased = group.key
                     val titleId =
                         if (purchased) R.string.not_purchased_groceries_group_title else null
+                    val sortedGroceries = if (purchased) {
+                        group.value.sortedByDescending { it.purchasedLastModified }
+                    } else {
+                        group.value.sortedWith(
+                            comparator = compareBy(String.CASE_INSENSITIVE_ORDER) { it.name }
+                        )
+                    }
                     GroceryGroup(
                         titleId = titleId,
-                        groceries = it.value,
+                        groceries = sortedGroceries,
                     )
                 }
         }
@@ -62,20 +74,7 @@ class GroceryListScreenViewModel @Inject constructor(
         )
 
     private val _grocerySearchResultsFlow = MutableStateFlow<List<Grocery>>(emptyList())
-    val grocerySearchResultsFlow: StateFlow<List<GroceryGroup>> = _grocerySearchResultsFlow
-        .map { groceries ->
-            listOf(
-                GroceryGroup(
-                    titleId = null,
-                    groceries = groceries,
-                )
-            )
-        }
-        .stateIn(
-            scope = viewModelScope,
-            initialValue = emptyList(),
-            started = SharingStarted.WhileSubscribed(5_000),
-        )
+    val grocerySearchResultsFlow = _grocerySearchResultsFlow.asStateFlow()
 
     var searchInput by mutableStateOf<String?>(null)
         private set
@@ -85,7 +84,7 @@ class GroceryListScreenViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     var clearSearchInputButtonIsShownFlow: StateFlow<Boolean> =
         searchInputFlow
-            .mapLatest { it?.isNotEmpty() ?: false }
+            .mapLatest { !it.isNullOrEmpty() }
             .stateIn(
                 scope = viewModelScope,
                 initialValue = false,
@@ -95,13 +94,27 @@ class GroceryListScreenViewModel @Inject constructor(
     private val _bottomSheetContentTypeFlow = MutableStateFlow(BottomSheetContentType.Suggestions)
     val bottomSheetContentTypeFlow = _bottomSheetContentTypeFlow.asStateFlow()
 
-    private val _previousGroceryFlow = MutableStateFlow<Grocery?>(null)
-    val previousGroceryFlow = _previousGroceryFlow.asStateFlow()
+    val previousGroceryFlow = groceriesFlow
+        .map { groceryGroups ->
+            groceryGroups
+                .flatMap { it.groceries }
+                .maxByOrNull { it.purchasedLastModified }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = null,
+            started = SharingStarted.WhileSubscribed(5_000),
+        )
 
     private val _editGroceryFlow = MutableStateFlow<Grocery?>(null)
     val editGroceryFlow = _editGroceryFlow.asStateFlow()
 
-    val groceryCategories = sampleCategories
+    val categoriesFlow = categoryRepository.getAllCategories()
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = emptyList(),
+            started = SharingStarted.WhileSubscribed(5_000),
+        )
 
     var editGroceryDescription by mutableStateOf<String?>(null)
         private set
@@ -116,6 +129,19 @@ class GroceryListScreenViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5_000),
             )
 
+    private val _customProduct = MutableStateFlow<CustomProduct?>(null)
+    val customProduct = _customProduct.asStateFlow()
+
+    val editGroceryChosenCategory = _editGroceryFlow
+        .map { grocery ->
+            categoriesFlow.value.find { it.id == grocery?.categoryId }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = null,
+            started = SharingStarted.WhileSubscribed(5_000),
+        )
+
     init {
         viewModelScope.launch {
             searchInputFlow.collectLatest { searchInput ->
@@ -125,9 +151,8 @@ class GroceryListScreenViewModel @Inject constructor(
                         BottomSheetContentType.SearchResults
                     }
                 } else {
-                    _grocerySearchResultsFlow.update {
-                        emptyList()
-                    }
+                    _grocerySearchResultsFlow.update { emptyList() }
+                    _customProduct.update { null }
                 }
             }
         }
@@ -135,23 +160,80 @@ class GroceryListScreenViewModel @Inject constructor(
 
     fun onIntent(intent: GroceryListScreenIntent) {
         when (intent) {
-            is GroceryListScreenIntent.OnGroceryItemClick -> toggleItemPurchased(intent.item)
-            is GroceryListScreenIntent.UpdateSearchInput -> updateSearchInput(intent.searchInput)
-            is GroceryListScreenIntent.OnGrocerySearchResultClick -> onGrocerySearchResultClick(
-                intent.grocery
-            )
+            is GroceryListScreenIntent.OnGroceryItemClick ->
+                toggleItemPurchased(intent.item)
 
-            is GroceryListScreenIntent.OnSearchInputKeyboardDone -> onSearchInputKeyboardDone()
-            is GroceryListScreenIntent.OnClearSearchInput -> resetBottomSheet()
-            is GroceryListScreenIntent.OnBottomSheetCollapsing -> resetBottomSheet()
-            is GroceryListScreenIntent.UpdateGroceryDescription -> editGroceryDescription =
-                intent.description
+            is GroceryListScreenIntent.UpdateSearchInput ->
+                updateSearchInput(intent.searchInput)
 
-            is GroceryListScreenIntent.OnClearGroceryDescription -> editGroceryDescription = null
-            is GroceryListScreenIntent.OnEditGroceryClick -> _editGroceryFlow.update { intent.grocery }
+            is GroceryListScreenIntent.OnGrocerySearchResultClick ->
+                addOrUpdateGrocery(intent.grocery)
+
+            is GroceryListScreenIntent.OnSearchInputKeyboardDone ->
+                onSearchInputKeyboardDone()
+
+            is GroceryListScreenIntent.OnClearSearchInput ->
+                resetBottomSheet()
+
+            is GroceryListScreenIntent.OnBottomSheetCollapsing ->
+                resetBottomSheet()
+
+            is GroceryListScreenIntent.UpdateGroceryDescription ->
+                editGroceryDescription = intent.description
+
+            is GroceryListScreenIntent.OnClearGroceryDescription ->
+                editGroceryDescription = null
+
+            is GroceryListScreenIntent.OnEditGroceryClick ->
+                _editGroceryFlow.update { intent.grocery }
+
             is GroceryListScreenIntent.OnEditGroceryCategoryClick -> {}
-            is GroceryListScreenIntent.OnEditGroceryBottomSheetHidden -> editGroceryDescription =
-                null
+            is GroceryListScreenIntent.OnEditGroceryBottomSheetHidden ->
+                editGroceryDescription = null
+
+            is GroceryListScreenIntent.OnCustomProductClick ->
+                addCustomProduct(intent.customProduct)
+        }
+    }
+
+    private fun updateSearchResults(searchInput: String) {
+        viewModelScope.launch {
+            val searchResults = productRepository.getProductsByName("%$searchInput%")
+                .sortedWith(
+                    compareBy(
+                        { !it.name.startsWith(searchInput, ignoreCase = true) },
+                        { it.name }
+                    )
+                )
+
+            val isPerfectMatch =
+                searchResults.firstOrNull()?.name.equals(searchInput, ignoreCase = true)
+
+            _customProduct.update {
+                if (!isPerfectMatch) {
+                    CustomProduct(
+                        name = searchInput,
+                        categoryId = categoryRepository.getDefaultCategory()!!.id,
+                    )
+                } else null
+            }
+
+            val newResults = searchResults.map { product ->
+                val correspondingGroceryInTheList = groceriesFlow.value
+                    .flatMap { it.groceries }
+                    .find { it.productId == product.id }
+                Grocery(
+                    productId = product.id,
+                    name = product.name,
+                    purchased = correspondingGroceryInTheList?.purchased ?: false,
+                    description = correspondingGroceryInTheList?.description,
+                    iconUri = product.iconUri,
+                    categoryId = product.categoryId,
+                    purchasedLastModified = correspondingGroceryInTheList?.purchasedLastModified
+                        ?: System.currentTimeMillis(),
+                )
+            }
+            _grocerySearchResultsFlow.update { newResults }
         }
     }
 
@@ -174,18 +256,36 @@ class GroceryListScreenViewModel @Inject constructor(
         }
     }
 
-    private fun onGrocerySearchResultClick(grocery: Grocery) {
-        addGrocery(grocery)
+    private fun addOrUpdateGrocery(grocery: Grocery) {
+        viewModelScope.launch {
+            if (groceriesFlow.value.any { it.groceries.contains(grocery) }) {
+                toggleItemPurchased(grocery)
+            } else {
+                viewModelScope.launch {
+                    groceryRepository.addGroceryToList(
+                        productId = grocery.productId,
+                        listId = groceryListId,
+                        description = grocery.description,
+                        purchased = grocery.purchased,
+                    )
+                }
+            }
+        }
+
         searchInput = null
-        _previousGroceryFlow.update { grocery }
         _bottomSheetContentTypeFlow.update {
             BottomSheetContentType.RefineItemOptions
         }
     }
 
     private fun onSearchInputKeyboardDone() {
-        if (_grocerySearchResultsFlow.value.isNotEmpty()) {
-            addGrocery(_grocerySearchResultsFlow.value.last())
+        val customProduct = _customProduct.value
+        if (customProduct != null) {
+            addCustomProduct(customProduct)
+        } else {
+            _grocerySearchResultsFlow.value.firstOrNull()?.let {
+                addOrUpdateGrocery(it)
+            }
         }
     }
 
@@ -196,108 +296,21 @@ class GroceryListScreenViewModel @Inject constructor(
         }
     }
 
-    private fun addGrocery(grocery: Grocery) {
-//        viewModelScope.launch {
-//            val groceryIsAlreadyInList = groceryRepository.
-//            groceryListRepository.addGroceryToList(grocery, groceryListId)
-//        }
-//        _groceriesFlow.update { groceryList ->
-//            groceryList.toMutableList().also { groceries ->
-//                val groceryIndex = groceries.indexOfFirst { it.productId == grocery.productId }
-//                if (groceryIndex == -1) {
-//                    groceries.add(
-//                        grocery.copy(
-//                            productId = groceries.maxOf { it.productId } + 1,
-//                            purchased = !grocery.purchased,
-//                        )
-//                    )
-//                } else {
-//                    groceries[groceryIndex] = groceries[groceryIndex].copy(
-//                        purchased = !groceries[groceryIndex].purchased
-//                    )
-//                }
-//            }
-//        }
-//        viewModelScope.launch {
-//            _grocerySearchResultsFlow.update { emptyList() }
-//        }
-    }
-
-    private fun findGroceriesByName(name: String): List<Grocery> {
-//        val escapedInput = Regex.escape(name)
-//        val pattern = Regex(".*$escapedInput.*", RegexOption.IGNORE_CASE)
-//        return sampleGroceryList
-//            .filter { pattern.matches(it.name) }
-//            .map { grocery ->
-//                Grocery(
-//                    productId = grocery.productId,
-//                    name = grocery.name,
-//                    purchased = _groceriesFlow.value.find { grocery.productId == it.productId }?.purchased
-//                        ?: true,
-//                    description = grocery.description,
-//                    iconUri = grocery.iconUri,
-//                    chosenCategoryId = grocery.chosenCategoryId,
-//                )
-//            }
-        return emptyList()
-    }
-
-    private fun updateSearchResults(searchInput: String) {
-        val searchResults = findGroceriesByName(searchInput)
-            .sortedWith(
-                compareBy(
-                    { !it.name.startsWith(searchInput, ignoreCase = true) },
-                    { it.name }
-                )
-            )
-
-        val customGrocery = Grocery(
-            productId = searchResults.maxOfOrNull { it.productId }?.plus(1) ?: 0,
-            name = searchInput,
-            purchased = true,
-            chosenCategoryId = 2,
-            description = null,
-            iconUri = "",
-        )
-
-        val isPerfectMatch =
-            searchResults.firstOrNull()?.name.equals(searchInput, ignoreCase = true)
-
-        _grocerySearchResultsFlow.update {
-            if (isPerfectMatch) searchResults else searchResults + customGrocery
-        }
-    }
-
-    companion object {
-        private val sampleGroceryList = listOf(
-            "Milk", "Eggs", "Butter", "Apples", "Bananas", "Oranges", "Pasta",
-            "Cheese", "Bread", "Pasta", "Rice", "Chicken", "Shrimp", "Crab",
-            "Lobster", "Beef", "Pork", "Lamb", "Salmon", "Tuna", "Sardines",
-            "Mackerel", "Herring", "Trout", "Cod", "Haddock", "Halibut", "Flounder",
-        ).mapIndexed { index, name ->
-            Grocery(
-                productId = index,
-                name = name,
-                purchased = Random.nextBoolean(),
-                description = null,
-                iconUri = "",
-                chosenCategoryId = 1,
+    private fun addCustomProduct(customProduct: CustomProduct) {
+        viewModelScope.launch {
+            groceryRepository.insertProductAndGrocery(
+                name = customProduct.name,
+                iconUri = customProduct.iconUri,
+                categoryId = customProduct.categoryId,
+                groceryListId = groceryListId,
+                description = customProduct.description,
+                purchased = false,
             )
         }
 
-        private val sampleCategories = listOf(
-            Category(
-                id = 1,
-                name = "Sample",
-                iconUri = "",
-                sortingPriority = 1,
-            ),
-            Category(
-                id = 2,
-                name = "Custom groceries",
-                iconUri = "",
-                sortingPriority = 2,
-            ),
-        )
+        searchInput = null
+        _bottomSheetContentTypeFlow.update {
+            BottomSheetContentType.RefineItemOptions
+        }
     }
 }

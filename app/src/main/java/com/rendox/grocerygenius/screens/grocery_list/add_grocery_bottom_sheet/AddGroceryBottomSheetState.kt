@@ -20,7 +20,7 @@ class AddGroceryBottomSheetState(
     val bottomSheetState: SheetState,
     private val coroutineScope: CoroutineScope,
 ) {
-    val sheetIsExpanding = bottomSheetState.targetValue == SheetValue.Expanded
+    private val sheetIsExpanding = bottomSheetState.targetValue == SheetValue.Expanded
     val sheetIsCollapsing = bottomSheetState.targetValue == SheetValue.PartiallyExpanded
     private val sheetIsFullyExpanded = bottomSheetState.currentValue == SheetValue.Expanded
 
@@ -88,11 +88,6 @@ class AddGroceryBottomSheetState(
             expandSheet()
         }
     }
-
-//
-//    init {
-//        searchFieldIsFocused = bottomSheetState
-//    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

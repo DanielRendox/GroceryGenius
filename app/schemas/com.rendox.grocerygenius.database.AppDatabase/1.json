@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7e63e7c8b989e03ede7de16b7cc15ecb",
+    "identityHash": "860ea12417b11292c273ebfb2e58a433",
     "entities": [
       {
         "tableName": "CategoryEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `iconUri` TEXT NOT NULL, `sortingPriority` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `iconUri` TEXT NOT NULL, `sortingPriority` INTEGER NOT NULL, `isDefault` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -31,6 +31,12 @@
             "columnName": "sortingPriority",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "isDefault",
+            "columnName": "isDefault",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -44,7 +50,7 @@
       },
       {
         "tableName": "GroceryEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`productId` INTEGER NOT NULL, `groceryListId` INTEGER NOT NULL, `description` TEXT, `purchased` INTEGER NOT NULL, PRIMARY KEY(`productId`, `groceryListId`), FOREIGN KEY(`productId`) REFERENCES `ProductEntity`(`id`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`groceryListId`) REFERENCES `GroceryListEntity`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`productId` INTEGER NOT NULL, `groceryListId` INTEGER NOT NULL, `description` TEXT, `purchased` INTEGER NOT NULL, `purchasedLastModified` INTEGER NOT NULL, PRIMARY KEY(`productId`, `groceryListId`), FOREIGN KEY(`productId`) REFERENCES `ProductEntity`(`id`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`groceryListId`) REFERENCES `GroceryListEntity`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "productId",
@@ -67,6 +73,12 @@
           {
             "fieldPath": "purchased",
             "columnName": "purchased",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "purchasedLastModified",
+            "columnName": "purchasedLastModified",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -219,7 +231,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7e63e7c8b989e03ede7de16b7cc15ecb')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '860ea12417b11292c273ebfb2e58a433')"
     ]
   }
 }

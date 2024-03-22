@@ -9,4 +9,5 @@ data class CategoryEntity(
     val name: String,
     val iconUri: String,
     val sortingPriority: Int,
+    val isDefault: Boolean,
 )

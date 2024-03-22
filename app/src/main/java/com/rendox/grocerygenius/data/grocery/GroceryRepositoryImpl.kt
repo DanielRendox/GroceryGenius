@@ -13,7 +13,8 @@ class GroceryRepositoryImpl @Inject constructor(
         productId: Int,
         listId: Int,
         description: String?,
-        purchased: Boolean
+        purchased: Boolean,
+        purchasedLastModified: Long,
     ) {
         groceryDao.insertGrocery(
             GroceryEntity(
@@ -21,7 +22,28 @@ class GroceryRepositoryImpl @Inject constructor(
                 groceryListId = listId,
                 description = description,
                 purchased = purchased,
+                purchasedLastModified = purchasedLastModified,
             )
+        )
+    }
+
+    override suspend fun insertProductAndGrocery(
+        name: String,
+        iconUri: String?,
+        categoryId: Int,
+        groceryListId: Int,
+        description: String?,
+        purchased: Boolean,
+        purchasedLastModified: Long,
+    ) {
+        groceryDao.insertProductAndGrocery(
+            name = name,
+            iconUri = iconUri,
+            categoryId = categoryId,
+            groceryListId = groceryListId,
+            description = description,
+            purchased = purchased,
+            purchasedLastModified = purchasedLastModified,
         )
     }
 
@@ -33,8 +55,18 @@ class GroceryRepositoryImpl @Inject constructor(
         return groceryDao.getGroceryDescriptions(productId)
     }
 
-    override suspend fun updatePurchased(productId: Int, listId: Int, purchased: Boolean) {
-        groceryDao.updatePurchased(productId, listId, purchased)
+    override suspend fun updatePurchased(
+        productId: Int,
+        listId: Int,
+        purchased: Boolean,
+        purchasedLastModified: Long,
+    ) {
+        groceryDao.updatePurchased(
+            productId,
+            listId,
+            purchased,
+            purchasedLastModified,
+        )
     }
 
     override suspend fun updateDescription(productId: Int, listId: Int, description: String) {

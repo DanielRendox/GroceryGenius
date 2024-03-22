@@ -31,15 +31,17 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rendox.grocerygenius.R
+import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.ui.components.SearchField
-import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGrid
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
+import com.rendox.grocerygenius.ui.components.grocery_list.groceryListItemColors
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import kotlin.random.Random
 
@@ -50,12 +52,13 @@ fun AddGroceryBottomSheetContent(
     useExpandedPlaceholderText: Boolean,
     clearSearchInputButtonIsShown: Boolean,
     showCancelButtonInsteadOfFab: Boolean,
-    grocerySearchResults: List<GroceryGroup>,
+    grocerySearchResults: List<Grocery>,
     handleBackButtonPress: Boolean,
     contentType: BottomSheetContentType,
     previousGrocery: Grocery?,
     showExtendedContent: Boolean,
     focusRequester: FocusRequester,
+    customProduct: CustomProduct? = null,
     onGrocerySearchResultClick: (Grocery) -> Unit,
     onSearchFieldFocusChanged: (FocusState) -> Unit,
     onBackButtonClicked: () -> Unit,
@@ -65,6 +68,7 @@ fun AddGroceryBottomSheetContent(
     onSearchInputChanged: (String) -> Unit,
     clearSearchInput: () -> Unit,
     editGroceryOnClick: (Grocery) -> Unit,
+    onCustomProductClick: (CustomProduct) -> Unit,
 ) {
     BackHandler(
         enabled = handleBackButtonPress,
@@ -98,6 +102,8 @@ fun AddGroceryBottomSheetContent(
                         SearchResults(
                             grocerySearchResults = grocerySearchResults,
                             onGrocerySearchResultClick = onGrocerySearchResultClick,
+                            customProduct = customProduct,
+                            onCustomProductClick = onCustomProductClick,
                         )
                     }
 
@@ -167,20 +173,54 @@ private fun BottomSheetHeader(
 @Composable
 private fun SearchResults(
     modifier: Modifier = Modifier,
-    grocerySearchResults: List<GroceryGroup>,
+    grocerySearchResults: List<Grocery>,
+    customProduct: CustomProduct?,
     onGrocerySearchResultClick: (Grocery) -> Unit,
+    onCustomProductClick: (CustomProduct) -> Unit,
 ) {
     LazyGroceryGrid(
         modifier = modifier,
-        groceryGroups = grocerySearchResults,
+        groceries = grocerySearchResults,
         groceryItem = { grocery ->
             LazyGroceryGridItem(
                 modifier = Modifier
                     .fillMaxSize()
                     .clickable { onGrocerySearchResultClick(grocery) },
-                grocery = grocery,
+                groceryName = grocery.name,
+                groceryDescription = grocery.description,
+                color = if (grocery.purchased) {
+                    MaterialTheme.colorScheme.groceryListItemColors.purchasedBackgroundColor
+                } else {
+                    MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor
+                },
+                icon = {
+                    Icon(
+                        modifier = Modifier.fillMaxSize(),
+                        painter = painterResource(id = R.drawable.sample_grocery_icon),
+                        contentDescription = null,
+                    )
+                }
             )
         },
+        customProduct = customProduct?.let { product ->
+            {
+                LazyGroceryGridItem(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable { onCustomProductClick(product) },
+                    groceryName = product.name,
+                    groceryDescription = product.description,
+                    color = MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor,
+                    icon = {
+                        Icon(
+                            modifier = Modifier.fillMaxSize(),
+                            painter = painterResource(id = R.drawable.sample_grocery_icon),
+                            contentDescription = null,
+                        )
+                    }
+                )
+            }
+        }
     )
 }
 
@@ -225,21 +265,16 @@ private fun RefineItemOptions(
 @Composable
 private fun SearchResultsPreview() {
     val searchResults = remember {
-        listOf(
-            GroceryGroup(
-                titleId = null,
-                groceries = List(8) { index ->
-                    Grocery(
-                        productId = index,
-                        name = "Grocery $index",
-                        purchased = Random.nextBoolean(),
-                        description = "Description $index",
-                        iconUri = "",
-                        chosenCategoryId = 1,
-                    )
-                }
+        List(8) { index ->
+            Grocery(
+                productId = index,
+                name = "Grocery $index",
+                purchased = Random.nextBoolean(),
+                description = "Description $index",
+                iconUri = "",
+                categoryId = 1,
             )
-        )
+        }
     }
 
     GroceryGeniusTheme {
@@ -247,6 +282,8 @@ private fun SearchResultsPreview() {
             SearchResults(
                 grocerySearchResults = searchResults,
                 onGrocerySearchResultClick = {},
+                customProduct = null,
+                onCustomProductClick = {},
             )
         }
     }

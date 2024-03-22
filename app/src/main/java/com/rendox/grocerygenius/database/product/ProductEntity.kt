@@ -21,7 +21,7 @@ import com.rendox.grocerygenius.database.category.CategoryEntity
 data class ProductEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
-    val deletable: Boolean,
+    val deletable: Boolean = true,
     val iconUri: String?,
     val categoryId: Int,
 )

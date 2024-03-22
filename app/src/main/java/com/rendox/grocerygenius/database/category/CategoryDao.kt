@@ -12,4 +12,7 @@ interface CategoryDao {
 
     @Query("SELECT * FROM CategoryEntity")
     fun getAllCategories(): Flow<List<CategoryEntity>>
+
+    @Query("SELECT * FROM CategoryEntity WHERE isDefault = 1 LIMIT 1")
+    suspend fun getDefaultCategory(): CategoryEntity?
 }

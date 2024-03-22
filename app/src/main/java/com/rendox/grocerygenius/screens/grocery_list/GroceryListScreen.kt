@@ -52,13 +52,16 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Category
+import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.AddGroceryBottomSheetContent
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.BottomSheetContentType
@@ -72,8 +75,9 @@ import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.ToolbarState
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.rememberExitUntilCollapsedToolbarState
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
-import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGrid
+import com.rendox.grocerygenius.ui.components.grocery_list.GroupedLazyGroceryGrid
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
+import com.rendox.grocerygenius.ui.components.grocery_list.groceryListItemColors
 import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import kotlinx.coroutines.cancelChildren
@@ -85,27 +89,33 @@ fun GroceryListRoute(
     modifier: Modifier = Modifier,
     viewModel: GroceryListScreenViewModel = viewModel(),
 ) {
+    val groceryList by viewModel.groceryListFlow.collectAsState()
     val groceries by viewModel.groceriesFlow.collectAsState()
     val grocerySearchResults by viewModel.grocerySearchResultsFlow.collectAsState()
     val clearSearchInputButtonIsShown by viewModel.clearSearchInputButtonIsShownFlow.collectAsState()
     val bottomSheetContentType by viewModel.bottomSheetContentTypeFlow.collectAsState()
-    val previousGroceryName by viewModel.previousGroceryFlow.collectAsState()
+    val previousGrocery by viewModel.previousGroceryFlow.collectAsState()
     val editGrocery by viewModel.editGroceryFlow.collectAsState()
     val clearEditGroceryDescriptionButtonIsShown by viewModel.clearEditGroceryDescriptionButtonIsShown.collectAsState()
+    val groceryCategories by viewModel.categoriesFlow.collectAsState()
+    val customProduct by viewModel.customProduct.collectAsState()
+    val editGroceryChosenCategory by viewModel.editGroceryChosenCategory.collectAsState()
 
     GroceryListScreen(
         modifier = modifier,
-        listName = "Grocery List",
+        listName = groceryList?.name ?: "",
         groceries = groceries,
         searchInput = viewModel.searchInput ?: "",
         grocerySearchResults = grocerySearchResults,
         clearSearchInputButtonIsShown = clearSearchInputButtonIsShown,
         bottomSheetContentType = bottomSheetContentType,
-        previousGrocery = previousGroceryName,
+        previousGrocery = previousGrocery,
         editGrocery = editGrocery,
+        editGroceryChosenCategory = editGroceryChosenCategory,
         clearEditGroceryDescriptionButtonIsShown = clearEditGroceryDescriptionButtonIsShown,
-        categories = viewModel.groceryCategories,
+        categories = groceryCategories,
         editGroceryDescription = viewModel.editGroceryDescription,
+        customProduct = customProduct,
         onIntent = viewModel::onIntent,
     )
 }
@@ -117,14 +127,16 @@ private fun GroceryListScreen(
     listName: String,
     searchInput: String,
     groceries: List<GroceryGroup>,
-    grocerySearchResults: List<GroceryGroup>,
+    grocerySearchResults: List<Grocery>,
     clearSearchInputButtonIsShown: Boolean,
     bottomSheetContentType: BottomSheetContentType,
     previousGrocery: Grocery?,
     editGrocery: Grocery?,
+    editGroceryChosenCategory: Category?,
     clearEditGroceryDescriptionButtonIsShown: Boolean,
     categories: List<Category>,
     editGroceryDescription: String?,
+    customProduct: CustomProduct?,
     onIntent: (GroceryListScreenIntent) -> Unit,
 ) {
     val collapsedToolbarHeight = 64.dp
@@ -210,23 +222,31 @@ private fun GroceryListScreen(
             scrimColor = Color.Transparent,
             dragHandle = { BottomSheetDragHandle() }
         ) {
-            EditGroceryBottomSheetContent(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .fillMaxHeight(),
-                groceryName = editGrocery?.name ?: "",
-                groceryDescription = editGroceryDescription ?: "",
-                chosenCategoryId = editGrocery?.chosenCategoryId ?: -1,
-                clearGroceryDescriptionButtonIsShown = clearEditGroceryDescriptionButtonIsShown,
-                onGroceryDescriptionChanged = { onIntent(GroceryListScreenIntent.UpdateGroceryDescription(it)) },
-                onClearGroceryDescription = { onIntent(GroceryListScreenIntent.OnClearGroceryDescription) },
-                onDoneButtonClick = hideBottomSheet,
-                onKeyboardDone = hideBottomSheet,
-                onCategoryClick = { onIntent(GroceryListScreenIntent.OnEditGroceryCategoryClick(it)) },
-                categories = categories,
-                itemDescriptionFocusRequester = itemDescriptionFocusRequester,
-            )
+            if (editGrocery != null) {
+                EditGroceryBottomSheetContent(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .fillMaxHeight(),
+                    groceryName = editGrocery.name,
+                    groceryDescription = editGroceryDescription,
+                    chosenCategory = editGroceryChosenCategory ?: Category(0, "", ""),
+                    clearGroceryDescriptionButtonIsShown = clearEditGroceryDescriptionButtonIsShown,
+                    onGroceryDescriptionChanged = {
+                        onIntent(GroceryListScreenIntent.UpdateGroceryDescription(it))
+                    },
+                    onClearGroceryDescription = {
+                        onIntent(GroceryListScreenIntent.OnClearGroceryDescription)
+                    },
+                    onDoneButtonClick = hideBottomSheet,
+                    onKeyboardDone = hideBottomSheet,
+                    onCategoryClick = {
+                        onIntent(GroceryListScreenIntent.OnEditGroceryCategoryClick(it))
+                    },
+                    categories = categories,
+                    itemDescriptionFocusRequester = itemDescriptionFocusRequester,
+                )
+            }
         }
     }
 
@@ -244,7 +264,9 @@ private fun GroceryListScreen(
                 showCancelButtonInsteadOfFab = addGroceryBottomSheetState.showCancelButtonInsteadOfFab,
                 grocerySearchResults = grocerySearchResults,
                 handleBackButtonPress = addGroceryBottomSheetState.handleBackButtonPress,
-                onGrocerySearchResultClick = { onIntent(GroceryListScreenIntent.OnGrocerySearchResultClick(it)) },
+                onGrocerySearchResultClick = {
+                    onIntent(GroceryListScreenIntent.OnGrocerySearchResultClick(it))
+                },
                 previousGrocery = previousGrocery,
                 onSearchFieldFocusChanged = addGroceryBottomSheetState::onSearchFieldFocusChanged,
                 onBackButtonClicked = addGroceryBottomSheetState::onSheetDismissed,
@@ -262,6 +284,10 @@ private fun GroceryListScreen(
                     editGroceryBottomSheetIsVisible = true
                 },
                 focusRequester = searchBarFocusRequester,
+                customProduct = customProduct,
+                onCustomProductClick = { product ->
+                    onIntent(GroceryListScreenIntent.OnCustomProductClick(product))
+                },
             )
         },
         sheetDragHandle = { BottomSheetDragHandle() },
@@ -277,14 +303,14 @@ private fun GroceryListScreen(
             val toolbarIsHidden =
                 addBottomSheetState.targetValue == SheetValue.Expanded ||
                         editBottomSheetState.targetValue == SheetValue.Expanded
-            AnimatedVisibility(visible = !toolbarIsHidden){
+            AnimatedVisibility(visible = !toolbarIsHidden) {
                 GroceryListCollapsingToolbar(
                     listName = listName,
                     toolbarHeightRange = toolbarHeightRange,
                     toolbarState = toolbarState,
                 )
             }
-            LazyGroceryGrid(
+            GroupedLazyGroceryGrid(
                 modifier = Modifier
                     .then(
                         if (toolbarIsHidden) Modifier.statusBarsPadding()
@@ -306,13 +332,32 @@ private fun GroceryListScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .combinedClickable(
-                                onClick = { onIntent(GroceryListScreenIntent.OnGroceryItemClick(grocery)) },
+                                onClick = {
+                                    onIntent(
+                                        GroceryListScreenIntent.OnGroceryItemClick(
+                                            grocery
+                                        )
+                                    )
+                                },
                                 onLongClick = {
                                     editGroceryBottomSheetIsVisible = true
                                     onIntent(GroceryListScreenIntent.OnEditGroceryClick(grocery))
                                 }
                             ),
-                        grocery = grocery,
+                        groceryName = grocery.name,
+                        groceryDescription = grocery.description,
+                        color = if (grocery.purchased) {
+                            MaterialTheme.colorScheme.groceryListItemColors.purchasedBackgroundColor
+                        } else {
+                            MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor
+                        },
+                        icon = {
+                            Icon(
+                                modifier = Modifier.fillMaxSize(),
+                                painter = painterResource(R.drawable.sample_grocery_icon),
+                                contentDescription = null,
+                            )
+                        }
                     )
                 },
                 contentPadding = PaddingValues(
@@ -398,7 +443,7 @@ fun GroceryListScreenPreview() {
                         purchased = Random.nextBoolean(),
                         description = "Description $index",
                         iconUri = "",
-                        chosenCategoryId = 1,
+                        categoryId = 1,
                     )
                 }
             )
@@ -409,7 +454,7 @@ fun GroceryListScreenPreview() {
         List(5) { index ->
             Category(
                 id = index,
-                name = "Category $index",
+                name = "Category$index",
                 iconUri = "",
             )
         }
@@ -420,7 +465,7 @@ fun GroceryListScreenPreview() {
             listName = "Grocery List",
             searchInput = "",
             groceries = dummyGroceries,
-            grocerySearchResults = dummyGroceries,
+            grocerySearchResults = emptyList(),
             clearSearchInputButtonIsShown = false,
             bottomSheetContentType = BottomSheetContentType.Suggestions,
             previousGrocery = null,
@@ -429,6 +474,12 @@ fun GroceryListScreenPreview() {
             categories = dummyCategories,
             editGroceryDescription = null,
             onIntent = {},
+            customProduct = null,
+            editGroceryChosenCategory = Category(
+                id = 1,
+                name = "Category1",
+                iconUri = "",
+            )
         )
     }
 }

@@ -8,6 +8,7 @@ fun CategoryEntity.asExternalModel() = Category(
     name = name,
     iconUri = iconUri,
     sortingPriority = sortingPriority,
+    isDefault = isDefault,
 )
 
 fun Category.asEntity() = CategoryEntity(
@@ -15,4 +16,5 @@ fun Category.asEntity() = CategoryEntity(
     name = name,
     iconUri = iconUri,
     sortingPriority = sortingPriority,
+    isDefault = isDefault,
 )

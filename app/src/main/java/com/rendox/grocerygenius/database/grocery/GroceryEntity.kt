@@ -34,4 +34,5 @@ data class GroceryEntity(
     val groceryListId: Int,
     val description: String?,
     val purchased: Boolean,
+    val purchasedLastModified: Long,
 )
