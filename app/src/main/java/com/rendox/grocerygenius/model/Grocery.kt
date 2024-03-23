@@ -6,6 +6,6 @@ data class Grocery(
     val purchased: Boolean,
     val description: String? = null,
     val iconUri: String? = null,
-    val categoryId: Int,
+    val category: Category,
     val purchasedLastModified: Long = System.currentTimeMillis(),
 )

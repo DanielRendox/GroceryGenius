@@ -16,21 +16,41 @@ interface ProductDao {
 
     @Query(
         """
-        SELECT *
+        SELECT 
+            product.id,
+            product.name,
+            product.iconUri,
+            category.id as categoryId,
+            category.name as categoryName,
+            category.iconUri as categoryIconUri,
+            category.sortingPriority as categorySortingPriority,
+            category.isDefault as categoryIsDefault,
+            product.deletable
         FROM ProductEntity product
+        INNER JOIN CategoryEntity category ON product.categoryId = category.id
         WHERE product.categoryId = :categoryId
     """
     )
-    suspend fun getProductsByCategory(categoryId: Int): List<ProductEntity>
+    suspend fun getProductsByCategory(categoryId: Int): List<CombinedProduct>
 
     @Query(
         """
-        SELECT *
+        SELECT 
+            product.id,
+            product.name,
+            product.iconUri,
+            category.id as categoryId,
+            category.name as categoryName,
+            category.iconUri as categoryIconUri,
+            category.sortingPriority as categorySortingPriority,
+            category.isDefault as categoryIsDefault,
+            product.deletable
         FROM ProductEntity product
+        INNER JOIN CategoryEntity category ON product.categoryId = category.id
         WHERE LOWER(product.name) LIKE LOWER(:name)
     """
     )
-    suspend fun getProductsByName(name: String): List<ProductEntity>
+    suspend fun getProductsByName(name: String): List<CombinedProduct>
 
     @Query("SELECT * FROM ProductEntity")
     suspend fun getAllProducts(): List<ProductEntity>

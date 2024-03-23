@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import com.rendox.grocerygenius.database.product.ProductEntity
-import com.rendox.grocerygenius.model.Grocery
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -50,14 +49,19 @@ abstract class GroceryDao {
             grocery.purchased,
             grocery.description,
             product.iconUri,
-            product.categoryId,
+            category.id as categoryId,
+            category.name as categoryName,
+            category.iconUri as categoryIconUri,
+            category.sortingPriority as categorySortingPriority,
+            category.isDefault as categoryIsDefault,
             grocery.purchasedLastModified
         FROM GroceryEntity grocery
         INNER JOIN ProductEntity product ON grocery.productId = product.id
+        INNER JOIN CategoryEntity category ON product.categoryId = category.id
         WHERE grocery.groceryListId = :listId
     """
     )
-    abstract fun getGroceriesFromList(listId: Int): Flow<List<Grocery>>
+    abstract fun getGroceriesFromList(listId: Int): Flow<List<CombinedGrocery>>
 
     @Query(
         """
@@ -67,14 +71,19 @@ abstract class GroceryDao {
             grocery.purchased,
             grocery.description,
             product.iconUri,
-            product.categoryId,
+            category.id as categoryId,
+            category.name as categoryName,
+            category.iconUri as categoryIconUri,
+            category.sortingPriority as categorySortingPriority,
+            category.isDefault as categoryIsDefault,
             grocery.purchasedLastModified
         FROM GroceryEntity grocery
         INNER JOIN ProductEntity product ON grocery.productId = product.id
+        INNER JOIN CategoryEntity category ON product.categoryId = category.id
         WHERE grocery.productId = :productId AND grocery.groceryListId = :listId
     """
     )
-    abstract suspend fun getGrocery(productId: Int, listId: Int): Grocery?
+    abstract suspend fun getGrocery(productId: Int, listId: Int): CombinedGrocery?
 
     @Query("""
         UPDATE GroceryEntity

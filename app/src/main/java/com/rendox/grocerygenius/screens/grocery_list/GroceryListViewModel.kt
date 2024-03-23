@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
@@ -47,15 +46,8 @@ class GroceryListScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
         )
 
-    val categoriesFlow = categoryRepository.getAllCategories()
-        .stateIn(
-            scope = viewModelScope,
-            initialValue = emptyList(),
-            started = SharingStarted.WhileSubscribed(5_000),
-        )
-
     val groceriesFlow = groceryRepository.getGroceriesFromList(groceryListId)
-        .combine(categoriesFlow) { groceryList, categories ->
+        .map { groceryList ->
             groceryList
                 .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name })
                 .sortedBy { it.purchased }
@@ -67,9 +59,7 @@ class GroceryListScreenViewModel @Inject constructor(
                     val sortedGroceries = if (purchased) {
                         group.value.sortedByDescending { it.purchasedLastModified }
                     } else {
-                        group.value.sortedBy { grocery ->
-                            categories.find { grocery.categoryId == it.id }?.sortingPriority
-                        }
+                        group.value.sortedBy { it.category.sortingPriority }
                     }
                     GroceryGroup(
                         titleId = titleId,
@@ -151,16 +141,6 @@ class GroceryListScreenViewModel @Inject constructor(
     private val _customProduct = MutableStateFlow<CustomProduct?>(null)
     val customProduct = _customProduct.asStateFlow()
 
-    val editGroceryChosenCategory = editGroceryFlow
-        .map { grocery ->
-            categoriesFlow.value.find { it.id == grocery?.categoryId }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            initialValue = null,
-            started = SharingStarted.WhileSubscribed(5_000),
-        )
-
     init {
         viewModelScope.launch {
             searchInputFlow.collectLatest { searchInput ->
@@ -216,8 +196,6 @@ class GroceryListScreenViewModel @Inject constructor(
             is GroceryListScreenIntent.OnEditGroceryClick ->
                 onEditGroceryClick(intent.grocery)
 
-            is GroceryListScreenIntent.OnEditGroceryCategoryClick -> {}
-
             is GroceryListScreenIntent.OnCustomProductClick ->
                 addCustomProduct(intent.customProduct)
         }
@@ -255,7 +233,7 @@ class GroceryListScreenViewModel @Inject constructor(
                     purchased = correspondingGroceryInTheList?.purchased ?: false,
                     description = correspondingGroceryInTheList?.description,
                     iconUri = product.iconUri,
-                    categoryId = product.categoryId,
+                    category = product.category,
                     purchasedLastModified = correspondingGroceryInTheList?.purchasedLastModified
                         ?: System.currentTimeMillis(),
                 )

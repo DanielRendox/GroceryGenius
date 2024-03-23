@@ -4,6 +4,6 @@ data class Product(
     val id: Int = 0,
     val name: String,
     val iconUri: String? = null,
-    val categoryId: Int,
+    val category: Category,
     val deletable: Boolean = true,
 )

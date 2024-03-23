@@ -1,9 +1,11 @@
 package com.rendox.grocerygenius.data.grocery
 
+import com.rendox.grocerygenius.data.model.asExternalModel
 import com.rendox.grocerygenius.database.grocery.GroceryDao
 import com.rendox.grocerygenius.database.grocery.GroceryEntity
 import com.rendox.grocerygenius.model.Grocery
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GroceryRepositoryImpl @Inject constructor(
@@ -48,11 +50,13 @@ class GroceryRepositoryImpl @Inject constructor(
     }
 
     override fun getGroceriesFromList(listId: Int): Flow<List<Grocery>> {
-        return groceryDao.getGroceriesFromList(listId)
+        return groceryDao.getGroceriesFromList(listId).map { combinedGroceries ->
+            combinedGroceries.map { it.asExternalModel() }
+        }
     }
 
     override suspend fun getGrocery(productId: Int, listId: Int): Grocery? {
-        return groceryDao.getGrocery(productId, listId)
+        return groceryDao.getGrocery(productId, listId)?.asExternalModel()
     }
 
     override suspend fun updatePurchased(

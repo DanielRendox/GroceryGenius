@@ -97,9 +97,7 @@ fun GroceryListRoute(
     val previousGrocery by viewModel.previousGroceryFlow.collectAsStateWithLifecycle()
     val editGrocery by viewModel.editGroceryFlow.collectAsStateWithLifecycle()
     val clearEditGroceryDescriptionButtonIsShown by viewModel.clearEditGroceryDescriptionButtonIsShown.collectAsStateWithLifecycle()
-    val groceryCategories by viewModel.categoriesFlow.collectAsStateWithLifecycle()
     val customProduct by viewModel.customProduct.collectAsStateWithLifecycle()
-    val editGroceryChosenCategory by viewModel.editGroceryChosenCategory.collectAsStateWithLifecycle()
 
     GroceryListScreen(
         modifier = modifier,
@@ -111,9 +109,7 @@ fun GroceryListRoute(
         bottomSheetContentType = bottomSheetContentType,
         previousGrocery = previousGrocery,
         editGrocery = editGrocery,
-        editGroceryChosenCategory = editGroceryChosenCategory,
         clearEditGroceryDescriptionButtonIsShown = clearEditGroceryDescriptionButtonIsShown,
-        categories = groceryCategories,
         editGroceryDescription = viewModel.editGroceryDescription,
         customProduct = customProduct,
         onIntent = viewModel::onIntent,
@@ -132,9 +128,7 @@ private fun GroceryListScreen(
     bottomSheetContentType: BottomSheetContentType,
     previousGrocery: Grocery?,
     editGrocery: Grocery?,
-    editGroceryChosenCategory: Category?,
     clearEditGroceryDescriptionButtonIsShown: Boolean,
-    categories: List<Category>,
     editGroceryDescription: String?,
     customProduct: CustomProduct?,
     onIntent: (GroceryListScreenIntent) -> Unit,
@@ -227,7 +221,6 @@ private fun GroceryListScreen(
                         .fillMaxHeight(),
                     groceryName = editGrocery.name,
                     groceryDescription = editGroceryDescription,
-                    chosenCategory = editGroceryChosenCategory ?: Category(0, "", ""),
                     clearGroceryDescriptionButtonIsShown = clearEditGroceryDescriptionButtonIsShown,
                     onGroceryDescriptionChanged = {
                         println("onGroceryDescriptionChanged")
@@ -238,10 +231,6 @@ private fun GroceryListScreen(
                     },
                     onDoneButtonClick = hideBottomSheet,
                     onKeyboardDone = hideBottomSheet,
-                    onCategoryClick = {
-                        onIntent(GroceryListScreenIntent.OnEditGroceryCategoryClick(it))
-                    },
-                    categories = categories,
                     itemDescriptionFocusRequester = itemDescriptionFocusRequester,
                 )
             }
@@ -435,21 +424,17 @@ fun GroceryListScreenPreview() {
                         purchased = Random.nextBoolean(),
                         description = "Description $index",
                         iconUri = "",
-                        categoryId = 1,
+                        category = Category(
+                            id = index,
+                            name = "Category$index",
+                            iconUri = "",
+                            sortingPriority = index,
+                            isDefault = false,
+                        ),
                     )
                 }
             )
         )
-    }
-
-    val dummyCategories = remember {
-        List(5) { index ->
-            Category(
-                id = index,
-                name = "Category$index",
-                iconUri = "",
-            )
-        }
     }
 
     GroceryGeniusTheme {
@@ -463,15 +448,9 @@ fun GroceryListScreenPreview() {
             previousGrocery = null,
             editGrocery = null,
             clearEditGroceryDescriptionButtonIsShown = false,
-            categories = dummyCategories,
             editGroceryDescription = null,
             onIntent = {},
             customProduct = null,
-            editGroceryChosenCategory = Category(
-                id = 1,
-                name = "Category1",
-                iconUri = "",
-            )
         )
     }
 }

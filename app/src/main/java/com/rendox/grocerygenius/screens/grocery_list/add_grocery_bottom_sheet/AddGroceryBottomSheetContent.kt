@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rendox.grocerygenius.R
+import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.ui.components.SearchField
@@ -254,7 +255,7 @@ private fun RefineItemOptions(
                 contentDescription = null,
             )
             Text(
-                text = "Enter item details",
+                text = stringResource(R.string.add_grocery_edit_item_button_title),
                 style = MaterialTheme.typography.bodySmall,
             )
         }
@@ -272,7 +273,13 @@ private fun SearchResultsPreview() {
                 purchased = Random.nextBoolean(),
                 description = "Description $index",
                 iconUri = "",
-                categoryId = 1,
+                category = Category(
+                    id = index,
+                    name = "Category$index",
+                    iconUri = "",
+                    sortingPriority = index,
+                    isDefault = false,
+                ),
             )
         }
     }
