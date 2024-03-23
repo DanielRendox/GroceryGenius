@@ -1,6 +1,8 @@
 package com.rendox.grocerygenius.screens.grocery_list
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -9,6 +11,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -18,15 +21,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetValue
@@ -301,7 +301,21 @@ private fun GroceryListScreen(
             val toolbarIsHidden =
                 addBottomSheetState.targetValue == SheetValue.Expanded ||
                         editBottomSheetState.targetValue == SheetValue.Expanded
-            AnimatedVisibility(visible = !toolbarIsHidden) {
+            AnimatedVisibility(
+                visible = toolbarIsHidden,
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+            ) {
+                Spacer(
+                    modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars)
+                )
+            }
+
+            AnimatedVisibility(
+                visible = !toolbarIsHidden,
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+            ) {
                 GroceryListCollapsingToolbar(
                     listName = listName,
                     toolbarHeightRange = toolbarHeightRange,
@@ -310,10 +324,6 @@ private fun GroceryListScreen(
             }
             GroupedLazyGroceryGrid(
                 modifier = Modifier
-                    .then(
-                        if (toolbarIsHidden) Modifier.statusBarsPadding()
-                        else Modifier
-                    )
                     .fillMaxSize()
                     // stop scroll when the user taps on screen
                     .pointerInput(Unit) {
@@ -407,23 +417,7 @@ private fun GroceryListCollapsingToolbar(
         expandedTitleFontSize = expandedTitleStyle.fontSize,
         titleBottomPadding = 24.dp,
         toolbarState = toolbarState,
-        navigationIcon = {
-            IconButton(onClick = { }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null
-                )
-            }
-        },
         toolbarHeightRange = toolbarHeightRange,
-        actions = {
-            IconButton(onClick = { }) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = null,
-                )
-            }
-        }
     )
 }
 
