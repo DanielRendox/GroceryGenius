@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
@@ -46,9 +47,17 @@ class GroceryListScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
         )
 
+    val categoriesFlow = categoryRepository.getAllCategories()
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = emptyList(),
+            started = SharingStarted.WhileSubscribed(5_000),
+        )
+
     val groceriesFlow = groceryRepository.getGroceriesFromList(groceryListId)
-        .map { groceryList ->
+        .combine(categoriesFlow) { groceryList, categories ->
             groceryList
+                .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name })
                 .sortedBy { it.purchased }
                 .groupBy { it.purchased }
                 .map { group ->
@@ -58,9 +67,9 @@ class GroceryListScreenViewModel @Inject constructor(
                     val sortedGroceries = if (purchased) {
                         group.value.sortedByDescending { it.purchasedLastModified }
                     } else {
-                        group.value.sortedWith(
-                            comparator = compareBy(String.CASE_INSENSITIVE_ORDER) { it.name }
-                        )
+                        group.value.sortedBy { grocery ->
+                            categories.find { grocery.categoryId == it.id }?.sortingPriority
+                        }
                     }
                     GroceryGroup(
                         titleId = titleId,
@@ -120,13 +129,6 @@ class GroceryListScreenViewModel @Inject constructor(
         .stateIn(
             scope = viewModelScope,
             initialValue = null,
-            started = SharingStarted.WhileSubscribed(5_000),
-        )
-
-    val categoriesFlow = categoryRepository.getAllCategories()
-        .stateIn(
-            scope = viewModelScope,
-            initialValue = emptyList(),
             started = SharingStarted.WhileSubscribed(5_000),
         )
 
