@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -106,8 +107,21 @@ class GroceryListScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
         )
 
-    private val _editGroceryFlow = MutableStateFlow<Grocery?>(null)
-    val editGroceryFlow = _editGroceryFlow.asStateFlow()
+    private val editGroceryIdFlow = MutableStateFlow<Int?>(null)
+    val editGroceryFlow = editGroceryIdFlow
+        .map { editGroceryIdFlow ->
+            val groceryFromRepository = groceryRepository.getGrocery(
+                productId = editGroceryIdFlow ?: return@map null,
+                listId = groceryListId,
+            )
+            println("map editGroceryFlow: groceryFromRepository = $groceryFromRepository")
+            groceryFromRepository
+        }
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = null,
+            started = SharingStarted.WhileSubscribed(5_000),
+        )
 
     val categoriesFlow = categoryRepository.getAllCategories()
         .stateIn(
@@ -119,9 +133,12 @@ class GroceryListScreenViewModel @Inject constructor(
     var editGroceryDescription by mutableStateOf<String?>(null)
         private set
 
+    private val editGroceryDescriptionFlow = snapshotFlow { editGroceryDescription }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val clearEditGroceryDescriptionButtonIsShown =
-        snapshotFlow { editGroceryDescription }
+        editGroceryDescriptionFlow
+            .onEach { println("editGroceryDescriptionFlow: $it") }
             .mapLatest { !it.isNullOrEmpty() }
             .stateIn(
                 scope = viewModelScope,
@@ -132,7 +149,7 @@ class GroceryListScreenViewModel @Inject constructor(
     private val _customProduct = MutableStateFlow<CustomProduct?>(null)
     val customProduct = _customProduct.asStateFlow()
 
-    val editGroceryChosenCategory = _editGroceryFlow
+    val editGroceryChosenCategory = editGroceryFlow
         .map { grocery ->
             categoriesFlow.value.find { it.id == grocery?.categoryId }
         }
@@ -156,6 +173,15 @@ class GroceryListScreenViewModel @Inject constructor(
                 }
             }
         }
+        viewModelScope.launch {
+            editGroceryDescriptionFlow.collectLatest { description ->
+                groceryRepository.updateDescription(
+                    productId = editGroceryIdFlow.value ?: return@collectLatest,
+                    listId = groceryListId,
+                    description = description,
+                )
+            }
+        }
     }
 
     fun onIntent(intent: GroceryListScreenIntent) {
@@ -173,10 +199,10 @@ class GroceryListScreenViewModel @Inject constructor(
                 onSearchInputKeyboardDone()
 
             is GroceryListScreenIntent.OnClearSearchInput ->
-                resetBottomSheet()
+                resetAddGroceryBottomSheet()
 
-            is GroceryListScreenIntent.OnBottomSheetCollapsing ->
-                resetBottomSheet()
+            is GroceryListScreenIntent.OnAddGroceryBottomSheetCollapsing ->
+                resetAddGroceryBottomSheet()
 
             is GroceryListScreenIntent.UpdateGroceryDescription ->
                 editGroceryDescription = intent.description
@@ -185,11 +211,9 @@ class GroceryListScreenViewModel @Inject constructor(
                 editGroceryDescription = null
 
             is GroceryListScreenIntent.OnEditGroceryClick ->
-                _editGroceryFlow.update { intent.grocery }
+                onEditGroceryClick(intent.grocery)
 
             is GroceryListScreenIntent.OnEditGroceryCategoryClick -> {}
-            is GroceryListScreenIntent.OnEditGroceryBottomSheetHidden ->
-                editGroceryDescription = null
 
             is GroceryListScreenIntent.OnCustomProductClick ->
                 addCustomProduct(intent.customProduct)
@@ -289,7 +313,7 @@ class GroceryListScreenViewModel @Inject constructor(
         }
     }
 
-    private fun resetBottomSheet() {
+    private fun resetAddGroceryBottomSheet() {
         searchInput = null
         _bottomSheetContentTypeFlow.update {
             BottomSheetContentType.Suggestions
@@ -312,5 +336,11 @@ class GroceryListScreenViewModel @Inject constructor(
         _bottomSheetContentTypeFlow.update {
             BottomSheetContentType.RefineItemOptions
         }
+    }
+
+    private fun onEditGroceryClick(grocery: Grocery) {
+        editGroceryIdFlow.update { grocery.productId }
+        println("onEditGroceryClick: grocery = $grocery")
+        editGroceryDescription = grocery.description
     }
 }

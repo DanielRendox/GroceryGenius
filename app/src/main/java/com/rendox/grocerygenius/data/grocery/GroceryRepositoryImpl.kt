@@ -51,6 +51,10 @@ class GroceryRepositoryImpl @Inject constructor(
         return groceryDao.getGroceriesFromList(listId)
     }
 
+    override suspend fun getGrocery(productId: Int, listId: Int): Grocery? {
+        return groceryDao.getGrocery(productId, listId)
+    }
+
     override suspend fun getGroceryDescriptions(productId: Int): List<String> {
         return groceryDao.getGroceryDescriptions(productId)
     }
@@ -69,7 +73,7 @@ class GroceryRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun updateDescription(productId: Int, listId: Int, description: String) {
+    override suspend fun updateDescription(productId: Int, listId: Int, description: String?) {
         groceryDao.updateDescription(productId, listId, description)
     }
 

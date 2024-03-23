@@ -23,6 +23,7 @@ interface GroceryRepository {
     )
 
     fun getGroceriesFromList(listId: Int): Flow<List<Grocery>>
+    suspend fun getGrocery(productId: Int, listId: Int): Grocery?
     suspend fun getGroceryDescriptions(productId: Int): List<String>
 
     suspend fun updatePurchased(
@@ -32,6 +33,6 @@ interface GroceryRepository {
         purchasedLastModified: Long = System.currentTimeMillis(),
     )
 
-    suspend fun updateDescription(productId: Int, listId: Int, description: String)
+    suspend fun updateDescription(productId: Int, listId: Int, description: String?)
     suspend fun removeGroceryFromList(productId: Int, listId: Int)
 }

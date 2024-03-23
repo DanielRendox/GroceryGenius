@@ -10,11 +10,10 @@ sealed class GroceryListScreenIntent {
     data class OnGrocerySearchResultClick(val grocery: Grocery) : GroceryListScreenIntent()
     data object OnSearchInputKeyboardDone : GroceryListScreenIntent()
     data object OnClearSearchInput : GroceryListScreenIntent()
-    data object OnBottomSheetCollapsing : GroceryListScreenIntent()
+    data object OnAddGroceryBottomSheetCollapsing : GroceryListScreenIntent()
     data class UpdateGroceryDescription(val description: String) : GroceryListScreenIntent()
     data object OnClearGroceryDescription : GroceryListScreenIntent()
     data class OnEditGroceryClick(val grocery: Grocery) : GroceryListScreenIntent()
     data class OnEditGroceryCategoryClick(val category: Category) : GroceryListScreenIntent()
-    data object OnEditGroceryBottomSheetHidden : GroceryListScreenIntent()
     data class OnCustomProductClick(val customProduct: CustomProduct) : GroceryListScreenIntent()
 }

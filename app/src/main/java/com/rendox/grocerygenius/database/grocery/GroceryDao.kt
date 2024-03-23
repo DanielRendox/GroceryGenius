@@ -60,6 +60,23 @@ abstract class GroceryDao {
     abstract fun getGroceriesFromList(listId: Int): Flow<List<Grocery>>
 
     @Query(
+        """
+        SELECT
+            grocery.productId,
+            product.name,
+            grocery.purchased,
+            grocery.description,
+            product.iconUri,
+            product.categoryId,
+            grocery.purchasedLastModified
+        FROM GroceryEntity grocery
+        INNER JOIN ProductEntity product ON grocery.productId = product.id
+        WHERE grocery.productId = :productId AND grocery.groceryListId = :listId
+    """
+    )
+    abstract suspend fun getGrocery(productId: Int, listId: Int): Grocery?
+
+    @Query(
         "SELECT DISTINCT description FROM GroceryEntity WHERE productId = :productId"
     )
     abstract suspend fun getGroceryDescriptions(productId: Int): List<String>
@@ -81,7 +98,7 @@ abstract class GroceryDao {
         SET description = :description
         WHERE productId = :productId AND groceryListId = :listId
     """)
-    abstract suspend fun updateDescription(productId: Int, listId: Int, description: String)
+    abstract suspend fun updateDescription(productId: Int, listId: Int, description: String?)
 
     @Query("DELETE FROM GroceryEntity WHERE productId = :productId AND groceryListId = :listId")
     abstract suspend fun deleteGrocery(productId: Int, listId: Int)

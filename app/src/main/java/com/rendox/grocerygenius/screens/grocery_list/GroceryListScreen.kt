@@ -174,7 +174,7 @@ private fun GroceryListScreen(
 
     LaunchedEffect(addGroceryBottomSheetState.sheetIsCollapsing) {
         if (addGroceryBottomSheetState.sheetIsCollapsing) {
-            onIntent(GroceryListScreenIntent.OnBottomSheetCollapsing)
+            onIntent(GroceryListScreenIntent.OnAddGroceryBottomSheetCollapsing)
         }
     }
 
@@ -214,11 +214,9 @@ private fun GroceryListScreen(
             scrimColor = Color.Transparent,
             dragHandle = { BottomSheetDragHandle() }
         ) {
-            LaunchedEffect(editBottomSheetState.isVisible) {
-                if (editBottomSheetState.isVisible) {
+            LaunchedEffect(editBottomSheetState.currentValue) {
+                if (editBottomSheetState.currentValue == SheetValue.Expanded) {
                     itemDescriptionFocusRequester.requestFocus()
-                } else {
-                    onIntent(GroceryListScreenIntent.OnEditGroceryBottomSheetHidden)
                 }
             }
             if (editGrocery != null) {
@@ -232,6 +230,7 @@ private fun GroceryListScreen(
                     chosenCategory = editGroceryChosenCategory ?: Category(0, "", ""),
                     clearGroceryDescriptionButtonIsShown = clearEditGroceryDescriptionButtonIsShown,
                     onGroceryDescriptionChanged = {
+                        println("onGroceryDescriptionChanged")
                         onIntent(GroceryListScreenIntent.UpdateGroceryDescription(it))
                     },
                     onClearGroceryDescription = {
