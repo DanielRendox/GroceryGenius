@@ -36,7 +36,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +57,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Category
@@ -89,17 +89,17 @@ fun GroceryListRoute(
     modifier: Modifier = Modifier,
     viewModel: GroceryListScreenViewModel = viewModel(),
 ) {
-    val groceryList by viewModel.groceryListFlow.collectAsState()
-    val groceries by viewModel.groceriesFlow.collectAsState()
-    val grocerySearchResults by viewModel.grocerySearchResultsFlow.collectAsState()
-    val clearSearchInputButtonIsShown by viewModel.clearSearchInputButtonIsShownFlow.collectAsState()
-    val bottomSheetContentType by viewModel.bottomSheetContentTypeFlow.collectAsState()
-    val previousGrocery by viewModel.previousGroceryFlow.collectAsState()
-    val editGrocery by viewModel.editGroceryFlow.collectAsState()
-    val clearEditGroceryDescriptionButtonIsShown by viewModel.clearEditGroceryDescriptionButtonIsShown.collectAsState()
-    val groceryCategories by viewModel.categoriesFlow.collectAsState()
-    val customProduct by viewModel.customProduct.collectAsState()
-    val editGroceryChosenCategory by viewModel.editGroceryChosenCategory.collectAsState()
+    val groceryList by viewModel.groceryListFlow.collectAsStateWithLifecycle()
+    val groceries by viewModel.groceriesFlow.collectAsStateWithLifecycle()
+    val grocerySearchResults by viewModel.grocerySearchResultsFlow.collectAsStateWithLifecycle()
+    val clearSearchInputButtonIsShown by viewModel.clearSearchInputButtonIsShownFlow.collectAsStateWithLifecycle()
+    val bottomSheetContentType by viewModel.bottomSheetContentTypeFlow.collectAsStateWithLifecycle()
+    val previousGrocery by viewModel.previousGroceryFlow.collectAsStateWithLifecycle()
+    val editGrocery by viewModel.editGroceryFlow.collectAsStateWithLifecycle()
+    val clearEditGroceryDescriptionButtonIsShown by viewModel.clearEditGroceryDescriptionButtonIsShown.collectAsStateWithLifecycle()
+    val groceryCategories by viewModel.categoriesFlow.collectAsStateWithLifecycle()
+    val customProduct by viewModel.customProduct.collectAsStateWithLifecycle()
+    val editGroceryChosenCategory by viewModel.editGroceryChosenCategory.collectAsStateWithLifecycle()
 
     GroceryListScreen(
         modifier = modifier,

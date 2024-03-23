@@ -162,8 +162,9 @@ class GroceryListScreenViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             searchInputFlow.collectLatest { searchInput ->
-                if (!searchInput.isNullOrEmpty()) {
-                    updateSearchResults(searchInput)
+                val trimmedSearchInput = searchInput?.trim()
+                if (!trimmedSearchInput.isNullOrEmpty()) {
+                    updateSearchResults(trimmedSearchInput)
                     _bottomSheetContentTypeFlow.update {
                         BottomSheetContentType.SearchResults
                     }
