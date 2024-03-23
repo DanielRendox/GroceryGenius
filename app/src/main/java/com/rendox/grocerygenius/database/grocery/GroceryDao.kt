@@ -76,11 +76,6 @@ abstract class GroceryDao {
     )
     abstract suspend fun getGrocery(productId: Int, listId: Int): Grocery?
 
-    @Query(
-        "SELECT DISTINCT description FROM GroceryEntity WHERE productId = :productId"
-    )
-    abstract suspend fun getGroceryDescriptions(productId: Int): List<String>
-
     @Query("""
         UPDATE GroceryEntity
         SET purchased = :purchased, purchasedLastModified = :purchasedLastModified

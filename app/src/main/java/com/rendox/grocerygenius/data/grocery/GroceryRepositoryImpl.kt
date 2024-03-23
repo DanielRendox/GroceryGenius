@@ -55,10 +55,6 @@ class GroceryRepositoryImpl @Inject constructor(
         return groceryDao.getGrocery(productId, listId)
     }
 
-    override suspend fun getGroceryDescriptions(productId: Int): List<String> {
-        return groceryDao.getGroceryDescriptions(productId)
-    }
-
     override suspend fun updatePurchased(
         productId: Int,
         listId: Int,
