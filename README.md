@@ -4,7 +4,7 @@
   <img alt="Grocery Genious logo" src="images/app_logo_rounded_corners.png" height="150px">
 </div>
 
-<h3 align="center" line-height:1"><b>Grocery Genius is now a CRUD 🎉</b></h3>
+<h3 align="center" line-height:1"><b>Grocery Genius is now a CRUD 🎉, 1st release coming in a few days</b></h3>
 
 <br />
 
@@ -12,13 +12,13 @@ Grocery Genius is a reliable Android app for your grocery needs, where you can a
 
 ## Motivation
 
-My motivation for this project is to learn how to talk to the server effectively and implement the functionality of real-time data sharing while preserving the offline-first mode, which is known to be tricky for many mobile devs. Additionally, it will add another non-traditional project to my portfolio and allow me to practice the Android tech stack. 
+My motivation for this project is to learn how to talk to the server effectively and implement the functionality of live data sharing while preserving the offline-first mode, which is known to be tricky for many mobile devs. Additionally, it will add another non-traditional project to my portfolio and allow me to practice the Android tech stack. 
 
 ## Features
 
 - Easily create and sort your grocery lists
 - Use already available products instead of typing the name of each or create your own items
-- ~~See which products are in stock, which products will be over soon, and which ones have already run out.~~ Discontinued, may be introduced in the future but the main focus has shifted to real-time sharing.
+- ~~See which products are in stock, which products will be over soon, and which ones have already run out.~~ Discontinued, may be introduced in the future but the main focus has shifted to shopping list sharing.
 - Modern Material UI with customizability options such as item sorting, dark/light mode, etc.
 
 ## Tech stack
