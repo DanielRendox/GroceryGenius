@@ -1,14 +1,14 @@
 <h1 align="center" line-height:1"><b>Grocery Genius</b></h1>
 
 <div align="center">
-  <img alt="Grocery Genious logo" src="images/app_logo_rounded_corners.png" height="150px">
+  <img alt="Grocery Genius logo" src="images/app_logo_rounded_corners.png" height="150px">
 </div>
 
 <h3 align="center" line-height:1"><b>Grocery Genius is now a CRUD 🎉, 1st release coming in a few days</b></h3>
 
 <br />
 
-Grocery Genius is a reliable Android app for your grocery needs, where you can add, edit, and delete items with the finesse of a ninja. And we’re gearing up to introduce real-time sharing! Soon, you’ll be able to sync your shopping lists with friends and family as you go. Apart from that, Grocery Genious offers a visually appealing interface featuring grocery images, autocomplete suggestions, and an intuitive user experience.
+Grocery Genius is a reliable Android app for your grocery needs, where you can add, edit, and delete items with the finesse of a ninja. And we’re gearing up to introduce real-time sharing! Soon, you’ll be able to sync your shopping lists with friends and family as you go. Apart from that, Grocery Genius offers a visually appealing interface featuring grocery images, autocomplete suggestions, and an intuitive user experience.
 
 ## Motivation
 
