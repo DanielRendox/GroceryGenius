@@ -10,9 +10,11 @@ import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.data.grocery.GroceryRepository
 import com.rendox.grocerygenius.data.grocery_list.GroceryListRepository
 import com.rendox.grocerygenius.data.product.ProductRepository
+import com.rendox.grocerygenius.file_storage.BitmapLoader
 import com.rendox.grocerygenius.model.CustomProduct
-import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.BottomSheetContentType
+import com.rendox.grocerygenius.ui.GroceryPresentation
+import com.rendox.grocerygenius.ui.asPresentationModel
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,6 +36,7 @@ class GroceryListScreenViewModel @Inject constructor(
     private val groceryRepository: GroceryRepository,
     groceryListRepository: GroceryListRepository,
     private val productRepository: ProductRepository,
+    private val bitmapLoader: BitmapLoader,
 ) : ViewModel() {
     private val groceryListId = 1
 
@@ -59,9 +62,15 @@ class GroceryListScreenViewModel @Inject constructor(
                     } else {
                         group.value.sortedBy { it.category?.sortingPriority }
                     }
+                    val presentationGroceries = sortedGroceries.map { grocery ->
+                        val iconBitmap = grocery.icon?.let {
+                            bitmapLoader.loadFromFile(it.filePath)
+                        }
+                        grocery.asPresentationModel(iconBitmap)
+                    }
                     GroceryGroup(
                         titleId = titleId,
-                        groceries = sortedGroceries,
+                        groceries = presentationGroceries,
                     )
                 }
         }
@@ -71,7 +80,7 @@ class GroceryListScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
         )
 
-    private val _grocerySearchResultsFlow = MutableStateFlow<List<Grocery>>(emptyList())
+    private val _grocerySearchResultsFlow = MutableStateFlow<List<GroceryPresentation>>(emptyList())
     val grocerySearchResultsFlow = _grocerySearchResultsFlow.asStateFlow()
 
     var searchInput by mutableStateOf<String?>(null)
@@ -107,12 +116,16 @@ class GroceryListScreenViewModel @Inject constructor(
     private val editGroceryIdFlow = MutableStateFlow<Int?>(null)
     val editGroceryFlow = editGroceryIdFlow
         .map { editGroceryIdFlow ->
-            val groceryFromRepository = groceryRepository.getGrocery(
+            val groceryFromRepository = groceryRepository
+                .getGrocery(
                 productId = editGroceryIdFlow ?: return@map null,
                 listId = groceryListId,
             )
-            println("map editGroceryFlow: groceryFromRepository = $groceryFromRepository")
-            groceryFromRepository
+            val groceryPresentation = groceryFromRepository?.let { grocery ->
+                val iconBitmap = grocery.icon?.let { bitmapLoader.loadFromFile(it.filePath) }
+                grocery.asPresentationModel(iconBitmap)
+            }
+            groceryPresentation
         }
         .stateIn(
             scope = viewModelScope,
@@ -222,9 +235,11 @@ class GroceryListScreenViewModel @Inject constructor(
                 val correspondingGroceryInTheList = groceriesFlow.value
                     .flatMap { it.groceries }
                     .find { it.productId == product.id }
-                Grocery(
+                GroceryPresentation(
                     productId = product.id,
                     name = product.name,
+                    icon = product.icon,
+                    iconBitmap = product.icon?.let { bitmapLoader.loadFromFile(it.filePath) },
                     purchased = correspondingGroceryInTheList?.purchased ?: false,
                     description = correspondingGroceryInTheList?.description,
                     category = product.category,
@@ -236,7 +251,7 @@ class GroceryListScreenViewModel @Inject constructor(
         }
     }
 
-    private fun toggleItemPurchased(item: Grocery) {
+    private fun toggleItemPurchased(item: GroceryPresentation) {
         viewModelScope.launch {
             groceryRepository.updatePurchased(
                 productId = item.productId,
@@ -255,7 +270,7 @@ class GroceryListScreenViewModel @Inject constructor(
         }
     }
 
-    private fun addOrUpdateGrocery(grocery: Grocery) {
+    private fun addOrUpdateGrocery(grocery: GroceryPresentation) {
         viewModelScope.launch {
             if (groceriesFlow.value.any { it.groceries.contains(grocery) }) {
                 toggleItemPurchased(grocery)
@@ -311,9 +326,8 @@ class GroceryListScreenViewModel @Inject constructor(
         }
     }
 
-    private fun onEditGroceryClick(grocery: Grocery) {
+    private fun onEditGroceryClick(grocery: GroceryPresentation) {
         editGroceryIdFlow.update { grocery.productId }
-        println("onEditGroceryClick: grocery = $grocery")
         editGroceryDescription = grocery.description
     }
 }

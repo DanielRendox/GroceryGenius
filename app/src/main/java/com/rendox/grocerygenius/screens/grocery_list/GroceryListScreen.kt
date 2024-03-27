@@ -59,11 +59,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.CustomProduct
-import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.AddGroceryBottomSheetContent
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.BottomSheetContentType
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.rememberAddGroceryBottomSheetState
 import com.rendox.grocerygenius.screens.grocery_list.edit_grocery_bottom_sheet.EditGroceryBottomSheetContent
+import com.rendox.grocerygenius.ui.GroceryPresentation
 import com.rendox.grocerygenius.ui.components.BottomSheetDragHandle
 import com.rendox.grocerygenius.ui.components.Scrim
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbar
@@ -120,11 +120,11 @@ private fun GroceryListScreen(
     listName: String,
     searchInput: String,
     groceries: List<GroceryGroup>,
-    grocerySearchResults: List<Grocery>,
+    grocerySearchResults: List<GroceryPresentation>,
     clearSearchInputButtonIsShown: Boolean,
     bottomSheetContentType: BottomSheetContentType,
-    previousGrocery: Grocery?,
-    editGrocery: Grocery?,
+    previousGrocery: GroceryPresentation?,
+    editGrocery: GroceryPresentation?,
     clearEditGroceryDescriptionButtonIsShown: Boolean,
     editGroceryDescription: String?,
     customProduct: CustomProduct?,
@@ -345,7 +345,7 @@ private fun GroceryListScreen(
                         } else {
                             MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor
                         },
-                        groceryIcon = grocery.icon,
+                        groceryIcon = grocery.iconBitmap,
                     )
                 },
                 contentPadding = PaddingValues(
@@ -409,7 +409,7 @@ fun GroceryListScreenPreview() {
             GroceryGroup(
                 titleId = null,
                 groceries = List(21) { index ->
-                    Grocery(
+                    GroceryPresentation(
                         productId = index,
                         name = "Grocery $index",
                         purchased = Random.nextBoolean(),

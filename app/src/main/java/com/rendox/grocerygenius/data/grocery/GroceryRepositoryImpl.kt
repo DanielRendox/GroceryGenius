@@ -3,7 +3,6 @@ package com.rendox.grocerygenius.data.grocery
 import com.rendox.grocerygenius.data.model.asExternalModel
 import com.rendox.grocerygenius.database.grocery.GroceryDao
 import com.rendox.grocerygenius.database.grocery.GroceryEntity
-import com.rendox.grocerygenius.file_storage.BitmapLoader
 import com.rendox.grocerygenius.model.Grocery
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -11,7 +10,6 @@ import javax.inject.Inject
 
 class GroceryRepositoryImpl @Inject constructor(
     private val groceryDao: GroceryDao,
-    private val bitmapLoader: BitmapLoader,
 ) : GroceryRepository {
     override suspend fun addGroceryToList(
         productId: Int,
@@ -56,16 +54,13 @@ class GroceryRepositoryImpl @Inject constructor(
     override fun getGroceriesFromList(listId: Int): Flow<List<Grocery>> {
         return groceryDao.getGroceriesFromList(listId).map { combinedGroceries ->
             combinedGroceries.map { combinedGrocery ->
-                val groceryIcon = combinedGrocery.iconFilePath?.let { bitmapLoader.loadFromFile(it) }
-                combinedGrocery.asExternalModel(groceryIcon)
+                combinedGrocery.asExternalModel()
             }
         }
     }
 
     override suspend fun getGrocery(productId: Int, listId: Int): Grocery? {
-        val grocery = groceryDao.getGrocery(productId, listId) ?: return null
-        val groceryIcon = grocery.iconFilePath?.let { bitmapLoader.loadFromFile(it) }
-        return grocery.asExternalModel(groceryIcon)
+        return groceryDao.getGrocery(productId, listId)?.asExternalModel()
     }
 
     override suspend fun updatePurchased(

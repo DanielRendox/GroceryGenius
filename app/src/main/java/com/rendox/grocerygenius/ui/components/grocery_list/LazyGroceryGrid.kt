@@ -15,15 +15,15 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rendox.grocerygenius.model.Grocery
+import com.rendox.grocerygenius.ui.GroceryPresentation
 
 @Composable
 fun LazyGroceryGrid(
     modifier: Modifier = Modifier,
     lazyGridState: LazyGridState = rememberLazyGridState(),
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    groceries: List<Grocery>,
-    groceryItem: @Composable (Grocery) -> Unit,
+    groceries: List<GroceryPresentation>,
+    groceryItem: @Composable (GroceryPresentation) -> Unit,
     customProduct: (@Composable () -> Unit)? = null,
 ) {
     LazyVerticalGrid(

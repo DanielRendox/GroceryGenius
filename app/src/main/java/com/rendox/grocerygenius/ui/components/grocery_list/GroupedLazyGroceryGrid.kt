@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rendox.grocerygenius.R
-import com.rendox.grocerygenius.model.Grocery
+import com.rendox.grocerygenius.ui.GroceryPresentation
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -31,7 +31,7 @@ fun GroupedLazyGroceryGrid(
     lazyGridState: LazyGridState = rememberLazyGridState(),
     contentPadding: PaddingValues = PaddingValues(0.dp),
     groceryGroups: List<GroceryGroup>,
-    groceryItem: @Composable (Grocery) -> Unit,
+    groceryItem: @Composable (GroceryPresentation) -> Unit,
 ) {
     LazyVerticalGrid(
         modifier = modifier,
