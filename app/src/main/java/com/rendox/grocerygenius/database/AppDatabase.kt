@@ -6,6 +6,7 @@ import com.rendox.grocerygenius.database.category.CategoryDao
 import com.rendox.grocerygenius.database.category.CategoryEntity
 import com.rendox.grocerygenius.database.grocery.GroceryDao
 import com.rendox.grocerygenius.database.grocery.GroceryEntity
+import com.rendox.grocerygenius.database.grocery_icon.GroceryIconEntity
 import com.rendox.grocerygenius.database.grocery_list.GroceryListDao
 import com.rendox.grocerygenius.database.grocery_list.GroceryListEntity
 import com.rendox.grocerygenius.database.product.ProductDao
@@ -17,6 +18,7 @@ import com.rendox.grocerygenius.database.product.ProductEntity
         GroceryEntity::class,
         GroceryListEntity::class,
         ProductEntity::class,
+        GroceryIconEntity::class,
     ],
     version = 1,
 )

@@ -7,7 +7,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rendox.grocerygenius.R
-import com.rendox.grocerygenius.data.category.CategoryRepository
 import com.rendox.grocerygenius.data.grocery.GroceryRepository
 import com.rendox.grocerygenius.data.grocery_list.GroceryListRepository
 import com.rendox.grocerygenius.data.product.ProductRepository
@@ -32,7 +31,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GroceryListScreenViewModel @Inject constructor(
-    private val categoryRepository: CategoryRepository,
     private val groceryRepository: GroceryRepository,
     groceryListRepository: GroceryListRepository,
     private val productRepository: ProductRepository,
@@ -59,7 +57,7 @@ class GroceryListScreenViewModel @Inject constructor(
                     val sortedGroceries = if (purchased) {
                         group.value.sortedByDescending { it.purchasedLastModified }
                     } else {
-                        group.value.sortedBy { it.category.sortingPriority }
+                        group.value.sortedBy { it.category?.sortingPriority }
                     }
                     GroceryGroup(
                         titleId = titleId,
@@ -216,10 +214,7 @@ class GroceryListScreenViewModel @Inject constructor(
 
             _customProduct.update {
                 if (!isPerfectMatch) {
-                    CustomProduct(
-                        name = searchInput,
-                        categoryId = categoryRepository.getDefaultCategory()!!.id,
-                    )
+                    CustomProduct(name = searchInput)
                 } else null
             }
 
@@ -232,7 +227,6 @@ class GroceryListScreenViewModel @Inject constructor(
                     name = product.name,
                     purchased = correspondingGroceryInTheList?.purchased ?: false,
                     description = correspondingGroceryInTheList?.description,
-                    iconUri = product.iconUri,
                     category = product.category,
                     purchasedLastModified = correspondingGroceryInTheList?.purchasedLastModified
                         ?: System.currentTimeMillis(),
@@ -305,11 +299,9 @@ class GroceryListScreenViewModel @Inject constructor(
         viewModelScope.launch {
             groceryRepository.insertProductAndGrocery(
                 name = customProduct.name,
-                iconUri = customProduct.iconUri,
-                categoryId = customProduct.categoryId,
+                categoryId = customProduct.category?.id,
                 groceryListId = groceryListId,
                 description = customProduct.description,
-                purchased = false,
             )
         }
 

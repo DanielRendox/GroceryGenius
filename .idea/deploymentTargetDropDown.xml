@@ -2,7 +2,10 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="RefineItemOptionsPreview">
+      <entry key="AndroidResourceToFileSaverTest">
+        <State />
+      </entry>
+      <entry key="AssetToFileSaverTest">
         <State />
       </entry>
       <entry key="app">
@@ -19,6 +22,41 @@
             </Target>
           </targetSelectedWithDropDown>
           <timeTargetWasSelectedWithDropDown value="2024-03-23T08:36:57.244894700Z" />
+        </State>
+      </entry>
+      <entry key="assertReturnsNullIfFailedToCopyFile()">
+        <State />
+      </entry>
+      <entry key="testCopiesFileSuccessfully()">
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\danie\.android\avd\Pixel_5_API_33.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-03-25T11:09:28.083609900Z" />
+        </State>
+      </entry>
+      <entry key="testResultingFileNameIsCorrect()">
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\danie\.android\avd\Pixel_5_API_33.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-03-25T11:07:06.618298300Z" />
         </State>
       </entry>
     </value>

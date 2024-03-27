@@ -31,7 +31,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -194,13 +193,7 @@ private fun SearchResults(
                 } else {
                     MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor
                 },
-                icon = {
-                    Icon(
-                        modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(id = R.drawable.sample_grocery_icon),
-                        contentDescription = null,
-                    )
-                }
+                groceryIcon = grocery.icon,
             )
         },
         customProduct = customProduct?.let { product ->
@@ -212,13 +205,7 @@ private fun SearchResults(
                     groceryName = product.name,
                     groceryDescription = product.description,
                     color = MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor,
-                    icon = {
-                        Icon(
-                            modifier = Modifier.fillMaxSize(),
-                            painter = painterResource(id = R.drawable.sample_grocery_icon),
-                            contentDescription = null,
-                        )
-                    }
+                    groceryIcon = null,
                 )
             }
         }
@@ -272,11 +259,9 @@ private fun SearchResultsPreview() {
                 name = "Grocery $index",
                 purchased = Random.nextBoolean(),
                 description = "Description $index",
-                iconUri = "",
                 category = Category(
                     id = index,
                     name = "Category$index",
-                    iconUri = "",
                     sortingPriority = index,
                     isDefault = false,
                 ),

@@ -1,7 +1,7 @@
 package com.rendox.grocerygenius.network.category
 
-import com.rendox.grocerygenius.model.Category
+import com.rendox.grocerygenius.network.model.CategoryNetwork
 
 interface CategoryNetworkDataSource {
-    suspend fun getAllCategories(): List<Category>
+    suspend fun getAllCategories(): List<CategoryNetwork>
 }

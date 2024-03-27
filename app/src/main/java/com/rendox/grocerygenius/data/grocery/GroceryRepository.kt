@@ -14,12 +14,13 @@ interface GroceryRepository {
 
     suspend fun insertProductAndGrocery(
         name: String,
-        iconUri: String?,
-        categoryId: Int,
+        iconId: Int? = null,
+        categoryId: Int?,
         groceryListId: Int,
         description: String?,
-        purchased: Boolean,
+        purchased: Boolean = false,
         purchasedLastModified: Long = System.currentTimeMillis(),
+        productIsDeletable: Boolean = true,
     )
 
     fun getGroceriesFromList(listId: Int): Flow<List<Grocery>>

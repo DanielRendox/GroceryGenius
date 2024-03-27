@@ -18,17 +18,19 @@ abstract class GroceryDao {
     @Transaction
     open suspend fun insertProductAndGrocery(
         name: String,
-        iconUri: String?,
-        categoryId: Int,
+        iconId: Int?,
+        categoryId: Int?,
         groceryListId: Int,
         description: String?,
         purchased: Boolean,
         purchasedLastModified: Long = System.currentTimeMillis(),
+        productIsDeletable: Boolean,
     ) {
         val product = ProductEntity(
             name = name,
-            iconUri = iconUri,
             categoryId = categoryId,
+            iconId = iconId,
+            deletable = productIsDeletable,
         )
         val productId = insertProduct(product)
         val grocery = GroceryEntity(
@@ -48,16 +50,17 @@ abstract class GroceryDao {
             product.name,
             grocery.purchased,
             grocery.description,
-            product.iconUri,
+            icon.id as iconId,
+            icon.filePath as iconFilePath,
             category.id as categoryId,
             category.name as categoryName,
-            category.iconUri as categoryIconUri,
             category.sortingPriority as categorySortingPriority,
             category.isDefault as categoryIsDefault,
             grocery.purchasedLastModified
         FROM GroceryEntity grocery
         INNER JOIN ProductEntity product ON grocery.productId = product.id
-        INNER JOIN CategoryEntity category ON product.categoryId = category.id
+        LEFT JOIN CategoryEntity category ON product.categoryId = category.id
+        LEFT JOIN GroceryIconEntity icon ON product.iconId = icon.id
         WHERE grocery.groceryListId = :listId
     """
     )
@@ -70,16 +73,17 @@ abstract class GroceryDao {
             product.name,
             grocery.purchased,
             grocery.description,
-            product.iconUri,
+            icon.id as iconId,
+            icon.filePath as iconFilePath,
             category.id as categoryId,
             category.name as categoryName,
-            category.iconUri as categoryIconUri,
             category.sortingPriority as categorySortingPriority,
             category.isDefault as categoryIsDefault,
             grocery.purchasedLastModified
         FROM GroceryEntity grocery
         INNER JOIN ProductEntity product ON grocery.productId = product.id
-        INNER JOIN CategoryEntity category ON product.categoryId = category.id
+        LEFT JOIN CategoryEntity category ON product.categoryId = category.id
+        LEFT JOIN GroceryIconEntity icon ON product.iconId = icon.id
         WHERE grocery.productId = :productId AND grocery.groceryListId = :listId
     """
     )

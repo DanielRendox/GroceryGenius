@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetValue
@@ -51,7 +50,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,7 +57,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.model.Grocery
@@ -348,13 +345,7 @@ private fun GroceryListScreen(
                         } else {
                             MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor
                         },
-                        icon = {
-                            Icon(
-                                modifier = Modifier.fillMaxSize(),
-                                painter = painterResource(R.drawable.sample_grocery_icon),
-                                contentDescription = null,
-                            )
-                        }
+                        groceryIcon = grocery.icon,
                     )
                 },
                 contentPadding = PaddingValues(
@@ -423,11 +414,9 @@ fun GroceryListScreenPreview() {
                         name = "Grocery $index",
                         purchased = Random.nextBoolean(),
                         description = "Description $index",
-                        iconUri = "",
                         category = Category(
                             id = index,
                             name = "Category$index",
-                            iconUri = "",
                             sortingPriority = index,
                             isDefault = false,
                         ),

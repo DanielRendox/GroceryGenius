@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "860ea12417b11292c273ebfb2e58a433",
+    "identityHash": "bed3281424b5d7222fe6d252c666fe17",
     "entities": [
       {
         "tableName": "CategoryEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `iconUri` TEXT NOT NULL, `sortingPriority` INTEGER NOT NULL, `isDefault` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `sortingPriority` INTEGER NOT NULL, `isDefault` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -17,12 +17,6 @@
           {
             "fieldPath": "name",
             "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "iconUri",
-            "columnName": "iconUri",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -163,7 +157,7 @@
       },
       {
         "tableName": "ProductEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `deletable` INTEGER NOT NULL, `iconUri` TEXT, `categoryId` INTEGER NOT NULL, FOREIGN KEY(`categoryId`) REFERENCES `CategoryEntity`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `deletable` INTEGER NOT NULL, `iconId` INTEGER, `categoryId` INTEGER, FOREIGN KEY(`iconId`) REFERENCES `GroceryIconEntity`(`id`) ON UPDATE CASCADE ON DELETE SET NULL , FOREIGN KEY(`categoryId`) REFERENCES `CategoryEntity`(`id`) ON UPDATE CASCADE ON DELETE SET NULL )",
         "fields": [
           {
             "fieldPath": "id",
@@ -184,16 +178,16 @@
             "notNull": true
           },
           {
-            "fieldPath": "iconUri",
-            "columnName": "iconUri",
-            "affinity": "TEXT",
+            "fieldPath": "iconId",
+            "columnName": "iconId",
+            "affinity": "INTEGER",
             "notNull": false
           },
           {
             "fieldPath": "categoryId",
             "columnName": "categoryId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -203,6 +197,15 @@
           ]
         },
         "indices": [
+          {
+            "name": "index_ProductEntity_iconId",
+            "unique": false,
+            "columnNames": [
+              "iconId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ProductEntity_iconId` ON `${TABLE_NAME}` (`iconId`)"
+          },
           {
             "name": "index_ProductEntity_categoryId",
             "unique": false,
@@ -215,8 +218,19 @@
         ],
         "foreignKeys": [
           {
+            "table": "GroceryIconEntity",
+            "onDelete": "SET NULL",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "iconId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
             "table": "CategoryEntity",
-            "onDelete": "RESTRICT",
+            "onDelete": "SET NULL",
             "onUpdate": "CASCADE",
             "columns": [
               "categoryId"
@@ -226,12 +240,48 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "GroceryIconEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `filePath` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "filePath",
+            "columnName": "filePath",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_GroceryIconEntity_filePath",
+            "unique": true,
+            "columnNames": [
+              "filePath"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_GroceryIconEntity_filePath` ON `${TABLE_NAME}` (`filePath`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '860ea12417b11292c273ebfb2e58a433')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bed3281424b5d7222fe6d252c666fe17')"
     ]
   }
 }

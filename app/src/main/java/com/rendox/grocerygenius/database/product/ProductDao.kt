@@ -19,15 +19,15 @@ interface ProductDao {
         SELECT 
             product.id,
             product.name,
-            product.iconUri,
+            icon.filePath,
             category.id as categoryId,
             category.name as categoryName,
-            category.iconUri as categoryIconUri,
             category.sortingPriority as categorySortingPriority,
             category.isDefault as categoryIsDefault,
             product.deletable
         FROM ProductEntity product
-        INNER JOIN CategoryEntity category ON product.categoryId = category.id
+        LEFT JOIN CategoryEntity category ON product.categoryId = category.id
+        LEFT JOIN GroceryIconEntity icon ON product.iconId = icon.id
         WHERE product.categoryId = :categoryId
     """
     )
@@ -38,15 +38,16 @@ interface ProductDao {
         SELECT 
             product.id,
             product.name,
-            product.iconUri,
+            icon.id,
+            icon.filePath,
             category.id as categoryId,
             category.name as categoryName,
-            category.iconUri as categoryIconUri,
             category.sortingPriority as categorySortingPriority,
             category.isDefault as categoryIsDefault,
             product.deletable
         FROM ProductEntity product
-        INNER JOIN CategoryEntity category ON product.categoryId = category.id
+        LEFT JOIN CategoryEntity category ON product.categoryId = category.id
+        LEFT JOIN GroceryIconEntity icon ON product.iconId = icon.id
         WHERE LOWER(product.name) LIKE LOWER(:name)
     """
     )
