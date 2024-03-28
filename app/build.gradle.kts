@@ -92,6 +92,11 @@ dependencies {
     implementation(libs.androidx.hilt.work)
     implementation(libs.androidx.test.runner)
 
+    implementation(libs.com.squareup.moshi)
+    implementation(libs.com.squareup.moshi.kotlin)
+    //noinspection KaptUsageInsteadOfKsp
+    kapt(libs.com.squareup.moshi.kotlin.codegen)
+
     testImplementation(platform(libs.org.junit.bom))
     testImplementation(libs.org.junit.jupiter.api)
     testImplementation(libs.org.junit.jupiter.engine)

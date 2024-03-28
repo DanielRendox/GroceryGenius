@@ -418,7 +418,6 @@ fun GroceryListScreenPreview() {
                             id = index,
                             name = "Category$index",
                             sortingPriority = index,
-                            isDefault = false,
                         ),
                     )
                 }

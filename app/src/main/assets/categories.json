@@ -1,0 +1,67 @@
+[
+  {
+    "id": 1,
+    "name": "Fruits & Vegetables",
+    "sortingPriority": 1
+  },
+  {
+    "id": 2,
+    "name": "Bakery",
+    "sortingPriority": 2
+  },
+  {
+    "id": 3,
+    "name": "Dairy & Eggs",
+    "sortingPriority": 3
+  },
+  {
+    "id": 4,
+    "name": "Meat",
+    "sortingPriority": 4
+  },
+  {
+    "id": 5,
+    "name": "Seafood",
+    "sortingPriority": 5
+  },
+  {
+    "id": 6,
+    "name": "Ingredients & Spices",
+    "sortingPriority": 6
+  },
+  {
+    "id": 7,
+    "name": "Frozen & Convenience",
+    "sortingPriority": 7
+  },
+  {
+    "id": 8,
+    "name": "Grain Products",
+    "sortingPriority": 8
+  },
+  {
+    "id": 9,
+    "name": "Drinks",
+    "sortingPriority": 9
+  },
+  {
+    "id": 10,
+    "name": "Snacks & Desserts",
+    "sortingPriority": 10
+  },
+  {
+    "id": 11,
+    "name": "Health & Beauty",
+    "sortingPriority": 11
+  },
+  {
+    "id": 12,
+    "name": "Pet Supplies",
+    "sortingPriority": 12
+  },
+  {
+    "id": 13,
+    "name": "Household & Cleaning",
+    "sortingPriority": 13
+  }
+]

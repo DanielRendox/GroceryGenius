@@ -34,7 +34,6 @@ val CombinedGrocery.category
             id = categoryId,
             name = categoryName,
             sortingPriority = categorySortingPriority,
-            isDefault = categoryIsDefault,
         )
 
         else -> null

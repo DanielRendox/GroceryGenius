@@ -12,6 +12,7 @@ espressoCore = "3.5.1"
 junit = "1.1.5"
 hilt = "2.51"
 material = "1.11.0"
+moshi = "1.15.1"
 junitBom = "5.10.2"
 truth = "1.4.2"
 kotlin = "1.9.22"
@@ -46,6 +47,10 @@ androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version
 androidx-work-testing = { module = "androidx.work:work-testing", version.ref = "androidxWork" }
 androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "andoridxHilt" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "andoridxHilt" }
+
+com-squareup-moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
+com-squareup-moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshi" }
+com-squareup-moshi-kotlin-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }
 
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
 

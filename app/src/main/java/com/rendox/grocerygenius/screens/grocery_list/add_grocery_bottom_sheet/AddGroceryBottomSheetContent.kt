@@ -263,7 +263,6 @@ private fun SearchResultsPreview() {
                     id = index,
                     name = "Category$index",
                     sortingPriority = index,
-                    isDefault = false,
                 ),
             )
         }

@@ -23,7 +23,6 @@ interface ProductDao {
             category.id as categoryId,
             category.name as categoryName,
             category.sortingPriority as categorySortingPriority,
-            category.isDefault as categoryIsDefault,
             product.deletable
         FROM ProductEntity product
         LEFT JOIN CategoryEntity category ON product.categoryId = category.id
@@ -43,7 +42,6 @@ interface ProductDao {
             category.id as categoryId,
             category.name as categoryName,
             category.sortingPriority as categorySortingPriority,
-            category.isDefault as categoryIsDefault,
             product.deletable
         FROM ProductEntity product
         LEFT JOIN CategoryEntity category ON product.categoryId = category.id
