@@ -19,7 +19,8 @@ interface ProductDao {
         SELECT 
             product.id,
             product.name,
-            icon.filePath,
+            icon.id as iconId,
+            icon.filePath as iconFilePath,
             category.id as categoryId,
             category.name as categoryName,
             category.sortingPriority as categorySortingPriority,
@@ -37,8 +38,8 @@ interface ProductDao {
         SELECT 
             product.id,
             product.name,
-            icon.id,
-            icon.filePath,
+            icon.id as iconId,
+            icon.filePath as iconFilePath,
             category.id as categoryId,
             category.name as categoryName,
             category.sortingPriority as categorySortingPriority,

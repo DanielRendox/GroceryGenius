@@ -235,11 +235,13 @@ class GroceryListScreenViewModel @Inject constructor(
                 val correspondingGroceryInTheList = groceriesFlow.value
                     .flatMap { it.groceries }
                     .find { it.productId == product.id }
+                val iconFilePath = product.icon?.filePath
+                println("searchResults: $product, $iconFilePath")
                 GroceryPresentation(
                     productId = product.id,
                     name = product.name,
                     icon = product.icon,
-                    iconBitmap = product.icon?.let { bitmapLoader.loadFromFile(it.filePath) },
+                    iconBitmap = iconFilePath?.let { bitmapLoader.loadFromFile(it) },
                     purchased = correspondingGroceryInTheList?.purchased ?: false,
                     description = correspondingGroceryInTheList?.description,
                     category = product.category,
