@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "a02ce176568e5e5b3da31a2e25e09045",
+    "identityHash": "06c21abba53117225d39fb40c3213be4",
     "entities": [
       {
         "tableName": "CategoryEntity",
@@ -151,7 +151,7 @@
       },
       {
         "tableName": "ProductEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `deletable` INTEGER NOT NULL, `iconId` INTEGER, `categoryId` INTEGER, FOREIGN KEY(`iconId`) REFERENCES `GroceryIconEntity`(`id`) ON UPDATE CASCADE ON DELETE SET NULL , FOREIGN KEY(`categoryId`) REFERENCES `CategoryEntity`(`id`) ON UPDATE CASCADE ON DELETE SET NULL )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `deletable` INTEGER NOT NULL, `iconId` INTEGER, `categoryId` INTEGER, FOREIGN KEY(`iconId`) REFERENCES `IconEntity`(`id`) ON UPDATE CASCADE ON DELETE SET NULL , FOREIGN KEY(`categoryId`) REFERENCES `CategoryEntity`(`id`) ON UPDATE CASCADE ON DELETE SET NULL )",
         "fields": [
           {
             "fieldPath": "id",
@@ -212,7 +212,7 @@
         ],
         "foreignKeys": [
           {
-            "table": "GroceryIconEntity",
+            "table": "IconEntity",
             "onDelete": "SET NULL",
             "onUpdate": "CASCADE",
             "columns": [
@@ -236,7 +236,7 @@
         ]
       },
       {
-        "tableName": "GroceryIconEntity",
+        "tableName": "IconEntity",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `filePath` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
@@ -260,13 +260,13 @@
         },
         "indices": [
           {
-            "name": "index_GroceryIconEntity_filePath",
+            "name": "index_IconEntity_filePath",
             "unique": true,
             "columnNames": [
               "filePath"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_GroceryIconEntity_filePath` ON `${TABLE_NAME}` (`filePath`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_IconEntity_filePath` ON `${TABLE_NAME}` (`filePath`)"
           }
         ],
         "foreignKeys": []
@@ -275,7 +275,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a02ce176568e5e5b3da31a2e25e09045')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '06c21abba53117225d39fb40c3213be4')"
     ]
   }
 }

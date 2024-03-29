@@ -1,5 +1,7 @@
 package com.rendox.grocerygenius.network.icons
 
+import com.rendox.grocerygenius.model.Icon
+
 interface IconNetworkDataSource {
-    suspend fun downloadIcon(iconId: Int): String
+    suspend fun downloadIcons(): List<Icon>
 }

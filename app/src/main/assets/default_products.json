@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "name": "Apples",
+    "iconId": 1,
+    "categoryId": 1,
+    "editable": false
+  },
+  {
+    "id": 2,
+    "name": "Avocado",
+    "iconId": 2,
+    "categoryId": 1,
+    "editable": false
+  },
+  {
+    "id": 3,
+    "name": "Bananas",
+    "iconId": 3,
+    "categoryId": 1,
+    "editable": false
+  },
+  {
+    "id": 4,
+    "name": "Beetroot",
+    "iconId": 4,
+    "categoryId": 1,
+    "editable": false
+  },
+  {
+    "id": 5,
+    "name": "Blackcurrant",
+    "iconId": 5,
+    "categoryId": 1,
+    "editable": false
+  },
+  {
+    "id": 6,
+    "name": "Redcurrant",
+    "iconId": 5,
+    "categoryId": 1,
+    "editable": false
+  },
+  {
+    "id": 7,
+    "name": "Blueberries",
+    "iconId": 5,
+    "categoryId": 1,
+    "editable": false
+  },
+  {
+    "id": 8,
+    "name": "Blackberries",
+    "iconId": 5,
+    "categoryId": 1,
+    "editable": false
+  }
+]

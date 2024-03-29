@@ -52,5 +52,5 @@ fun ProductNetwork.asEntity() = ProductEntity(
     name = name,
     categoryId = categoryId,
     iconId = iconId,
-    deletable = deletable,
+    deletable = editable,
 )

@@ -26,7 +26,7 @@ interface ProductDao {
             product.deletable
         FROM ProductEntity product
         LEFT JOIN CategoryEntity category ON product.categoryId = category.id
-        LEFT JOIN GroceryIconEntity icon ON product.iconId = icon.id
+        LEFT JOIN IconEntity icon ON product.iconId = icon.id
         WHERE product.categoryId = :categoryId
     """
     )
@@ -45,7 +45,7 @@ interface ProductDao {
             product.deletable
         FROM ProductEntity product
         LEFT JOIN CategoryEntity category ON product.categoryId = category.id
-        LEFT JOIN GroceryIconEntity icon ON product.iconId = icon.id
+        LEFT JOIN IconEntity icon ON product.iconId = icon.id
         WHERE LOWER(product.name) LIKE LOWER(:name)
     """
     )

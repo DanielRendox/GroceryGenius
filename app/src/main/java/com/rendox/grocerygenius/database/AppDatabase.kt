@@ -6,7 +6,8 @@ import com.rendox.grocerygenius.database.category.CategoryDao
 import com.rendox.grocerygenius.database.category.CategoryEntity
 import com.rendox.grocerygenius.database.grocery.GroceryDao
 import com.rendox.grocerygenius.database.grocery.GroceryEntity
-import com.rendox.grocerygenius.database.grocery_icon.GroceryIconEntity
+import com.rendox.grocerygenius.database.grocery_icon.IconDao
+import com.rendox.grocerygenius.database.grocery_icon.IconEntity
 import com.rendox.grocerygenius.database.grocery_list.GroceryListDao
 import com.rendox.grocerygenius.database.grocery_list.GroceryListEntity
 import com.rendox.grocerygenius.database.product.ProductDao
@@ -18,7 +19,7 @@ import com.rendox.grocerygenius.database.product.ProductEntity
         GroceryEntity::class,
         GroceryListEntity::class,
         ProductEntity::class,
-        GroceryIconEntity::class,
+        IconEntity::class,
     ],
     version = 1,
 )
@@ -27,4 +28,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun groceryDao(): GroceryDao
     abstract fun groceryListDao(): GroceryListDao
     abstract fun productDao(): ProductDao
+    abstract fun iconDao(): IconDao
 }

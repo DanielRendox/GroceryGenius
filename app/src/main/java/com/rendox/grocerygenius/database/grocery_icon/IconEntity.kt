@@ -5,7 +5,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(indices = [Index(value = ["filePath"], unique = true)])
-data class GroceryIconEntity(
+data class IconEntity(
     @PrimaryKey val id: Int,
     val filePath: String,
 )

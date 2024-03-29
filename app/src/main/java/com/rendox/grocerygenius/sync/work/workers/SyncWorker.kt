@@ -28,6 +28,7 @@ import androidx.work.WorkerParameters
 import com.rendox.grocerygenius.data.Synchronizer
 import com.rendox.grocerygenius.data.category.CategoryRepository
 import com.rendox.grocerygenius.data.grocery_list.GroceryListRepository
+import com.rendox.grocerygenius.data.icons.IconRepository
 import com.rendox.grocerygenius.data.product.ProductRepository
 import com.rendox.grocerygenius.network.di.Dispatcher
 import com.rendox.grocerygenius.network.di.GroceryGeniusDispatchers
@@ -48,6 +49,7 @@ internal class SyncWorker @AssistedInject constructor(
     private val categoryRepository: CategoryRepository,
     private val groceryListRepository: GroceryListRepository,
     private val productRepository: ProductRepository,
+    private val iconRepository: IconRepository,
     @Dispatcher(GroceryGeniusDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : CoroutineWorker(appContext, workerParams), Synchronizer {
 
@@ -55,6 +57,7 @@ internal class SyncWorker @AssistedInject constructor(
         appContext.syncForegroundInfo()
 
     override suspend fun doWork(): Result = withContext(ioDispatcher) {
+        iconRepository.sync()
         categoryRepository.sync()
         productRepository.sync()
         groceryListRepository.sync()

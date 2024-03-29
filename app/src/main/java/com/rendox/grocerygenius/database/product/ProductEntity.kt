@@ -5,12 +5,12 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.rendox.grocerygenius.database.category.CategoryEntity
-import com.rendox.grocerygenius.database.grocery_icon.GroceryIconEntity
+import com.rendox.grocerygenius.database.grocery_icon.IconEntity
 
 @Entity(
     foreignKeys = [
         ForeignKey(
-            entity = GroceryIconEntity::class,
+            entity = IconEntity::class,
             parentColumns = ["id"],
             childColumns = ["iconId"],
             onDelete = ForeignKey.SET_NULL,

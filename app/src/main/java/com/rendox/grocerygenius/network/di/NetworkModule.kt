@@ -4,6 +4,8 @@ import com.rendox.grocerygenius.network.category.CategoryNetworkDataSource
 import com.rendox.grocerygenius.network.category.OfflineCategoryNetworkDataSource
 import com.rendox.grocerygenius.network.grocery_list.GroceryListNetworkDataSource
 import com.rendox.grocerygenius.network.grocery_list.OfflineGroceryListNetworkDataSourceFake
+import com.rendox.grocerygenius.network.icons.IconNetworkDataSource
+import com.rendox.grocerygenius.network.icons.OfflineIconNetworkDataSource
 import com.rendox.grocerygenius.network.product.OfflineProductNetworkDataSource
 import com.rendox.grocerygenius.network.product.ProductNetworkDataSource
 import com.squareup.moshi.Moshi
@@ -35,6 +37,12 @@ abstract class NetworkModule {
     abstract fun bindProductNetworkDataSource(
         productNetworkDataSource: OfflineProductNetworkDataSource
     ): ProductNetworkDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindIconNetworkDataSource(
+        iconNetworkDataSource: OfflineIconNetworkDataSource
+    ): IconNetworkDataSource
 
     companion object {
         @Provides

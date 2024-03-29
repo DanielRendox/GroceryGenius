@@ -1,0 +1,114 @@
+[
+  {
+    "id": 1,
+    "assetFilePath": "grocery/icons/apple_v2.png"
+  },
+  {
+    "id": 2,
+    "assetFilePath": "grocery/icons/avocado_v1.png"
+  },
+  {
+    "id": 3,
+    "assetFilePath": "grocery/icons/bananas_v1.png"
+  },
+  {
+    "id": 4,
+    "assetFilePath": "grocery/icons/beet_v1.png"
+  },
+  {
+    "id": 5,
+    "assetFilePath": "grocery/icons/ribes_v2.png"
+  },
+  {
+    "id": 6,
+    "assetFilePath": "grocery/icons/bottle_small_v1.png"
+  },
+  {
+    "id": 7,
+    "assetFilePath": "grocery/icons/broccoli_v1.png"
+  },
+  {
+    "id": 8,
+    "assetFilePath": "grocery/icons/carrots_v1.png"
+  },
+  {
+    "id": 9,
+    "assetFilePath": "grocery/icons/cheese_v1.png"
+  },
+  {
+    "id": 10,
+    "assetFilePath": "grocery/icons/cottage_cheese_v1.png"
+  },
+  {
+    "id": 11,
+    "assetFilePath": "grocery/icons/cucumber_v1.png"
+  },
+  {
+    "id": 12,
+    "assetFilePath": "grocery/icons/eggs_v1.png"
+  },
+  {
+    "id": 13,
+    "assetFilePath": "grocery/icons/grapes_v1.png"
+  },
+  {
+    "id": 14,
+    "assetFilePath": "grocery/icons/juice_v1.png"
+  },
+  {
+    "id": 15,
+    "assetFilePath": "grocery/icons/lemon_v1.png"
+  },
+  {
+    "id": 16,
+    "assetFilePath": "grocery/icons/melon_v1.png"
+  },
+  {
+    "id": 17,
+    "assetFilePath": "grocery/icons/milk_v1.png"
+  },
+  {
+    "id": 18,
+    "assetFilePath": "grocery/icons/onion_v1.png"
+  },
+  {
+    "id": 19,
+    "assetFilePath": "grocery/icons/orange_v1.png"
+  },
+  {
+    "id": 20,
+    "assetFilePath": "grocery/icons/parsley_v1.png"
+  },
+  {
+    "id": 21,
+    "assetFilePath": "grocery/icons/pear_v1.png"
+  },
+  {
+    "id": 22,
+    "assetFilePath": "grocery/icons/pepper_v1.png"
+  },
+  {
+    "id": 23,
+    "assetFilePath": "grocery/icons/pineapple_v1.png"
+  },
+  {
+    "id": 24,
+    "assetFilePath": "grocery/icons/potatoes_v1.png"
+  },
+  {
+    "id": 25,
+    "assetFilePath": "grocery/icons/sour_cream_v1.png"
+  },
+  {
+    "id": 26,
+    "assetFilePath": "grocery/icons/sweet_corn_v1.png"
+  },
+  {
+    "id": 27,
+    "assetFilePath": "grocery/icons/tangerines_v1.png"
+  },
+  {
+    "id": 28,
+    "assetFilePath": "grocery/icons/tomato_v1.png"
+  }
+]
