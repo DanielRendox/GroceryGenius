@@ -1,14 +1,17 @@
 package com.rendox.grocerygenius.network.icons
 
+import android.content.Context
 import com.rendox.grocerygenius.file_storage.AssetToFileSaver
 import com.rendox.grocerygenius.file_storage.JsonAssetDecoder
 import com.rendox.grocerygenius.model.Icon
 import com.rendox.grocerygenius.network.model.GroceryIconAsset
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class OfflineIconNetworkDataSource @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val jsonAssetDecoder: JsonAssetDecoder,
     private val moshi: Moshi,
     private val assetToFileSaver: AssetToFileSaver,
@@ -25,7 +28,7 @@ class OfflineIconNetworkDataSource @Inject constructor(
             file?.let {
                 Icon(
                     id = icon.id,
-                    filePath = it.absolutePath,
+                    filePath = it.toRelativeString(appContext.filesDir),
                 )
             }
         }

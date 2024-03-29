@@ -1,5 +1,6 @@
 package com.rendox.grocerygenius.screens.grocery_list
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,6 +18,7 @@ import com.rendox.grocerygenius.ui.GroceryPresentation
 import com.rendox.grocerygenius.ui.asPresentationModel
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -29,10 +31,12 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class GroceryListScreenViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val groceryRepository: GroceryRepository,
     groceryListRepository: GroceryListRepository,
     private val productRepository: ProductRepository,
@@ -64,7 +68,9 @@ class GroceryListScreenViewModel @Inject constructor(
                     }
                     val presentationGroceries = sortedGroceries.map { grocery ->
                         val iconBitmap = grocery.icon?.let {
-                            bitmapLoader.loadFromFile(it.filePath)
+                            bitmapLoader.loadFromFile(
+                                File(appContext.filesDir, it.filePath).absolutePath
+                            )
                         }
                         grocery.asPresentationModel(iconBitmap)
                     }
@@ -118,11 +124,13 @@ class GroceryListScreenViewModel @Inject constructor(
         .map { editGroceryIdFlow ->
             val groceryFromRepository = groceryRepository
                 .getGrocery(
-                productId = editGroceryIdFlow ?: return@map null,
-                listId = groceryListId,
-            )
+                    productId = editGroceryIdFlow ?: return@map null,
+                    listId = groceryListId,
+                )
             val groceryPresentation = groceryFromRepository?.let { grocery ->
-                val iconBitmap = grocery.icon?.let { bitmapLoader.loadFromFile(it.filePath) }
+                val iconBitmap = grocery.icon?.let {
+                    bitmapLoader.loadFromFile(File(appContext.filesDir, it.filePath).absolutePath)
+                }
                 grocery.asPresentationModel(iconBitmap)
             }
             groceryPresentation
@@ -241,7 +249,9 @@ class GroceryListScreenViewModel @Inject constructor(
                     productId = product.id,
                     name = product.name,
                     icon = product.icon,
-                    iconBitmap = iconFilePath?.let { bitmapLoader.loadFromFile(it) },
+                    iconBitmap = iconFilePath?.let {
+                        bitmapLoader.loadFromFile(File(appContext.filesDir, it).absolutePath)
+                    },
                     purchased = correspondingGroceryInTheList?.purchased ?: false,
                     description = correspondingGroceryInTheList?.description,
                     category = product.category,
