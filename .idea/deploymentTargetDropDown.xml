@@ -2,11 +2,24 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="AndroidResourceToFileSaverTest">
-        <State />
-      </entry>
       <entry key="AssetToFileSaverTest">
         <State />
+      </entry>
+      <entry key="ChangeListVersionsDataSourceTest">
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\danie\.android\avd\Pixel_5_API_33.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-03-30T09:12:32.553341800Z" />
+        </State>
       </entry>
       <entry key="app">
         <State>

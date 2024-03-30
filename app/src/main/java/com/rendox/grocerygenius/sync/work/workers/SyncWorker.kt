@@ -30,6 +30,8 @@ import com.rendox.grocerygenius.data.category.CategoryRepository
 import com.rendox.grocerygenius.data.grocery_list.GroceryListRepository
 import com.rendox.grocerygenius.data.icons.IconRepository
 import com.rendox.grocerygenius.data.product.ProductRepository
+import com.rendox.grocerygenius.datastore.ChangeListVersions
+import com.rendox.grocerygenius.datastore.ChangeListVersionsDataSource
 import com.rendox.grocerygenius.network.di.Dispatcher
 import com.rendox.grocerygenius.network.di.GroceryGeniusDispatchers
 import com.rendox.grocerygenius.sync.work.initializers.syncForegroundInfo
@@ -43,7 +45,7 @@ import kotlinx.coroutines.withContext
  * sync functionality.
  */
 @HiltWorker
-internal class SyncWorker @AssistedInject constructor(
+class SyncWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val categoryRepository: CategoryRepository,
@@ -51,18 +53,29 @@ internal class SyncWorker @AssistedInject constructor(
     private val productRepository: ProductRepository,
     private val iconRepository: IconRepository,
     @Dispatcher(GroceryGeniusDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+    private val changeListVersionsDataSource: ChangeListVersionsDataSource,
 ) : CoroutineWorker(appContext, workerParams), Synchronizer {
 
     override suspend fun getForegroundInfo(): ForegroundInfo =
         appContext.syncForegroundInfo()
 
     override suspend fun doWork(): Result = withContext(ioDispatcher) {
-        iconRepository.sync()
-        categoryRepository.sync()
-        productRepository.sync()
-        groceryListRepository.sync()
-        Result.success()
+        val syncedSuccessfully = listOf(
+            groceryListRepository.sync(),
+            iconRepository.sync(),
+            categoryRepository.sync(),
+            productRepository.sync(),
+        ).all { it }
+        if (syncedSuccessfully) Result.success() else Result.failure()
     }
+
+    override suspend fun getChangeListVersions(): ChangeListVersions =
+        changeListVersionsDataSource.getChangeListVersions()
+
+    override suspend fun updateChangeListVersions(
+        update: ChangeListVersions.() -> ChangeListVersions
+    ) = changeListVersionsDataSource.updateChangeListVersion(update)
+
 
     companion object {
         /**

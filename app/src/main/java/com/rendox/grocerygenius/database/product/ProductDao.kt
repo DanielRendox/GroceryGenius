@@ -5,14 +5,15 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 
 @Dao
 interface ProductDao {
     @Insert
     suspend fun insertProduct(product: ProductEntity)
 
-    @Insert
-    suspend fun insertProducts(products: List<ProductEntity>)
+    @Upsert
+    suspend fun upsertProducts(products: List<ProductEntity>)
 
     @Query(
         """
@@ -60,4 +61,12 @@ interface ProductDao {
 
     @Delete
     suspend fun deleteProduct(product: ProductEntity)
+
+    @Query(
+        """
+            DELETE FROM ProductEntity
+            WHERE id in (:ids)
+        """,
+    )
+    suspend fun deleteProductsByIds(ids: List<Int>)
 }

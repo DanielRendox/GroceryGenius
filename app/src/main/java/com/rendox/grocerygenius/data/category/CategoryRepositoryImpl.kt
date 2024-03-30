@@ -1,6 +1,7 @@
 package com.rendox.grocerygenius.data.category
 
 import com.rendox.grocerygenius.data.Synchronizer
+import com.rendox.grocerygenius.data.changeListSync
 import com.rendox.grocerygenius.data.model.asEntity
 import com.rendox.grocerygenius.data.model.asExternalModel
 import com.rendox.grocerygenius.database.category.CategoryDao
@@ -24,11 +25,28 @@ class CategoryRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun syncWith(synchronizer: Synchronizer) {
-        val existingCategories = categoryDao.getAllCategories().first()
-        if (existingCategories.isEmpty()) {
+    override suspend fun syncWith(synchronizer: Synchronizer) = synchronizer.changeListSync(
+        checkIfExistingDataIsEmpty = {
+            categoryDao.getAllCategories().first().isEmpty()
+        },
+        prepopulateWithInitialData = {
             val categories = categoryNetworkDataSource.getAllCategories()
-            categoryDao.insertCategories(categories.map { it.asEntity() })
-        }
-    }
+            categoryDao.upsertCategories(categories.map { it.asEntity() })
+        },
+        versionReader = { it.categoryVersion },
+        changeListFetcher = { currentVersion ->
+            categoryNetworkDataSource.getCategoryChangeList(after = currentVersion)
+        },
+        versionUpdater = { latestVersion ->
+            copy(categoryVersion = latestVersion)
+        },
+        modelDeleter = { categoryIds ->
+            categoryDao.deleteCategories(categoryIds)
+        },
+        modelUpdater = { changedIds ->
+            val networkCategories =
+                categoryNetworkDataSource.getCategoriesByIds(ids = changedIds)
+            categoryDao.upsertCategories(networkCategories.map { it.asEntity() })
+        },
+    )
 }

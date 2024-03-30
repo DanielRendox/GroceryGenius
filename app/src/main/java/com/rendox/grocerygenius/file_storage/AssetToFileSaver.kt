@@ -24,8 +24,8 @@ class AssetToFileSaver @Inject constructor(
     ): File? = withContext(ioDispatcher) {
         val derivedOutputFileName = outputFileName ?: Uri.parse(assetFilePath).lastPathSegment
         if (derivedOutputFileName == null) {
-            Log.d(
-                "ResourceToFileSaver",
+            Log.w(
+                "AssetToFileSaver",
                 "Failed to derive output file name from asset file name: $assetFilePath"
             )
             return@withContext null
@@ -36,7 +36,7 @@ class AssetToFileSaver @Inject constructor(
             .joinToString("/")
         val outputDir = File(appContext.filesDir, derivedOutputDirPath)
         if (!outputDir.mkdirs()) {
-            Log.d("ResourceToFileSaver", "Failed to create directory: ${outputDir.toURI()}")
+            Log.w("AssetToFileSaver", "Failed to create directory: ${outputDir.toURI()}")
         }
         val outputFile = File(outputDir, derivedOutputFileName)
         val assetManager = appContext.assets
@@ -49,7 +49,7 @@ class AssetToFileSaver @Inject constructor(
                     input.copyTo(output)
                 }
             }
-            Log.i("ResourceToFileSaver", "File saved successfully: ${outputFile.toURI()}")
+            Log.i("AssetToFileSaver", "File saved successfully: ${outputFile.toURI()}")
         } catch (e: IOException) {
             e.printStackTrace()
             return@withContext null

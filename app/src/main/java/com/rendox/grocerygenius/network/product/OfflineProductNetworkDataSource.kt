@@ -1,6 +1,7 @@
 package com.rendox.grocerygenius.network.product
 
 import com.rendox.grocerygenius.file_storage.JsonAssetDecoder
+import com.rendox.grocerygenius.network.model.NetworkChangeList
 import com.rendox.grocerygenius.network.model.ProductNetwork
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -16,7 +17,19 @@ class OfflineProductNetworkDataSource @Inject constructor(
         val adapter = moshi.adapter<List<ProductNetwork>>(type)
         return jsonAssetDecoder.decodeFromFile(
             adapter = adapter,
-            fileName = "default_products.json",
+            fileName = "product/default_products.json",
+        ) ?: emptyList()
+    }
+
+    override suspend fun getProductsByIds(ids: List<Int>): List<ProductNetwork> =
+        getAllProducts().filter { it.id in ids }
+
+    override suspend fun getProductChangeList(after: Int): List<NetworkChangeList> {
+        val type = Types.newParameterizedType(List::class.java, NetworkChangeList::class.java)
+        val adapter = moshi.adapter<List<NetworkChangeList>>(type)
+        return jsonAssetDecoder.decodeFromFile(
+            adapter = adapter,
+            fileName = "product/default_products_change_list.json",
         ) ?: emptyList()
     }
 }

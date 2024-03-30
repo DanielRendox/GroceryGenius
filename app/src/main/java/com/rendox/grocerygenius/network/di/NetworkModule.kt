@@ -3,7 +3,7 @@ package com.rendox.grocerygenius.network.di
 import com.rendox.grocerygenius.network.category.CategoryNetworkDataSource
 import com.rendox.grocerygenius.network.category.OfflineCategoryNetworkDataSource
 import com.rendox.grocerygenius.network.grocery_list.GroceryListNetworkDataSource
-import com.rendox.grocerygenius.network.grocery_list.OfflineGroceryListNetworkDataSourceFake
+import com.rendox.grocerygenius.network.grocery_list.OfflineGroceryListNetworkDataSource
 import com.rendox.grocerygenius.network.icons.IconNetworkDataSource
 import com.rendox.grocerygenius.network.icons.OfflineIconNetworkDataSource
 import com.rendox.grocerygenius.network.product.OfflineProductNetworkDataSource
@@ -29,7 +29,7 @@ abstract class NetworkModule {
     @Binds
     @Singleton
     abstract fun bindGroceryListNetworkDataSource(
-        groceryNetworkDataSource: OfflineGroceryListNetworkDataSourceFake
+        groceryNetworkDataSource: OfflineGroceryListNetworkDataSource
     ): GroceryListNetworkDataSource
 
     @Binds

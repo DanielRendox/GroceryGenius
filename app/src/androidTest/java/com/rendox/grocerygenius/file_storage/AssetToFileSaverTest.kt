@@ -1,9 +1,8 @@
-package com.rendox.grocerygenius
+package com.rendox.grocerygenius.file_storage
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
-import com.rendox.grocerygenius.file_storage.AssetToFileSaver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import org.junit.Before

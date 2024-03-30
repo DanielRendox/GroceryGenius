@@ -5,24 +5,14 @@
     "sortingPriority": 1
   },
   {
-    "id": 2,
-    "name": "Bakery",
-    "sortingPriority": 2
-  },
-  {
     "id": 3,
     "name": "Dairy & Eggs",
     "sortingPriority": 3
   },
   {
     "id": 4,
-    "name": "Meat",
+    "name": "Meat & Fish",
     "sortingPriority": 4
-  },
-  {
-    "id": 5,
-    "name": "Seafood",
-    "sortingPriority": 5
   },
   {
     "id": 6,
@@ -46,7 +36,7 @@
   },
   {
     "id": 10,
-    "name": "Snacks & Desserts",
+    "name": "Snacks & Bakery",
     "sortingPriority": 10
   },
   {
@@ -58,10 +48,5 @@
     "id": 12,
     "name": "Pet Supplies",
     "sortingPriority": 12
-  },
-  {
-    "id": 13,
-    "name": "Household & Cleaning",
-    "sortingPriority": 13
   }
 ]

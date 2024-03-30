@@ -1,6 +1,7 @@
 package com.rendox.grocerygenius.data.product
 
 import com.rendox.grocerygenius.data.Synchronizer
+import com.rendox.grocerygenius.data.changeListSync
 import com.rendox.grocerygenius.data.model.asEntity
 import com.rendox.grocerygenius.data.model.asExternalModel
 import com.rendox.grocerygenius.database.product.ProductDao
@@ -36,11 +37,27 @@ class ProductRepositoryImpl @Inject constructor(
         productDao.deleteProduct(product.asEntity())
     }
 
-    override suspend fun syncWith(synchronizer: Synchronizer) {
-        val existingProducts = productDao.getAllProducts()
-        if (existingProducts.isEmpty()) {
+    override suspend fun syncWith(synchronizer: Synchronizer) = synchronizer.changeListSync(
+        checkIfExistingDataIsEmpty = {
+            productDao.getAllProducts().isEmpty()
+        },
+        prepopulateWithInitialData = {
             val products = productNetworkDataSource.getAllProducts()
-            productDao.insertProducts(products.map { it.asEntity() })
-        }
-    }
+            productDao.upsertProducts(products.map { it.asEntity() })
+        },
+        versionReader = { it.productVersion },
+        changeListFetcher = { currentVersion ->
+            productNetworkDataSource.getProductChangeList(after = currentVersion)
+        },
+        versionUpdater = { latestVersion ->
+            copy(categoryVersion = latestVersion)
+        },
+        modelDeleter = { productIds ->
+            productDao.deleteProductsByIds(productIds)
+        },
+        modelUpdater = { changedIds ->
+            val networkCategories = productNetworkDataSource.getProductsByIds(ids = changedIds)
+            productDao.upsertProducts(networkCategories.map { it.asEntity() })
+        },
+    )
 }

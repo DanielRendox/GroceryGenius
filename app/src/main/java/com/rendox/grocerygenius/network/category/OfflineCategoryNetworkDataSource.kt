@@ -2,6 +2,7 @@ package com.rendox.grocerygenius.network.category
 
 import com.rendox.grocerygenius.file_storage.JsonAssetDecoder
 import com.rendox.grocerygenius.network.model.CategoryNetwork
+import com.rendox.grocerygenius.network.model.NetworkChangeList
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import javax.inject.Inject
@@ -15,7 +16,20 @@ class OfflineCategoryNetworkDataSource @Inject constructor(
         val adapter = moshi.adapter<List<CategoryNetwork>>(type)
         return jsonAssetDecoder.decodeFromFile(
             adapter = adapter,
-            fileName = "categories.json",
+            fileName = "category/categories.json",
+        ) ?: emptyList()
+    }
+
+    override suspend fun getCategoriesByIds(ids: List<Int>): List<CategoryNetwork> {
+        return getAllCategories().filter { it.id in ids }
+    }
+
+    override suspend fun getCategoryChangeList(after: Int): List<NetworkChangeList> {
+        val type = Types.newParameterizedType(List::class.java, NetworkChangeList::class.java)
+        val adapter = moshi.adapter<List<NetworkChangeList>>(type)
+        return jsonAssetDecoder.decodeFromFile(
+            adapter = adapter,
+            fileName = "category/categories_change_list.json",
         ) ?: emptyList()
     }
 }
