@@ -3,7 +3,7 @@ package com.rendox.grocerygenius.data.model
 import com.rendox.grocerygenius.database.product.CombinedProduct
 import com.rendox.grocerygenius.database.product.ProductEntity
 import com.rendox.grocerygenius.model.Category
-import com.rendox.grocerygenius.model.Icon
+import com.rendox.grocerygenius.model.IconReference
 import com.rendox.grocerygenius.model.Product
 import com.rendox.grocerygenius.network.model.ProductNetwork
 
@@ -25,7 +25,7 @@ fun CombinedProduct.asExternalModel() = Product(
 
 val CombinedProduct.icon
     get() = when {
-        iconId != null && iconFilePath != null -> Icon(
+        iconId != null && iconFilePath != null -> IconReference(
             id = iconId,
             filePath = iconFilePath,
         )

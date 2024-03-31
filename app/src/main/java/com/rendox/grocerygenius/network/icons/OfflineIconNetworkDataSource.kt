@@ -3,7 +3,7 @@ package com.rendox.grocerygenius.network.icons
 import android.content.Context
 import com.rendox.grocerygenius.file_storage.AssetToFileSaver
 import com.rendox.grocerygenius.file_storage.JsonAssetDecoder
-import com.rendox.grocerygenius.model.Icon
+import com.rendox.grocerygenius.model.IconReference
 import com.rendox.grocerygenius.network.model.GroceryIconAsset
 import com.rendox.grocerygenius.network.model.NetworkChangeList
 import com.squareup.moshi.Moshi
@@ -18,10 +18,10 @@ class OfflineIconNetworkDataSource @Inject constructor(
     private val assetToFileSaver: AssetToFileSaver,
 ) : IconNetworkDataSource {
 
-    override suspend fun downloadIcons(): List<Icon> =
+    override suspend fun downloadIcons(): List<IconReference> =
         getReferencesToIcons().saveIconsToInternalStorage()
 
-    override suspend fun downloadIconsByIds(ids: List<String>): List<Icon> =
+    override suspend fun downloadIconsByIds(ids: List<String>): List<IconReference> =
         getReferencesToIcons().filter { it.id in ids }.saveIconsToInternalStorage()
 
     private suspend fun getReferencesToIcons(): List<GroceryIconAsset> {
@@ -33,11 +33,11 @@ class OfflineIconNetworkDataSource @Inject constructor(
         ) ?: emptyList()
     }
 
-    private suspend fun List<GroceryIconAsset>.saveIconsToInternalStorage(): List<Icon> =
+    private suspend fun List<GroceryIconAsset>.saveIconsToInternalStorage(): List<IconReference> =
         this.mapNotNull { icon ->
             val file = assetToFileSaver.copyAssetToInternalStorage(icon.assetFilePath)
             file?.let {
-                Icon(
+                IconReference(
                     id = icon.id,
                     filePath = it.toRelativeString(appContext.filesDir),
                 )
