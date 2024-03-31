@@ -50,7 +50,7 @@ class ProductRepositoryImpl @Inject constructor(
             productNetworkDataSource.getProductChangeList(after = currentVersion)
         },
         versionUpdater = { latestVersion ->
-            copy(categoryVersion = latestVersion)
+            copy(productVersion = latestVersion)
         },
         modelDeleter = { productIds ->
             productDao.deleteProductsByIds(productIds)

@@ -62,11 +62,10 @@ suspend fun Synchronizer.changeListSync(
 
     if (checkIfExistingDataIsEmpty()) {
         prepopulateWithInitialData()
-        latestVersion?.let {
-            updateChangeListVersions {
-                versionUpdater(it)
-            }
+        updateChangeListVersions {
+            versionUpdater(latestVersion ?: 0)
         }
+        println("Initial data populated. Sync complete. Change list versions = ${getChangeListVersions()}")
         return@suspendRunCatching true
     }
     if (latestVersion == null) return@suspendRunCatching true
