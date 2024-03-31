@@ -35,9 +35,7 @@ class AssetToFileSaver @Inject constructor(
             .dropLast(1)
             .joinToString("/")
         val outputDir = File(appContext.filesDir, derivedOutputDirPath)
-        if (!outputDir.mkdirs()) {
-            Log.w("AssetToFileSaver", "Failed to create directory: ${outputDir.toURI()}")
-        }
+        !outputDir.mkdirs()
         val outputFile = File(outputDir, derivedOutputFileName)
         val assetManager = appContext.assets
 
