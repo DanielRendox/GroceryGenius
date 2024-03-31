@@ -30,8 +30,8 @@ import com.rendox.grocerygenius.database.product.ProductEntity
     ]
 )
 data class GroceryEntity(
-    val productId: Int,
-    val groceryListId: Int,
+    val productId: String,
+    val groceryListId: String,
     val description: String?,
     val purchased: Boolean,
     val purchasedLastModified: Long,

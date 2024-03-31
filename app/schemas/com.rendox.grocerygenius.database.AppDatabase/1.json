@@ -2,16 +2,16 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "860ea12417b11292c273ebfb2e58a433",
+    "identityHash": "47e95ff68d3468b3326970d9920b8647",
     "entities": [
       {
         "tableName": "CategoryEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `iconUri` TEXT NOT NULL, `sortingPriority` INTEGER NOT NULL, `isDefault` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `sortingPriority` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -21,26 +21,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "iconUri",
-            "columnName": "iconUri",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
             "fieldPath": "sortingPriority",
             "columnName": "sortingPriority",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isDefault",
-            "columnName": "isDefault",
             "affinity": "INTEGER",
             "notNull": true
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
             "id"
           ]
@@ -50,18 +38,18 @@
       },
       {
         "tableName": "GroceryEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`productId` INTEGER NOT NULL, `groceryListId` INTEGER NOT NULL, `description` TEXT, `purchased` INTEGER NOT NULL, `purchasedLastModified` INTEGER NOT NULL, PRIMARY KEY(`productId`, `groceryListId`), FOREIGN KEY(`productId`) REFERENCES `ProductEntity`(`id`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`groceryListId`) REFERENCES `GroceryListEntity`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`productId` TEXT NOT NULL, `groceryListId` TEXT NOT NULL, `description` TEXT, `purchased` INTEGER NOT NULL, `purchasedLastModified` INTEGER NOT NULL, PRIMARY KEY(`productId`, `groceryListId`), FOREIGN KEY(`productId`) REFERENCES `ProductEntity`(`id`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`groceryListId`) REFERENCES `GroceryListEntity`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "productId",
             "columnName": "productId",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "groceryListId",
             "columnName": "groceryListId",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -137,12 +125,12 @@
       },
       {
         "tableName": "GroceryListEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -153,7 +141,7 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
             "id"
           ]
@@ -163,12 +151,12 @@
       },
       {
         "tableName": "ProductEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `deletable` INTEGER NOT NULL, `iconUri` TEXT, `categoryId` INTEGER NOT NULL, FOREIGN KEY(`categoryId`) REFERENCES `CategoryEntity`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `deletable` INTEGER NOT NULL, `iconId` TEXT, `categoryId` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`iconId`) REFERENCES `IconEntity`(`id`) ON UPDATE CASCADE ON DELETE SET NULL , FOREIGN KEY(`categoryId`) REFERENCES `CategoryEntity`(`id`) ON UPDATE CASCADE ON DELETE SET NULL )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -184,25 +172,34 @@
             "notNull": true
           },
           {
-            "fieldPath": "iconUri",
-            "columnName": "iconUri",
+            "fieldPath": "iconId",
+            "columnName": "iconId",
             "affinity": "TEXT",
             "notNull": false
           },
           {
             "fieldPath": "categoryId",
             "columnName": "categoryId",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
             "id"
           ]
         },
         "indices": [
+          {
+            "name": "index_ProductEntity_iconId",
+            "unique": false,
+            "columnNames": [
+              "iconId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ProductEntity_iconId` ON `${TABLE_NAME}` (`iconId`)"
+          },
           {
             "name": "index_ProductEntity_categoryId",
             "unique": false,
@@ -215,8 +212,19 @@
         ],
         "foreignKeys": [
           {
+            "table": "IconEntity",
+            "onDelete": "SET NULL",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "iconId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
             "table": "CategoryEntity",
-            "onDelete": "RESTRICT",
+            "onDelete": "SET NULL",
             "onUpdate": "CASCADE",
             "columns": [
               "categoryId"
@@ -226,12 +234,48 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "IconEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `filePath` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "filePath",
+            "columnName": "filePath",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_IconEntity_filePath",
+            "unique": true,
+            "columnNames": [
+              "filePath"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_IconEntity_filePath` ON `${TABLE_NAME}` (`filePath`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '860ea12417b11292c273ebfb2e58a433')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '47e95ff68d3468b3326970d9920b8647')"
     ]
   }
 }

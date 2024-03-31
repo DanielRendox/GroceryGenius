@@ -1,0 +1,114 @@
+[
+  {
+    "id": "default-grocery-icons-apple",
+    "assetFilePath": "grocery/icons/apple_v2.png"
+  },
+  {
+    "id": "default-grocery-icons-avocado",
+    "assetFilePath": "grocery/icons/avocado_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-bananas",
+    "assetFilePath": "grocery/icons/bananas_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-beet",
+    "assetFilePath": "grocery/icons/beet_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-ribes",
+    "assetFilePath": "grocery/icons/ribes_v2.png"
+  },
+  {
+    "id": "default-grocery-icons-bottle-small",
+    "assetFilePath": "grocery/icons/bottle_small_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-broccoli",
+    "assetFilePath": "grocery/icons/broccoli_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-carrots",
+    "assetFilePath": "grocery/icons/carrots_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-cheese",
+    "assetFilePath": "grocery/icons/cheese_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-cottage-cheese",
+    "assetFilePath": "grocery/icons/cottage_cheese_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-cucumber",
+    "assetFilePath": "grocery/icons/cucumber_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-eggs",
+    "assetFilePath": "grocery/icons/eggs_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-grapes",
+    "assetFilePath": "grocery/icons/grapes_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-juice",
+    "assetFilePath": "grocery/icons/juice_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-lemon",
+    "assetFilePath": "grocery/icons/lemon_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-melon",
+    "assetFilePath": "grocery/icons/melon_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-milk",
+    "assetFilePath": "grocery/icons/milk_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-onion",
+    "assetFilePath": "grocery/icons/onion_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-orange",
+    "assetFilePath": "grocery/icons/orange_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-parsley",
+    "assetFilePath": "grocery/icons/parsley_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-pear",
+    "assetFilePath": "grocery/icons/pear_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-pepper",
+    "assetFilePath": "grocery/icons/pepper_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-pineapple",
+    "assetFilePath": "grocery/icons/pineapple_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-potatoes",
+    "assetFilePath": "grocery/icons/potatoes_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-sour-cream",
+    "assetFilePath": "grocery/icons/sour_cream_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-sweet-corn",
+    "assetFilePath": "grocery/icons/sweet_corn_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-tangerines",
+    "assetFilePath": "grocery/icons/tangerines_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-tomato",
+    "assetFilePath": "grocery/icons/tomato_v1.png"
+  }
+]

@@ -17,4 +17,6 @@
     <string name="sync_work_notification_channel_name">Sync</string>
     <string name="sync_work_notification_channel_description">Background tasks for Grocery Genius</string>
     <string name="sync_work_notification_title">Syncing your groceries</string>
+    <string name="toggle_dropdown_menu_visibility">Toggle dropdown menu visibility</string>
+    <string name="grocery_choose_category_dropdown_title">Category</string>
 </resources>

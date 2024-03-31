@@ -1,0 +1,58 @@
+[
+  {
+    "id": "default-product-apples",
+    "name": "Apples",
+    "iconId": "default-grocery-icons-apple",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-avocado",
+    "name": "Avocado",
+    "iconId": "default-grocery-icons-avocado",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-bananas",
+    "name": "Bananas",
+    "iconId": "default-grocery-icons-bananas",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-beetroot",
+    "name": "Beetroot",
+    "iconId": "default-grocery-icons-beet",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-blackcurrant",
+    "name": "Blackcurrant",
+    "iconId": "default-grocery-icons-ribes",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-redcurrant",
+    "name": "Redcurrant",
+    "iconId": "default-grocery-icons-ribes",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-blueberries",
+    "name": "Blueberries",
+    "iconId": "default-grocery-icons-ribes",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-blackberries",
+    "name": "Blackberries",
+    "iconId": "default-grocery-icons-ribes",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  }
+]

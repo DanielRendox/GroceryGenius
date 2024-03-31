@@ -2,6 +2,7 @@ package com.rendox.grocerygenius.database
 
 import com.rendox.grocerygenius.database.category.CategoryDao
 import com.rendox.grocerygenius.database.grocery.GroceryDao
+import com.rendox.grocerygenius.database.grocery_icon.IconDao
 import com.rendox.grocerygenius.database.grocery_list.GroceryListDao
 import com.rendox.grocerygenius.database.product.ProductDao
 import dagger.Module
@@ -31,4 +32,9 @@ object DaosModule {
     fun providesProductDao(
         appDatabase: AppDatabase
     ): ProductDao = appDatabase.productDao()
+
+    @Provides
+    fun providesIconDao(
+        appDatabase: AppDatabase
+    ): IconDao = appDatabase.iconDao()
 }

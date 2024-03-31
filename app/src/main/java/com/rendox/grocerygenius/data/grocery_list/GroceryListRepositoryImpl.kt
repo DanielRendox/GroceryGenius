@@ -3,6 +3,7 @@ package com.rendox.grocerygenius.data.grocery_list
 import com.rendox.grocerygenius.data.Synchronizer
 import com.rendox.grocerygenius.data.model.asEntity
 import com.rendox.grocerygenius.data.model.asExternalModel
+import com.rendox.grocerygenius.data.suspendRunCatching
 import com.rendox.grocerygenius.database.grocery_list.GroceryListDao
 import com.rendox.grocerygenius.model.GroceryList
 import com.rendox.grocerygenius.network.grocery_list.GroceryListNetworkDataSource
@@ -19,7 +20,7 @@ class GroceryListRepositoryImpl @Inject constructor(
         groceryListDao.insertGroceryList(groceryList.asEntity())
     }
 
-    override fun getGroceryListById(id: Int): Flow<GroceryList?> {
+    override fun getGroceryListById(id: String): Flow<GroceryList?> {
         return groceryListDao.getGroceryListById(id).map { it?.asExternalModel() }
     }
 
@@ -37,11 +38,11 @@ class GroceryListRepositoryImpl @Inject constructor(
         groceryListDao.deleteGroceryList(groceryList.asEntity())
     }
 
-    override suspend fun syncWith(synchronizer: Synchronizer) {
+    override suspend fun syncWith(synchronizer: Synchronizer) = suspendRunCatching {
         val existingGroceryLists = groceryListDao.getAllGroceryLists().first()
         if (existingGroceryLists.isEmpty()) {
             val groceryList = groceryListNetworkDataSource.getSampleGroceryList()
             groceryListDao.insertGroceryList(groceryList.asEntity())
         }
-    }
+    }.isSuccess
 }

@@ -65,6 +65,7 @@ dependencies {
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
@@ -90,6 +91,13 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
     implementation(libs.androidx.test.runner)
+
+    implementation(libs.com.squareup.moshi)
+    implementation(libs.com.squareup.moshi.kotlin)
+    //noinspection KaptUsageInsteadOfKsp
+    kapt(libs.com.squareup.moshi.kotlin.codegen)
+
+    implementation(libs.androidx.datastore.preferences)
 
     testImplementation(platform(libs.org.junit.bom))
     testImplementation(libs.org.junit.jupiter.api)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.rendox.grocerygenius
+package com.rendox.grocerygenius.sync.work
 
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
@@ -23,13 +23,13 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.testing.SynchronousExecutor
 import androidx.work.testing.WorkManagerTestInitHelper
-import com.rendox.grocerygenius.sync.work.workers.SyncWorker
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import com.google.common.truth.Truth.assertThat
+import com.rendox.grocerygenius.sync.work.workers.SyncWorker
 
 @HiltAndroidTest
 class SyncWorkerTest {
@@ -56,7 +56,6 @@ class SyncWorkerTest {
         val request = SyncWorker.startUpSyncWork()
 
         val workManager = WorkManager.getInstance(context)
-        val testDriver = WorkManagerTestInitHelper.getTestDriver(context)!!
 
         // Enqueue and wait for result.
         workManager.enqueue(request).result.get()

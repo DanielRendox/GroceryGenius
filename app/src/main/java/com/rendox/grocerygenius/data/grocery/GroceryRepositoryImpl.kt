@@ -1,17 +1,22 @@
 package com.rendox.grocerygenius.data.grocery
 
+import com.rendox.grocerygenius.data.model.asExternalModel
 import com.rendox.grocerygenius.database.grocery.GroceryDao
 import com.rendox.grocerygenius.database.grocery.GroceryEntity
+import com.rendox.grocerygenius.database.product.ProductDao
+import com.rendox.grocerygenius.database.product.ProductEntity
 import com.rendox.grocerygenius.model.Grocery
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GroceryRepositoryImpl @Inject constructor(
-    private val groceryDao: GroceryDao
+    private val groceryDao: GroceryDao,
+    private val productDao: ProductDao,
 ) : GroceryRepository {
     override suspend fun addGroceryToList(
-        productId: Int,
-        listId: Int,
+        productId: String,
+        listId: String,
         description: String?,
         purchased: Boolean,
         purchasedLastModified: Long,
@@ -29,35 +34,48 @@ class GroceryRepositoryImpl @Inject constructor(
 
     override suspend fun insertProductAndGrocery(
         name: String,
-        iconUri: String?,
-        categoryId: Int,
-        groceryListId: Int,
+        productId: String,
+        iconId: String?,
+        categoryId: String?,
+        groceryListId: String,
         description: String?,
         purchased: Boolean,
         purchasedLastModified: Long,
+        isDefault: Boolean,
     ) {
-        groceryDao.insertProductAndGrocery(
+        val product = ProductEntity(
+            id = productId,
             name = name,
-            iconUri = iconUri,
             categoryId = categoryId,
+            iconId = iconId,
+            deletable = isDefault,
+        )
+        val grocery = GroceryEntity(
+            productId = productId,
             groceryListId = groceryListId,
             description = description,
             purchased = purchased,
             purchasedLastModified = purchasedLastModified,
         )
+        productDao.insertProduct(product)
+        groceryDao.insertGrocery(grocery)
     }
 
-    override fun getGroceriesFromList(listId: Int): Flow<List<Grocery>> {
-        return groceryDao.getGroceriesFromList(listId)
+    override fun getGroceriesFromList(listId: String): Flow<List<Grocery>> {
+        return groceryDao.getGroceriesFromList(listId).map { combinedGroceries ->
+            combinedGroceries.map { combinedGrocery ->
+                combinedGrocery.asExternalModel()
+            }
+        }
     }
 
-    override suspend fun getGroceryDescriptions(productId: Int): List<String> {
-        return groceryDao.getGroceryDescriptions(productId)
+    override suspend fun getGrocery(productId: String, listId: String): Grocery? {
+        return groceryDao.getGrocery(productId, listId)?.asExternalModel()
     }
 
     override suspend fun updatePurchased(
-        productId: Int,
-        listId: Int,
+        productId: String,
+        listId: String,
         purchased: Boolean,
         purchasedLastModified: Long,
     ) {
@@ -69,11 +87,11 @@ class GroceryRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun updateDescription(productId: Int, listId: Int, description: String) {
+    override suspend fun updateDescription(productId: String, listId: String, description: String?) {
         groceryDao.updateDescription(productId, listId, description)
     }
 
-    override suspend fun removeGroceryFromList(productId: Int, listId: Int) {
+    override suspend fun removeGroceryFromList(productId: String, listId: String) {
         groceryDao.deleteGrocery(productId, listId)
     }
 }

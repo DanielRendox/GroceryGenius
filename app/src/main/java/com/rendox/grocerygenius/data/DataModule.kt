@@ -6,6 +6,8 @@ import com.rendox.grocerygenius.data.grocery.GroceryRepository
 import com.rendox.grocerygenius.data.grocery.GroceryRepositoryImpl
 import com.rendox.grocerygenius.data.grocery_list.GroceryListRepository
 import com.rendox.grocerygenius.data.grocery_list.GroceryListRepositoryImpl
+import com.rendox.grocerygenius.data.icons.IconRepository
+import com.rendox.grocerygenius.data.icons.IconRepositoryImpl
 import com.rendox.grocerygenius.data.product.ProductRepository
 import com.rendox.grocerygenius.data.product.ProductRepositoryImpl
 import dagger.Binds
@@ -41,4 +43,10 @@ abstract class DataModule {
     abstract fun bindProductRepository(
         productRepositoryImpl: ProductRepositoryImpl
     ): ProductRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindIconRepository(
+        iconRepositoryImpl: IconRepositoryImpl
+    ): IconRepository
 }

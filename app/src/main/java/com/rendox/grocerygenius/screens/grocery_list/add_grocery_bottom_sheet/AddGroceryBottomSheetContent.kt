@@ -31,13 +31,13 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rendox.grocerygenius.R
+import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.CustomProduct
-import com.rendox.grocerygenius.model.Grocery
+import com.rendox.grocerygenius.ui.GroceryPresentation
 import com.rendox.grocerygenius.ui.components.SearchField
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGrid
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
@@ -52,14 +52,14 @@ fun AddGroceryBottomSheetContent(
     useExpandedPlaceholderText: Boolean,
     clearSearchInputButtonIsShown: Boolean,
     showCancelButtonInsteadOfFab: Boolean,
-    grocerySearchResults: List<Grocery>,
+    grocerySearchResults: List<GroceryPresentation>,
     handleBackButtonPress: Boolean,
     contentType: BottomSheetContentType,
-    previousGrocery: Grocery?,
+    previousGrocery: GroceryPresentation?,
     showExtendedContent: Boolean,
     focusRequester: FocusRequester,
     customProduct: CustomProduct? = null,
-    onGrocerySearchResultClick: (Grocery) -> Unit,
+    onGrocerySearchResultClick: (GroceryPresentation) -> Unit,
     onSearchFieldFocusChanged: (FocusState) -> Unit,
     onBackButtonClicked: () -> Unit,
     onKeyboardDone: () -> Unit,
@@ -67,7 +67,7 @@ fun AddGroceryBottomSheetContent(
     fabOnClick: () -> Unit,
     onSearchInputChanged: (String) -> Unit,
     clearSearchInput: () -> Unit,
-    editGroceryOnClick: (Grocery) -> Unit,
+    editGroceryOnClick: (GroceryPresentation) -> Unit,
     onCustomProductClick: (CustomProduct) -> Unit,
 ) {
     BackHandler(
@@ -173,9 +173,9 @@ private fun BottomSheetHeader(
 @Composable
 private fun SearchResults(
     modifier: Modifier = Modifier,
-    grocerySearchResults: List<Grocery>,
+    grocerySearchResults: List<GroceryPresentation>,
     customProduct: CustomProduct?,
-    onGrocerySearchResultClick: (Grocery) -> Unit,
+    onGrocerySearchResultClick: (GroceryPresentation) -> Unit,
     onCustomProductClick: (CustomProduct) -> Unit,
 ) {
     LazyGroceryGrid(
@@ -193,13 +193,7 @@ private fun SearchResults(
                 } else {
                     MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor
                 },
-                icon = {
-                    Icon(
-                        modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(id = R.drawable.sample_grocery_icon),
-                        contentDescription = null,
-                    )
-                }
+                groceryIcon = grocery.iconBitmap,
             )
         },
         customProduct = customProduct?.let { product ->
@@ -211,13 +205,7 @@ private fun SearchResults(
                     groceryName = product.name,
                     groceryDescription = product.description,
                     color = MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor,
-                    icon = {
-                        Icon(
-                            modifier = Modifier.fillMaxSize(),
-                            painter = painterResource(id = R.drawable.sample_grocery_icon),
-                            contentDescription = null,
-                        )
-                    }
+                    groceryIcon = null,
                 )
             }
         }
@@ -254,7 +242,7 @@ private fun RefineItemOptions(
                 contentDescription = null,
             )
             Text(
-                text = "Enter item details",
+                text = stringResource(R.string.add_grocery_edit_item_button_title),
                 style = MaterialTheme.typography.bodySmall,
             )
         }
@@ -266,13 +254,16 @@ private fun RefineItemOptions(
 private fun SearchResultsPreview() {
     val searchResults = remember {
         List(8) { index ->
-            Grocery(
-                productId = index,
+            GroceryPresentation(
+                productId = index.toString(),
                 name = "Grocery $index",
                 purchased = Random.nextBoolean(),
                 description = "Description $index",
-                iconUri = "",
-                categoryId = 1,
+                category = Category(
+                    id = index.toString(),
+                    name = "Category$index",
+                    sortingPriority = index,
+                ),
             )
         }
     }

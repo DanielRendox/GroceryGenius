@@ -1,11 +1,11 @@
 package com.rendox.grocerygenius.model
 
 data class Grocery(
-    val productId: Int,
+    val productId: String,
     val name: String,
     val purchased: Boolean,
     val description: String? = null,
-    val iconUri: String? = null,
-    val categoryId: Int,
+    val icon: IconReference? = null,
+    val category: Category? = null,
     val purchasedLastModified: Long = System.currentTimeMillis(),
 )
