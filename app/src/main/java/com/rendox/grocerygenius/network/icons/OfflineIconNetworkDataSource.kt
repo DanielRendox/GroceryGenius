@@ -21,7 +21,7 @@ class OfflineIconNetworkDataSource @Inject constructor(
     override suspend fun downloadIcons(): List<Icon> =
         getReferencesToIcons().saveIconsToInternalStorage()
 
-    override suspend fun downloadIconsByIds(ids: List<Int>): List<Icon> =
+    override suspend fun downloadIconsByIds(ids: List<String>): List<Icon> =
         getReferencesToIcons().filter { it.id in ids }.saveIconsToInternalStorage()
 
     private suspend fun getReferencesToIcons(): List<GroceryIconAsset> {
@@ -50,6 +50,6 @@ class OfflineIconNetworkDataSource @Inject constructor(
         return jsonAssetDecoder.decodeFromFile(
             adapter = adapter,
             fileName = "icon/icons_change_list.json",
-        ) ?: emptyList()
+        )?.filter { it.changeListVersion > after } ?: emptyList()
     }
 }

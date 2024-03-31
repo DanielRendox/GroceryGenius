@@ -1,9 +1,11 @@
 package com.rendox.grocerygenius.model
 
+import java.util.UUID
+
 data class Product(
-    val id: Int = 0,
+    val id: String = UUID.randomUUID().toString(),
     val name: String,
     val icon: Icon? = null,
     val category: Category? = null,
-    val deletable: Boolean = true,
+    val isDefault: Boolean = false,
 )

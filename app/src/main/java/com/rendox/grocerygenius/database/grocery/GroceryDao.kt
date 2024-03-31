@@ -3,45 +3,12 @@ package com.rendox.grocerygenius.database.grocery
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Transaction
-import com.rendox.grocerygenius.database.product.ProductEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 abstract class GroceryDao {
     @Insert
     abstract suspend fun insertGrocery(grocery: GroceryEntity)
-
-    @Insert
-    protected abstract suspend fun insertProduct(product: ProductEntity): Long
-
-    @Transaction
-    open suspend fun insertProductAndGrocery(
-        name: String,
-        iconId: Int?,
-        categoryId: Int?,
-        groceryListId: Int,
-        description: String?,
-        purchased: Boolean,
-        purchasedLastModified: Long = System.currentTimeMillis(),
-        productIsDeletable: Boolean,
-    ) {
-        val product = ProductEntity(
-            name = name,
-            categoryId = categoryId,
-            iconId = iconId,
-            deletable = productIsDeletable,
-        )
-        val productId = insertProduct(product)
-        val grocery = GroceryEntity(
-            productId = productId.toInt(),
-            groceryListId = groceryListId,
-            description = description,
-            purchased = purchased,
-            purchasedLastModified = purchasedLastModified,
-        )
-        insertGrocery(grocery)
-    }
 
     @Query(
         """
@@ -63,7 +30,7 @@ abstract class GroceryDao {
         WHERE grocery.groceryListId = :listId
     """
     )
-    abstract fun getGroceriesFromList(listId: Int): Flow<List<CombinedGrocery>>
+    abstract fun getGroceriesFromList(listId: String): Flow<List<CombinedGrocery>>
 
     @Query(
         """
@@ -85,7 +52,7 @@ abstract class GroceryDao {
         WHERE grocery.productId = :productId AND grocery.groceryListId = :listId
     """
     )
-    abstract suspend fun getGrocery(productId: Int, listId: Int): CombinedGrocery?
+    abstract suspend fun getGrocery(productId: String, listId: String): CombinedGrocery?
 
     @Query("""
         UPDATE GroceryEntity
@@ -93,8 +60,8 @@ abstract class GroceryDao {
         WHERE productId = :productId AND groceryListId = :listId
     """)
     abstract suspend fun updatePurchased(
-        productId: Int,
-        listId: Int,
+        productId: String,
+        listId: String,
         purchased: Boolean,
         purchasedLastModified: Long,
     )
@@ -104,8 +71,8 @@ abstract class GroceryDao {
         SET description = :description
         WHERE productId = :productId AND groceryListId = :listId
     """)
-    abstract suspend fun updateDescription(productId: Int, listId: Int, description: String?)
+    abstract suspend fun updateDescription(productId: String, listId: String, description: String?)
 
     @Query("DELETE FROM GroceryEntity WHERE productId = :productId AND groceryListId = :listId")
-    abstract suspend fun deleteGrocery(productId: Int, listId: Int)
+    abstract suspend fun deleteGrocery(productId: String, listId: String)
 }

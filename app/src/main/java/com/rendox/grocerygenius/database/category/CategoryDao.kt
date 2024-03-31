@@ -19,5 +19,5 @@ interface CategoryDao {
             WHERE id in (:ids)
         """,
     )
-    suspend fun deleteCategories(ids: List<Int>)
+    suspend fun deleteCategories(ids: List<String>)
 }

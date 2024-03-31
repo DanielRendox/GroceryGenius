@@ -1,6 +1,6 @@
 package com.rendox.grocerygenius.model
 
 data class Icon(
-    val id: Int,
+    val id: String,
     val filePath: String,
 )

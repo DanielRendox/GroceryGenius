@@ -1,58 +1,58 @@
 [
   {
-    "id": 1,
+    "id": "default-product-apples",
     "name": "Apples",
-    "iconId": 1,
-    "categoryId": 1,
-    "editable": false
+    "iconId": "default-grocery-icons-apple",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
   },
   {
-    "id": 2,
+    "id": "default-product-avocado",
     "name": "Avocado",
-    "iconId": 2,
-    "categoryId": 1,
-    "editable": false
+    "iconId": "default-grocery-icons-avocado",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
   },
   {
-    "id": 3,
+    "id": "default-product-bananas",
     "name": "Bananas",
-    "iconId": 3,
-    "categoryId": 1,
-    "editable": false
+    "iconId": "default-grocery-icons-bananas",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
   },
   {
-    "id": 4,
+    "id": "default-product-beetroot",
     "name": "Beetroot",
-    "iconId": 4,
-    "categoryId": 1,
-    "editable": false
+    "iconId": "default-grocery-icons-beet",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
   },
   {
-    "id": 5,
+    "id": "default-product-blackcurrant",
     "name": "Blackcurrant",
-    "iconId": 5,
-    "categoryId": 1,
-    "editable": false
+    "iconId": "default-grocery-icons-ribes",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
   },
   {
-    "id": 6,
+    "id": "default-product-redcurrant",
     "name": "Redcurrant",
-    "iconId": 5,
-    "categoryId": 1,
-    "editable": false
+    "iconId": "default-grocery-icons-ribes",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
   },
   {
-    "id": 7,
+    "id": "default-product-blueberries",
     "name": "Blueberries",
-    "iconId": 5,
-    "categoryId": 1,
-    "editable": false
+    "iconId": "default-grocery-icons-ribes",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
   },
   {
-    "id": 8,
+    "id": "default-product-blackberries",
     "name": "Blackberries",
-    "iconId": 5,
-    "categoryId": 1,
-    "editable": false
+    "iconId": "default-grocery-icons-ribes",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
   }
 ]

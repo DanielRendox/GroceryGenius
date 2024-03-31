@@ -42,7 +42,7 @@ class GroceryListScreenViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val bitmapLoader: BitmapLoader,
 ) : ViewModel() {
-    private val groceryListId = 1
+    private val groceryListId = "sample-grocery-list"
 
     val groceryListFlow = groceryListRepository.getGroceryListById(groceryListId)
         .stateIn(
@@ -119,7 +119,7 @@ class GroceryListScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
         )
 
-    private val editGroceryIdFlow = MutableStateFlow<Int?>(null)
+    private val editGroceryIdFlow = MutableStateFlow<String?>(null)
     val editGroceryFlow = editGroceryIdFlow
         .map { editGroceryIdFlow ->
             val groceryFromRepository = groceryRepository

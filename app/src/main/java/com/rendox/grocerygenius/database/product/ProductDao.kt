@@ -32,7 +32,7 @@ interface ProductDao {
         WHERE product.categoryId = :categoryId
     """
     )
-    suspend fun getProductsByCategory(categoryId: Int): List<CombinedProduct>
+    suspend fun getProductsByCategory(categoryId: String): List<CombinedProduct>
 
     @Query(
         """
@@ -68,5 +68,5 @@ interface ProductDao {
             WHERE id in (:ids)
         """,
     )
-    suspend fun deleteProductsByIds(ids: List<Int>)
+    suspend fun deleteProductsByIds(ids: List<String>)
 }

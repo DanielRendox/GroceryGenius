@@ -19,5 +19,5 @@ interface IconDao {
             WHERE id in (:ids)
         """,
     )
-    suspend fun deleteIcons(ids: List<Int>)
+    suspend fun deleteIcons(ids: List<String>)
 }

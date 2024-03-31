@@ -4,9 +4,9 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class ProductNetwork(
-    val id: Int = 0,
+    val id: String,
     val name: String,
-    val iconId: Int?,
-    val categoryId: Int?,
-    val editable: Boolean,
+    val iconId: String?,
+    val categoryId: String?,
+    val isDefault: Boolean,
 )

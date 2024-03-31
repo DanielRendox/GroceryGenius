@@ -1,51 +1,51 @@
 [
   {
-    "id": 1,
+    "id": "default-category-fruits-and-vegetables",
     "name": "Fruits & Vegetables",
     "sortingPriority": 1
   },
   {
-    "id": 3,
+    "id": "default-category-dairy-and-eggs",
     "name": "Dairy & Eggs",
     "sortingPriority": 3
   },
   {
-    "id": 4,
+    "id": "default-category-meat-and-fish",
     "name": "Meat & Fish",
     "sortingPriority": 4
   },
   {
-    "id": 6,
+    "id": "default-category-ingredients-and-spices",
     "name": "Ingredients & Spices",
     "sortingPriority": 6
   },
   {
-    "id": 7,
+    "id": "default-category-frozen-and-convenience",
     "name": "Frozen & Convenience",
     "sortingPriority": 7
   },
   {
-    "id": 8,
+    "id": "default-category-grain-products",
     "name": "Grain Products",
     "sortingPriority": 8
   },
   {
-    "id": 9,
+    "id": "default-category-drinks",
     "name": "Drinks",
     "sortingPriority": 9
   },
   {
-    "id": 10,
+    "id": "default-category-snacks-and-bakery",
     "name": "Snacks & Bakery",
     "sortingPriority": 10
   },
   {
-    "id": 11,
+    "id": "default-category-health-and-beauty",
     "name": "Health & Beauty",
     "sortingPriority": 11
   },
   {
-    "id": 12,
+    "id": "default-category-pet-supplies",
     "name": "Pet Supplies",
     "sortingPriority": 12
   }

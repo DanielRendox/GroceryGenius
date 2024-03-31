@@ -255,12 +255,12 @@ private fun SearchResultsPreview() {
     val searchResults = remember {
         List(8) { index ->
             GroceryPresentation(
-                productId = index,
+                productId = index.toString(),
                 name = "Grocery $index",
                 purchased = Random.nextBoolean(),
                 description = "Description $index",
                 category = Category(
-                    id = index,
+                    id = index.toString(),
                     name = "Category$index",
                     sortingPriority = index,
                 ),

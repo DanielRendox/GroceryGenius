@@ -21,7 +21,7 @@ class OfflineProductNetworkDataSource @Inject constructor(
         ) ?: emptyList()
     }
 
-    override suspend fun getProductsByIds(ids: List<Int>): List<ProductNetwork> =
+    override suspend fun getProductsByIds(ids: List<String>): List<ProductNetwork> =
         getAllProducts().filter { it.id in ids }
 
     override suspend fun getProductChangeList(after: Int): List<NetworkChangeList> {
@@ -30,6 +30,6 @@ class OfflineProductNetworkDataSource @Inject constructor(
         return jsonAssetDecoder.decodeFromFile(
             adapter = adapter,
             fileName = "product/default_products_change_list.json",
-        ) ?: emptyList()
+        )?.filter { it.changeListVersion > after } ?: emptyList()
     }
 }

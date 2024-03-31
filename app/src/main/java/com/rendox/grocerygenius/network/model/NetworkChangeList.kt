@@ -4,7 +4,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class NetworkChangeList(
-    val id: Int,
+    val id: String,
     val changeListVersion: Int,
     val isDeleted: Boolean,
 )

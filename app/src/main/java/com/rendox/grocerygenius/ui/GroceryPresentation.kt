@@ -6,7 +6,7 @@ import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.model.Icon
 
 data class GroceryPresentation(
-    val productId: Int,
+    val productId: String,
     val name: String,
     val purchased: Boolean,
     val description: String? = null,

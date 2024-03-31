@@ -20,7 +20,7 @@ class OfflineCategoryNetworkDataSource @Inject constructor(
         ) ?: emptyList()
     }
 
-    override suspend fun getCategoriesByIds(ids: List<Int>): List<CategoryNetwork> {
+    override suspend fun getCategoriesByIds(ids: List<String>): List<CategoryNetwork> {
         return getAllCategories().filter { it.id in ids }
     }
 
@@ -30,6 +30,6 @@ class OfflineCategoryNetworkDataSource @Inject constructor(
         return jsonAssetDecoder.decodeFromFile(
             adapter = adapter,
             fileName = "category/categories_change_list.json",
-        ) ?: emptyList()
+        )?.filter { it.changeListVersion > after } ?: emptyList()
     }
 }

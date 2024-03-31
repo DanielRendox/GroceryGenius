@@ -1,11 +1,11 @@
 package com.rendox.grocerygenius.database.product
 
 data class CombinedProduct(
-    val id: Int,
+    val id: String,
     val name: String,
-    val iconId: Int?,
+    val iconId: String?,
     val iconFilePath: String?,
-    val categoryId: Int?,
+    val categoryId: String?,
     val categoryName: String?,
     val categorySortingPriority: Int?,
     val categoryIsDefault: Boolean?,

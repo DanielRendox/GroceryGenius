@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 
 @Entity(indices = [Index(value = ["filePath"], unique = true)])
 data class IconEntity(
-    @PrimaryKey val id: Int,
+    @PrimaryKey val id: String,
     val filePath: String,
 )

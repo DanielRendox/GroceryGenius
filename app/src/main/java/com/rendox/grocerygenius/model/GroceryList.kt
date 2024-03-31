@@ -1,6 +1,6 @@
 package com.rendox.grocerygenius.model
 
 data class GroceryList(
-    val id: Int,
+    val id: String,
     val name: String,
 )

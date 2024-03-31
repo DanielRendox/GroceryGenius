@@ -17,7 +17,7 @@ class ProductRepositoryImpl @Inject constructor(
         productDao.insertProduct(product.asEntity())
     }
 
-    override suspend fun getProductsByCategory(categoryId: Int): List<Product> {
+    override suspend fun getProductsByCategory(categoryId: String): List<Product> {
         return productDao.getProductsByCategory(categoryId).map { combinedProduct ->
             combinedProduct.asExternalModel()
         }

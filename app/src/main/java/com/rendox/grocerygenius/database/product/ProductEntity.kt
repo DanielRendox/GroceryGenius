@@ -30,9 +30,9 @@ import com.rendox.grocerygenius.database.grocery_icon.IconEntity
     ]
 )
 data class ProductEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey val id: String,
     val name: String,
     val deletable: Boolean = true,
-    val iconId: Int?,
-    val categoryId: Int?,
+    val iconId: String?,
+    val categoryId: String?,
 )

@@ -12,7 +12,7 @@ fun Product.asEntity() = ProductEntity(
     name = name,
     categoryId = category?.id,
     iconId = icon?.id,
-    deletable = deletable,
+    deletable = isDefault,
 )
 
 fun CombinedProduct.asExternalModel() = Product(
@@ -20,7 +20,7 @@ fun CombinedProduct.asExternalModel() = Product(
     name = name,
     icon = icon,
     category = category,
-    deletable = deletable,
+    isDefault = deletable,
 )
 
 val CombinedProduct.icon
@@ -52,5 +52,5 @@ fun ProductNetwork.asEntity() = ProductEntity(
     name = name,
     categoryId = categoryId,
     iconId = iconId,
-    deletable = editable,
+    deletable = isDefault,
 )
