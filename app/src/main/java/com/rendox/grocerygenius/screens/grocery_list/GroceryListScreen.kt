@@ -1,6 +1,8 @@
 package com.rendox.grocerygenius.screens.grocery_list
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -14,12 +16,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
@@ -235,7 +237,7 @@ private fun GroceryListScreen(
     }
 
     BottomSheetScaffold(
-        modifier = modifier.consumeWindowInsets(WindowInsets.navigationBars),
+        modifier = modifier.navigationBarsPadding(),
         sheetContent = {
             AddGroceryBottomSheetContent(
                 modifier = Modifier
@@ -287,10 +289,27 @@ private fun GroceryListScreen(
             val toolbarIsHidden =
                 addBottomSheetState.targetValue == SheetValue.Expanded ||
                         editBottomSheetState.targetValue == SheetValue.Expanded
+            val toolbarEnterTransition = remember {
+                expandVertically(
+                    animationSpec = tween(
+                        durationMillis = 150,
+                        easing = LinearEasing,
+                    )
+                )
+            }
+            val toolbarExitTransition = remember {
+                shrinkVertically(
+                    animationSpec = tween(
+                        durationMillis = 150,
+                        easing = LinearEasing,
+                    )
+                )
+            }
+
             AnimatedVisibility(
                 visible = toolbarIsHidden,
-                enter = expandVertically(),
-                exit = shrinkVertically(),
+                enter = toolbarEnterTransition,
+                exit = toolbarExitTransition,
             ) {
                 Spacer(
                     modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars)
@@ -299,8 +318,8 @@ private fun GroceryListScreen(
 
             AnimatedVisibility(
                 visible = !toolbarIsHidden,
-                enter = expandVertically(),
-                exit = shrinkVertically(),
+                enter = toolbarEnterTransition,
+                exit = toolbarExitTransition,
             ) {
                 GroceryListCollapsingToolbar(
                     listName = listName,
