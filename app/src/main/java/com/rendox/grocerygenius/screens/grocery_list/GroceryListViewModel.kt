@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -317,15 +318,26 @@ class GroceryListScreenViewModel @Inject constructor(
     }
 
     private fun addCustomProduct(customProduct: CustomProduct) {
+        val productId = UUID.randomUUID().toString()
+        val purchased = false
         viewModelScope.launch {
             groceryRepository.insertProductAndGrocery(
+                productId = productId,
                 name = customProduct.name,
                 categoryId = customProduct.category?.id,
                 groceryListId = groceryListId,
                 description = customProduct.description,
             )
         }
-
+        previousGroceryFlow.update {
+            GroceryPresentation(
+                productId = productId,
+                name = customProduct.name,
+                description = customProduct.description,
+                category = customProduct.category,
+                purchased = purchased,
+            )
+        }
         searchInput = null
         _bottomSheetContentTypeFlow.update {
             BottomSheetContentType.RefineItemOptions

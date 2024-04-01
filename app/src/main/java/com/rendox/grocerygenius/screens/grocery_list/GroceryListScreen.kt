@@ -204,7 +204,7 @@ private fun GroceryListScreen(
 
     if (editGroceryBottomSheetIsVisible) {
         ModalBottomSheet(
-            modifier = Modifier.padding(top = 60.dp),
+            modifier = Modifier.padding(top = 20.dp),
             onDismissRequest = hideBottomSheet,
             sheetState = editBottomSheetState,
             scrimColor = Color.Transparent,
