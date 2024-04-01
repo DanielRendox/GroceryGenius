@@ -1,6 +1,5 @@
 package com.rendox.grocerygenius.ui.components.collapsing_toolbar
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -18,7 +17,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -90,10 +88,7 @@ fun CollapsingToolbar(
                 fraction = toolbarState.progress,
             )
 
-            val titleStartPadding = when (LocalConfiguration.current.orientation) {
-                Configuration.ORIENTATION_LANDSCAPE -> 24.dp
-                else -> 16.dp
-            }
+            val titleStartPadding = 16.dp
 
             val textStartPadding = if (navigationIcon == null) titleStartPadding else lerp(
                 start = 0.dp,

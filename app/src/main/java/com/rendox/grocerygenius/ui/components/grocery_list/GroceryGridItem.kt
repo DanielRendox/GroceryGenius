@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -60,23 +62,6 @@ fun LazyGroceryGridItem(
                     )
                 }
                 val descriptionMaxLines = if (titleLayoutResult.lineCount == 1) 2 else 1
-                val descriptionLayoutResult = remember(
-                    groceryDescription,
-                    descriptionMaxLines,
-                    boxWithConstraintsScope.constraints
-                ) {
-                    groceryDescription?.let {
-                        textMeasurer.measure(
-                            text = it,
-                            style = descriptionStyle,
-                            constraints = boxWithConstraintsScope.constraints,
-                            maxLines = descriptionMaxLines,
-                        )
-                    }
-                }
-                val totalLinesOfText =
-                    titleLayoutResult.lineCount + (descriptionLayoutResult?.lineCount ?: 0)
-                val textShouldBeSmaller = totalLinesOfText > 2
                 Box(
                     modifier = Modifier
                         .weight(1F)
@@ -84,13 +69,12 @@ fun LazyGroceryGridItem(
                     contentAlignment = Alignment.Center,
                 ) {
                     GroceryIcon(
-                        textShouldBeSmaller = textShouldBeSmaller,
                         groceryName = groceryName,
                         bitmap = groceryIcon,
                     )
                 }
                 Box(
-                    modifier = Modifier.heightIn(min = 44.dp),
+                    modifier = Modifier.heightIn(min = 40.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -126,24 +110,27 @@ fun LazyGroceryGridItem(
 private fun GroceryIcon(
     modifier: Modifier = Modifier,
     groceryName: String,
-    textShouldBeSmaller: Boolean,
     bitmap: Bitmap?,
 ) {
-    if (bitmap != null) {
-        Icon(
-            modifier = modifier.fillMaxSize(),
-            bitmap = bitmap.asImageBitmap(),
-            contentDescription = null,
-        )
-    } else {
-        val groceryNameFirstLetter = groceryName.firstOrNull()?.uppercaseChar()
-        Text(
-            modifier = modifier.fillMaxHeight(),
-            text = groceryNameFirstLetter?.toString() ?: "",
-            style = MaterialTheme.typography.headlineLarge,
-            fontFamily = trainOneFontFamily,
-            fontSize = if (textShouldBeSmaller) 40.sp else 48.sp,
-        )
+    BoxWithConstraints {
+        val density = LocalDensity.current
+        val boxWithConstraintsScope = this
+        if (bitmap != null) {
+            Icon(
+                modifier = modifier.padding(top = 4.dp).fillMaxSize(),
+                bitmap = bitmap.asImageBitmap(),
+                contentDescription = null,
+            )
+        } else {
+            val groceryNameFirstLetter = groceryName.firstOrNull()?.uppercaseChar()
+            Text(
+                modifier = modifier.fillMaxHeight().offset(y = (-4).dp),
+                text = groceryNameFirstLetter?.toString() ?: "",
+                style = MaterialTheme.typography.headlineLarge,
+                fontFamily = trainOneFontFamily,
+                fontSize = with(density) { boxWithConstraintsScope.maxHeight.toSp() * 0.8F },
+            )
+        }
     }
 }
 
