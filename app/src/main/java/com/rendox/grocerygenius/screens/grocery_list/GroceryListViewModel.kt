@@ -284,7 +284,10 @@ class GroceryListScreenViewModel @Inject constructor(
 
     private fun addOrUpdateGrocery(grocery: GroceryPresentation) {
         viewModelScope.launch {
-            if (groceriesFlow.value.any { it.groceries.contains(grocery) }) {
+            val groceryIsAlreadyInList = groceriesFlow.value.any {  groceryGroup ->
+                groceryGroup.groceries.any { it.productId == grocery.productId }
+            }
+            if (groceryIsAlreadyInList) {
                 toggleItemPurchased(grocery)
             } else {
                 viewModelScope.launch {
