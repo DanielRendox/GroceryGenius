@@ -107,17 +107,7 @@ class GroceryListScreenViewModel @Inject constructor(
     private val _bottomSheetContentTypeFlow = MutableStateFlow(BottomSheetContentType.Suggestions)
     val bottomSheetContentTypeFlow = _bottomSheetContentTypeFlow.asStateFlow()
 
-    val previousGroceryFlow = groceriesFlow
-        .map { groceryGroups ->
-            groceryGroups
-                .flatMap { it.groceries }
-                .maxByOrNull { it.purchasedLastModified }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            initialValue = null,
-            started = SharingStarted.WhileSubscribed(5_000),
-        )
+    val previousGroceryFlow = MutableStateFlow<GroceryPresentation?>(null)
 
     private val editGroceryIdFlow = MutableStateFlow<String?>(null)
     val editGroceryFlow = editGroceryIdFlow
@@ -301,6 +291,7 @@ class GroceryListScreenViewModel @Inject constructor(
             }
         }
 
+        previousGroceryFlow.update { grocery }
         searchInput = null
         _bottomSheetContentTypeFlow.update {
             BottomSheetContentType.RefineItemOptions
