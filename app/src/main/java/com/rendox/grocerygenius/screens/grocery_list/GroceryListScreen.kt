@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetValue
@@ -55,6 +56,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,11 +64,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.AddGroceryBottomSheetContent
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.BottomSheetContentType
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.rememberAddGroceryBottomSheetState
+import com.rendox.grocerygenius.screens.grocery_list.dialogs.CategoryPickerDialog
+import com.rendox.grocerygenius.screens.grocery_list.dialogs.IconPickerDialog
 import com.rendox.grocerygenius.screens.grocery_list.edit_grocery_bottom_sheet.EditGroceryBottomSheetContent
 import com.rendox.grocerygenius.ui.GroceryPresentation
 import com.rendox.grocerygenius.ui.components.BottomSheetDragHandle
@@ -202,6 +207,8 @@ private fun GroceryListScreen(
         }
     }
 
+    var pickerDialog by remember { mutableStateOf(PickerDialogType.None) }
+
     if (editGroceryBottomSheetIsVisible) {
         ModalBottomSheet(
             modifier = Modifier.padding(top = 20.dp),
@@ -234,6 +241,12 @@ private fun GroceryListScreen(
                     onDoneButtonClick = hideBottomSheet,
                     onKeyboardDone = hideBottomSheet,
                     itemDescriptionFocusRequester = itemDescriptionFocusRequester,
+                    onChangeCategoryClick = {
+                        pickerDialog = PickerDialogType.CategoryPicker
+                    },
+                    onChangeIconClick = {
+                        pickerDialog = PickerDialogType.IconPicker
+                    },
                 )
             }
         }
@@ -391,6 +404,43 @@ private fun GroceryListScreen(
                     indication = null,
                     onClick = addGroceryBottomSheetState::onSheetDismissed,
                 )
+            )
+        }
+    }
+
+    when (pickerDialog) {
+        PickerDialogType.None -> {}
+        PickerDialogType.CategoryPicker -> {
+            val categories = remember {
+                listOf(
+                    Category("1", "Fruit"),
+                    Category("2", "Vegetable"),
+                    Category("3", "Meat"),
+                )
+            }
+            CategoryPickerDialog(
+                modifier = Modifier,
+                selectedCategoryId = "1",
+                categories = categories,
+                onCategorySelected = { pickerDialog = PickerDialogType.None },
+                onDismissRequest = { pickerDialog = PickerDialogType.None },
+            )
+        }
+
+        PickerDialogType.IconPicker -> {
+            IconPickerDialog(
+                modifier = Modifier,
+                numOfIcons = 10,
+                icon = {
+                    Icon(
+                        modifier = Modifier.fillMaxSize(),
+                        painter = painterResource(R.drawable.sample_grocery_icon),
+                        contentDescription = null,
+                    )
+                },
+                title = { "Icon $it" },
+                onIconSelected = { pickerDialog = PickerDialogType.None },
+                onDismissRequest = { pickerDialog = PickerDialogType.None },
             )
         }
     }

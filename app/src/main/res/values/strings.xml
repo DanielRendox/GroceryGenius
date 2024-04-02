@@ -14,7 +14,9 @@
     <string name="edit_grocery_change_icon_button_title">Change icon</string>
     <string name="edit_grocery_change_category_button_title">Change category</string>
     <string name="edit_grocery_remove_item_button_title">Remove item from the list</string>
-    <string name="edit_grocery_delete_grocery_button_title">Delete grocery</string>
+    <string name="edit_grocery_delete_grocery_button_title">Delete item</string>
+    <string name="select_category_dialog_title">Select category</string>
+    <string name="select_icon_dialog_title">Select icon</string>
 
     <!-- General -->
     <string name="done">Done</string>
