@@ -48,7 +48,7 @@ class GroceryListScreenViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val bitmapLoader: BitmapLoader,
     categoryRepository: CategoryRepository,
-    private val iconRepository: IconRepository,
+    iconRepository: IconRepository,
 ) : ViewModel() {
     private val groceryListId = "sample-grocery-list"
 
@@ -59,11 +59,28 @@ class GroceryListScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
         )
 
-    private val _groceryIconsFlow = MutableStateFlow<List<IconPresentation>>(emptyList())
-    val groceryIconsFlow = _groceryIconsFlow.asStateFlow()
+    val groceryIconsFlow = iconRepository.getAllGroceryIcons()
+        .map { iconReferences ->
+            iconReferences.mapNotNull {
+                bitmapLoader.loadFromFile(
+                    File(appContext.filesDir, it.filePath).absolutePath
+                )?.let { bitmap ->
+                    IconPresentation(
+                        id = it.id,
+                        iconBitmap = bitmap.asImageBitmap(),
+                        name = it.name,
+                    )
+                }
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = emptyList(),
+            started = SharingStarted.WhileSubscribed(5_000),
+        )
 
     val groceriesFlow = groceryRepository.getGroceriesFromList(groceryListId)
-        .combine(_groceryIconsFlow) { groceryList, icons ->
+        .combine(groceryIconsFlow) { groceryList, icons ->
             groceryList
                 .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name })
                 .sortedBy { it.purchased }
@@ -127,7 +144,7 @@ class GroceryListScreenViewModel @Inject constructor(
                 )
             val groceryPresentation = groceryFromRepository?.let { grocery ->
                 grocery.asPresentationModel(
-                    icon = _groceryIconsFlow.value.find { it.id == grocery.icon?.id }
+                    icon = groceryIconsFlow.value.find { it.id == grocery.icon?.id }
                 )
             }
             groceryPresentation
@@ -187,20 +204,6 @@ class GroceryListScreenViewModel @Inject constructor(
                     description = description,
                 )
             }
-        }
-        viewModelScope.launch {
-            val icons = iconRepository.getAllGroceryIcons().mapNotNull {
-                bitmapLoader.loadFromFile(
-                    File(appContext.filesDir, it.filePath).absolutePath
-                )?.let { bitmap ->
-                    IconPresentation(
-                        id = it.id,
-                        iconBitmap = bitmap.asImageBitmap(),
-                        name = it.name,
-                    )
-                }
-            }
-            _groceryIconsFlow.update { icons }
         }
     }
 
@@ -266,7 +269,7 @@ class GroceryListScreenViewModel @Inject constructor(
                 GroceryPresentation(
                     productId = product.id,
                     name = product.name,
-                    icon = _groceryIconsFlow.value.find { it.id == product.icon?.id },
+                    icon = groceryIconsFlow.value.find { it.id == product.icon?.id },
                     purchased = correspondingGroceryInTheList?.purchased ?: false,
                     description = correspondingGroceryInTheList?.description,
                     category = product.category,
@@ -299,7 +302,7 @@ class GroceryListScreenViewModel @Inject constructor(
 
     private fun addOrUpdateGrocery(grocery: GroceryPresentation) {
         viewModelScope.launch {
-            val groceryIsAlreadyInList = groceriesFlow.value.any {  groceryGroup ->
+            val groceryIsAlreadyInList = groceriesFlow.value.any { groceryGroup ->
                 groceryGroup.groceries.any { it.productId == grocery.productId }
             }
             if (groceryIsAlreadyInList) {

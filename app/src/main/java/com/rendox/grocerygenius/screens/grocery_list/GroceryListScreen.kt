@@ -434,9 +434,11 @@ private fun GroceryListScreen(
                 modifier = Modifier,
                 numOfIcons = groceryIcons.size,
                 icon = {
+                    val image = groceryIcons[it].iconBitmap
+                    image.prepareToDraw()
                     Icon(
                         modifier = Modifier.fillMaxSize(),
-                        bitmap = groceryIcons[it].iconBitmap,
+                        bitmap = image,
                         contentDescription = null,
                     )
                 },

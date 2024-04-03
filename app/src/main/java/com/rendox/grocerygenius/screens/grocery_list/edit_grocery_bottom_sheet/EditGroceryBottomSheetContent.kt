@@ -97,7 +97,9 @@ fun EditGroceryBottomSheetContent(
         }
         
         FilledTonalButton(
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
             onClick = onDeleteProduct,
             shape = CornerRoundingDefault,
             colors = ButtonDefaults.buttonColors(
@@ -136,7 +138,7 @@ private fun GrocerySettings(
 ) {
     Column(modifier = modifier) {
         Text(
-            text = "Settings",
+            text = stringResource(R.string.edit_grocery_settings_title),
             style = MaterialTheme.typography.titleMedium,
         )
         Row(

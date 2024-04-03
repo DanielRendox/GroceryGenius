@@ -115,6 +115,7 @@ private fun GroceryIcon(
         val density = LocalDensity.current
         val boxWithConstraintsScope = this
         if (bitmap != null) {
+            bitmap.prepareToDraw()
             Icon(
                 modifier = modifier.padding(top = 4.dp).fillMaxSize(),
                 bitmap = bitmap,

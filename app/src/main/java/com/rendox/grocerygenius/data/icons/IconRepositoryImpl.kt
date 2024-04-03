@@ -5,6 +5,7 @@ import com.rendox.grocerygenius.data.changeListSync
 import com.rendox.grocerygenius.data.model.asEntity
 import com.rendox.grocerygenius.database.grocery_icon.IconDao
 import com.rendox.grocerygenius.network.icons.IconNetworkDataSource
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class IconRepositoryImpl @Inject constructor(
@@ -12,11 +13,11 @@ class IconRepositoryImpl @Inject constructor(
     private val iconNetworkDataSource: IconNetworkDataSource,
 ) : IconRepository {
 
-    override suspend fun getAllGroceryIcons() = iconDao.getAllGroceryIcons()
+    override fun getAllGroceryIcons() = iconDao.getAllGroceryIcons()
 
     override suspend fun syncWith(synchronizer: Synchronizer) = synchronizer.changeListSync(
         checkIfExistingDataIsEmpty = {
-            iconDao.getAllGroceryIcons().isEmpty()
+            iconDao.getAllGroceryIcons().first().isEmpty()
         },
         prepopulateWithInitialData = {
             val icons = iconNetworkDataSource.downloadIcons()

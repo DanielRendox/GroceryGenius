@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import com.rendox.grocerygenius.model.IconReference
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface IconDao {
@@ -19,7 +20,7 @@ interface IconDao {
         INNER JOIN ProductEntity p ON i.id = p.iconId
         GROUP BY i.id
     """)
-    suspend fun getAllGroceryIcons(): List<IconReference>
+    fun getAllGroceryIcons(): Flow<List<IconReference>>
 
     @Query(
         """
