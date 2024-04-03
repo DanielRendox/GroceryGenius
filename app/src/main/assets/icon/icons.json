@@ -20,10 +20,6 @@
     "assetFilePath": "grocery/icons/ribes_v2.png"
   },
   {
-    "id": "default-grocery-icons-bottle-small",
-    "assetFilePath": "grocery/icons/bottle_small_v1.png"
-  },
-  {
     "id": "default-grocery-icons-broccoli",
     "assetFilePath": "grocery/icons/broccoli_v1.png"
   },
@@ -110,5 +106,13 @@
   {
     "id": "default-grocery-icons-tomato",
     "assetFilePath": "grocery/icons/tomato_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-garlic",
+    "assetFilePath": "grocery/icons/garlic_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-cabbage",
+    "assetFilePath": "grocery/icons/cabbage_v1.png"
   }
 ]
