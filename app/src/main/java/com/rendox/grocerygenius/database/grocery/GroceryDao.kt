@@ -22,7 +22,8 @@ abstract class GroceryDao {
             category.id as categoryId,
             category.name as categoryName,
             category.sortingPriority as categorySortingPriority,
-            grocery.purchasedLastModified
+            grocery.purchasedLastModified,
+            product.isDefault as productIsDefault
         FROM GroceryEntity grocery
         INNER JOIN ProductEntity product ON grocery.productId = product.id
         LEFT JOIN CategoryEntity category ON product.categoryId = category.id
@@ -44,7 +45,8 @@ abstract class GroceryDao {
             category.id as categoryId,
             category.name as categoryName,
             category.sortingPriority as categorySortingPriority,
-            grocery.purchasedLastModified
+            grocery.purchasedLastModified,
+            product.isDefault as productIsDefault
         FROM GroceryEntity grocery
         INNER JOIN ProductEntity product ON grocery.productId = product.id
         LEFT JOIN CategoryEntity category ON product.categoryId = category.id

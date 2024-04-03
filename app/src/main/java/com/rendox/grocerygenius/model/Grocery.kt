@@ -8,4 +8,5 @@ data class Grocery(
     val icon: IconReference? = null,
     val category: Category? = null,
     val purchasedLastModified: Long = System.currentTimeMillis(),
+    val productIsDefault: Boolean = false,
 )

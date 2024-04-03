@@ -19,6 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rendox.grocerygenius.R
@@ -40,7 +42,7 @@ fun IconPickerDialog(
     ) {
         LazyVerticalGrid(
             modifier = modifier.weight(1F).padding(16.dp),
-            columns = GridCells.Adaptive(64.dp),
+            columns = GridCells.Adaptive(80.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -62,9 +64,12 @@ fun IconPickerDialog(
                             icon(index)
                         }
                         Text(
-                            modifier = Modifier.padding(vertical = 4.dp),
+                            modifier = Modifier.padding(vertical = 8.dp),
                             text = title(index),
                             style = MaterialTheme.typography.bodySmall,
+                            maxLines = 1,
+                            textAlign = TextAlign.Center,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 }

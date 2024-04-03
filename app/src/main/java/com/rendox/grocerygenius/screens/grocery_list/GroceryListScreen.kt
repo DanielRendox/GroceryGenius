@@ -56,7 +56,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,7 +63,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.AddGroceryBottomSheetContent
@@ -74,6 +72,7 @@ import com.rendox.grocerygenius.screens.grocery_list.dialogs.CategoryPickerDialo
 import com.rendox.grocerygenius.screens.grocery_list.dialogs.IconPickerDialog
 import com.rendox.grocerygenius.screens.grocery_list.edit_grocery_bottom_sheet.EditGroceryBottomSheetContent
 import com.rendox.grocerygenius.ui.GroceryPresentation
+import com.rendox.grocerygenius.ui.IconPresentation
 import com.rendox.grocerygenius.ui.components.BottomSheetDragHandle
 import com.rendox.grocerygenius.ui.components.Scrim
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbar
@@ -104,7 +103,9 @@ fun GroceryListRoute(
     val previousGrocery by viewModel.previousGroceryFlow.collectAsStateWithLifecycle()
     val editGrocery by viewModel.editGroceryFlow.collectAsStateWithLifecycle()
     val clearEditGroceryDescriptionButtonIsShown by viewModel.clearEditGroceryDescriptionButtonIsShown.collectAsStateWithLifecycle()
-    val customProduct by viewModel.customProduct.collectAsStateWithLifecycle()
+    val customProduct by viewModel.customProductFlow.collectAsStateWithLifecycle()
+    val groceryIcons by viewModel.groceryIconsFlow.collectAsStateWithLifecycle()
+    val groceryCategories by viewModel.groceryCategories.collectAsStateWithLifecycle()
 
     GroceryListScreen(
         modifier = modifier,
@@ -120,6 +121,8 @@ fun GroceryListRoute(
         editGroceryDescription = viewModel.editGroceryDescription,
         customProduct = customProduct,
         onIntent = viewModel::onIntent,
+        groceryIcons = groceryIcons,
+        groceryCategories = groceryCategories,
     )
 }
 
@@ -139,6 +142,8 @@ private fun GroceryListScreen(
     editGroceryDescription: String?,
     customProduct: CustomProduct?,
     onIntent: (GroceryListScreenIntent) -> Unit,
+    groceryIcons: List<IconPresentation>,
+    groceryCategories: List<Category>,
 ) {
     val collapsedToolbarHeight = 64.dp
     val expandedToolbarHeight = 112.dp
@@ -247,6 +252,9 @@ private fun GroceryListScreen(
                     onChangeIconClick = {
                         pickerDialog = PickerDialogType.IconPicker
                     },
+                    productCanBeModified = !editGrocery.productIsDefault,
+                    onRemoveGrocery = hideBottomSheet,
+                    onDeleteProduct = hideBottomSheet,
                 )
             }
         }
@@ -382,7 +390,7 @@ private fun GroceryListScreen(
                         } else {
                             MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor
                         },
-                        groceryIcon = grocery.iconBitmap,
+                        groceryIcon = grocery.icon?.iconBitmap,
                     )
                 },
                 contentPadding = PaddingValues(
@@ -411,34 +419,28 @@ private fun GroceryListScreen(
     when (pickerDialog) {
         PickerDialogType.None -> {}
         PickerDialogType.CategoryPicker -> {
-            val categories = remember {
-                listOf(
-                    Category("1", "Fruit"),
-                    Category("2", "Vegetable"),
-                    Category("3", "Meat"),
-                )
-            }
             CategoryPickerDialog(
                 modifier = Modifier,
-                selectedCategoryId = "1",
-                categories = categories,
+                selectedCategoryId = null,
+                categories = groceryCategories,
                 onCategorySelected = { pickerDialog = PickerDialogType.None },
                 onDismissRequest = { pickerDialog = PickerDialogType.None },
+                onCustomCategorySelected = { pickerDialog = PickerDialogType.None },
             )
         }
 
         PickerDialogType.IconPicker -> {
             IconPickerDialog(
                 modifier = Modifier,
-                numOfIcons = 10,
+                numOfIcons = groceryIcons.size,
                 icon = {
                     Icon(
                         modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(R.drawable.sample_grocery_icon),
+                        bitmap = groceryIcons[it].iconBitmap,
                         contentDescription = null,
                     )
                 },
-                title = { "Icon $it" },
+                title = { groceryIcons[it].name },
                 onIconSelected = { pickerDialog = PickerDialogType.None },
                 onDismissRequest = { pickerDialog = PickerDialogType.None },
             )
@@ -513,6 +515,8 @@ fun GroceryListScreenPreview() {
             editGroceryDescription = null,
             onIntent = {},
             customProduct = null,
+            groceryIcons = emptyList(),
+            groceryCategories = emptyList(),
         )
     }
 }

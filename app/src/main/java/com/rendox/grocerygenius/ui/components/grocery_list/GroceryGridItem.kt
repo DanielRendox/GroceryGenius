@@ -1,6 +1,5 @@
 package com.rendox.grocerygenius.ui.components.grocery_list
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -20,7 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
@@ -37,7 +36,7 @@ fun LazyGroceryGridItem(
     modifier: Modifier = Modifier,
     groceryName: String,
     groceryDescription: String?,
-    groceryIcon: Bitmap?,
+    groceryIcon: ImageBitmap?,
     color: Color,
 ) {
     Surface(
@@ -110,7 +109,7 @@ fun LazyGroceryGridItem(
 private fun GroceryIcon(
     modifier: Modifier = Modifier,
     groceryName: String,
-    bitmap: Bitmap?,
+    bitmap: ImageBitmap?,
 ) {
     BoxWithConstraints {
         val density = LocalDensity.current
@@ -118,7 +117,7 @@ private fun GroceryIcon(
         if (bitmap != null) {
             Icon(
                 modifier = modifier.padding(top = 4.dp).fillMaxSize(),
-                bitmap = bitmap.asImageBitmap(),
+                bitmap = bitmap,
                 contentDescription = null,
             )
         } else {

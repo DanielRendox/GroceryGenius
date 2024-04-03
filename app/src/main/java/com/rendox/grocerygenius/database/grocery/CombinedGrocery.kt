@@ -10,6 +10,6 @@ data class CombinedGrocery(
     val categoryId: String?,
     val categoryName: String?,
     val categorySortingPriority: Int?,
-    val categoryIsDefault: Boolean?,
     val purchasedLastModified: Long,
+    val productIsDefault: Boolean,
 )

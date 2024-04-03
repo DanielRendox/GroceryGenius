@@ -26,7 +26,9 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.ui.components.SearchField
@@ -40,12 +42,15 @@ fun EditGroceryBottomSheetContent(
     groceryName: String,
     groceryDescription: String?,
     clearGroceryDescriptionButtonIsShown: Boolean,
+    productCanBeModified: Boolean,
     onGroceryDescriptionChanged: (String) -> Unit,
     onClearGroceryDescription: () -> Unit,
     onDoneButtonClick: () -> Unit,
     onKeyboardDone: () -> Unit,
     onChangeCategoryClick: () -> Unit,
     onChangeIconClick: () -> Unit,
+    onRemoveGrocery: () -> Unit,
+    onDeleteProduct: () -> Unit,
     itemDescriptionFocusRequester: FocusRequester,
 ) {
     Column(modifier = modifier) {
@@ -83,16 +88,59 @@ fun EditGroceryBottomSheetContent(
             onKeyboardDone = onKeyboardDone,
         )
 
+        if (productCanBeModified) {
+            GrocerySettings(
+                modifier = Modifier.padding(top = 32.dp),
+                onChangeCategoryClick = onChangeCategoryClick,
+                onChangeIconClick = onChangeIconClick,
+            )
+        }
+        
+        FilledTonalButton(
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+            onClick = onDeleteProduct,
+            shape = CornerRoundingDefault,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            )
+        ) {
+            Text(
+                text = stringResource(R.string.edit_grocery_remove_item_button_title),
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+
+        if (productCanBeModified) {
+            FilledTonalButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onRemoveGrocery,
+                shape = CornerRoundingDefault,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.extendedColors.redAccent,
+                )
+            ) {
+                Text(
+                    text = stringResource(R.string.edit_grocery_delete_grocery_button_title),
+                    color = MaterialTheme.extendedColors.onRedAccent,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun GrocerySettings(
+    modifier: Modifier = Modifier,
+    onChangeCategoryClick: () -> Unit,
+    onChangeIconClick: () -> Unit,
+) {
+    Column(modifier = modifier) {
         Text(
-            modifier = Modifier.padding(top = 32.dp),
             text = "Settings",
             style = MaterialTheme.typography.titleMedium,
         )
         Row(
-            modifier = Modifier.padding(
-                top = 8.dp,
-                bottom = 16.dp,
-            ),
+            modifier = Modifier.padding(top = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             SettingButton(
@@ -116,32 +164,6 @@ fun EditGroceryBottomSheetContent(
                 },
                 title = stringResource(R.string.edit_grocery_change_icon_button_title),
                 onClick = onChangeIconClick,
-            )
-        }
-        FilledTonalButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = {  },
-            shape = CornerRoundingDefault,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            )
-        ) {
-            Text(
-                text = stringResource(R.string.edit_grocery_remove_item_button_title),
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-        FilledTonalButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { },
-            shape = CornerRoundingDefault,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.extendedColors.redAccent,
-            )
-        ) {
-            Text(
-                text = stringResource(R.string.edit_grocery_delete_grocery_button_title),
-                color = MaterialTheme.extendedColors.onRedAccent,
             )
         }
     }
@@ -171,9 +193,15 @@ private fun SettingButton(
     }
 }
 
-@PreviewLightDark
+class ParameterProvider : PreviewParameterProvider<Boolean> {
+    override val values = sequenceOf(true, false)
+}
+
+@Preview
 @Composable
-private fun EditGroceryBottomSheetContentPreview() {
+private fun EditGroceryBottomSheetContentPreview(
+    @PreviewParameter(ParameterProvider::class) productCanBeModified: Boolean,
+) {
     GroceryGeniusTheme {
         Surface {
             EditGroceryBottomSheetContent(
@@ -188,6 +216,9 @@ private fun EditGroceryBottomSheetContentPreview() {
                 itemDescriptionFocusRequester = remember { FocusRequester() },
                 onChangeCategoryClick = {},
                 onChangeIconClick = {},
+                productCanBeModified = productCanBeModified,
+                onRemoveGrocery = {},
+                onDeleteProduct = {},
             )
         }
     }

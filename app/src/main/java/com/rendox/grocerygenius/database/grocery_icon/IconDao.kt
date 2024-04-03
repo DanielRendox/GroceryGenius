@@ -3,15 +3,23 @@ package com.rendox.grocerygenius.database.grocery_icon
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import kotlinx.coroutines.flow.Flow
+import com.rendox.grocerygenius.model.IconReference
 
 @Dao
 interface IconDao {
     @Upsert
     suspend fun upsertGroceryIcons(groceryIconEntities: List<IconEntity>)
 
-    @Query("SELECT * FROM IconEntity")
-    fun getAllGroceryIcons(): Flow<List<IconEntity>>
+    @Query("""
+        SELECT 
+        i.id,
+        i.filePath,
+        p.name
+        FROM IconEntity i
+        INNER JOIN ProductEntity p ON i.id = p.iconId
+        GROUP BY i.id
+    """)
+    suspend fun getAllGroceryIcons(): List<IconReference>
 
     @Query(
         """

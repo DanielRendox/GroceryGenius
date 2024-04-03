@@ -194,7 +194,7 @@ private fun SearchResults(
                 } else {
                     MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor
                 },
-                groceryIcon = grocery.iconBitmap,
+                groceryIcon = grocery.icon?.iconBitmap,
             )
         },
         customProduct = customProduct?.let { product ->

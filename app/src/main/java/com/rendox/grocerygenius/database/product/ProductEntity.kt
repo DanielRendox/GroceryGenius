@@ -32,7 +32,7 @@ import com.rendox.grocerygenius.database.grocery_icon.IconEntity
 data class ProductEntity(
     @PrimaryKey val id: String,
     val name: String,
-    val deletable: Boolean = true,
+    val isDefault: Boolean,
     val iconId: String?,
     val categoryId: String?,
 )

@@ -17,49 +17,73 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 
 @Composable
 fun CategoryPickerDialog(
     modifier: Modifier = Modifier,
-    selectedCategoryId: String,
+    selectedCategoryId: String?,
     categories: List<Category>,
     onCategorySelected: (Category) -> Unit,
+    onCustomCategorySelected: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     PickerDialog(
         modifier = modifier,
-        title = "Choose category",
+        title = stringResource(R.string.select_category_dialog_title),
         onDismissRequest = onDismissRequest
     ) {
         LazyColumn(modifier = Modifier.weight(1F)) {
+            item(key = categories.size) {
+                CategoryOption(
+                    isSelected = selectedCategoryId == null,
+                    categoryName = stringResource(R.string.custom_category_title),
+                    onClick = onCustomCategorySelected,
+                )
+            }
             items(
                 items = categories,
                 key = { it.id },
             ) { category ->
-                val interactionSource = remember { MutableInteractionSource() }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(
-                            onClick = { onCategorySelected(category) },
-                            interactionSource = interactionSource,
-                            indication = null,
-                        ),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    RadioButton(
-                        modifier = Modifier.padding(start = 16.dp),
-                        selected = category.id == selectedCategoryId,
-                        onClick = { onCategorySelected(category) },
-                    )
-                    Text(text = category.name)
-                }
+                CategoryOption(
+                    onClick = { onCategorySelected(category) },
+                    isSelected = category.id == selectedCategoryId,
+                    categoryName = category.name,
+                )
             }
         }
+    }
+}
+
+@Composable
+private fun CategoryOption(
+    modifier: Modifier = Modifier,
+    isSelected: Boolean,
+    categoryName: String,
+    onClick: () -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(
+                onClick = onClick,
+                interactionSource = interactionSource,
+                indication = null,
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        RadioButton(
+            modifier = Modifier.padding(start = 16.dp),
+            selected = isSelected,
+            onClick = onClick,
+        )
+        Text(text = categoryName)
     }
 }
 
@@ -83,6 +107,7 @@ private fun ChooseCategoryDialogPreview() {
                 categories = categories,
                 onCategorySelected = {},
                 onDismissRequest = {},
+                onCustomCategorySelected = {},
             )
         }
     }
