@@ -100,7 +100,7 @@ fun EditGroceryBottomSheetContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-            onClick = onDeleteProduct,
+            onClick = onRemoveGrocery,
             shape = CornerRoundingDefault,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -115,7 +115,7 @@ fun EditGroceryBottomSheetContent(
         if (productCanBeModified) {
             FilledTonalButton(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = onRemoveGrocery,
+                onClick = onDeleteProduct,
                 shape = CornerRoundingDefault,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.extendedColors.redAccent,

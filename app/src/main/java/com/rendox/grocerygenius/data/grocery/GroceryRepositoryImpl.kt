@@ -69,8 +69,8 @@ class GroceryRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getGrocery(productId: String, listId: String): Grocery? {
-        return groceryDao.getGrocery(productId, listId)?.asExternalModel()
+    override fun getGroceryById(productId: String, listId: String): Flow<Grocery?> {
+        return groceryDao.getGrocery(productId, listId).map { it?.asExternalModel() }
     }
 
     override suspend fun updatePurchased(

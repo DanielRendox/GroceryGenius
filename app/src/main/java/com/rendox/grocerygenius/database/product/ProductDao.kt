@@ -1,10 +1,8 @@
 package com.rendox.grocerygenius.database.product
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
 import androidx.room.Upsert
 
 @Dao
@@ -56,11 +54,14 @@ interface ProductDao {
     @Query("SELECT * FROM ProductEntity")
     suspend fun getAllProducts(): List<ProductEntity>
 
-    @Update
-    suspend fun updateProduct(product: ProductEntity)
+    @Query("UPDATE ProductEntity SET categoryId = :categoryId WHERE id = :productId")
+    suspend fun updateProductCategory(productId: String, categoryId: String?)
 
-    @Delete
-    suspend fun deleteProduct(product: ProductEntity)
+    @Query("UPDATE ProductEntity SET iconId = :iconId WHERE id = :productId")
+    suspend fun updateProductIcon(productId: String, iconId: String)
+
+    @Query("DELETE FROM ProductEntity WHERE id = :productId")
+    suspend fun deleteProductById(productId: String)
 
     @Query(
         """

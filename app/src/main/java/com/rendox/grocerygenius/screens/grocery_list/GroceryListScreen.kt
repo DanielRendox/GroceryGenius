@@ -253,8 +253,23 @@ private fun GroceryListScreen(
                         pickerDialog = PickerDialogType.IconPicker
                     },
                     productCanBeModified = !editGrocery.productIsDefault,
-                    onRemoveGrocery = hideBottomSheet,
-                    onDeleteProduct = hideBottomSheet,
+                    onRemoveGrocery = {
+                        onIntent(
+                            GroceryListScreenIntent.OnRemoveGroceryFromList(
+                                editGrocery.productId
+                            )
+                        )
+                        hideBottomSheet()
+                    },
+                    onDeleteProduct = {
+                        // TODO display a confirmation dialog instead
+                        onIntent(
+                            GroceryListScreenIntent.OnDeleteProduct(
+                                editGrocery.productId
+                            )
+                        )
+                        hideBottomSheet()
+                    },
                 )
             }
         }
@@ -421,11 +436,17 @@ private fun GroceryListScreen(
         PickerDialogType.CategoryPicker -> {
             CategoryPickerDialog(
                 modifier = Modifier,
-                selectedCategoryId = null,
+                selectedCategoryId = editGrocery?.category?.id,
                 categories = groceryCategories,
-                onCategorySelected = { pickerDialog = PickerDialogType.None },
+                onCategorySelected = {
+                    onIntent(GroceryListScreenIntent.OnCategorySelected(it.id))
+                    pickerDialog = PickerDialogType.None
+                },
                 onDismissRequest = { pickerDialog = PickerDialogType.None },
-                onCustomCategorySelected = { pickerDialog = PickerDialogType.None },
+                onCustomCategorySelected = {
+                    onIntent(GroceryListScreenIntent.OnCustomCategorySelected)
+                    pickerDialog = PickerDialogType.None
+                },
             )
         }
 
@@ -443,7 +464,10 @@ private fun GroceryListScreen(
                     )
                 },
                 title = { groceryIcons[it].name },
-                onIconSelected = { pickerDialog = PickerDialogType.None },
+                onIconSelected = {
+                    onIntent(GroceryListScreenIntent.OnIconSelected(groceryIcons[it].id))
+                    pickerDialog = PickerDialogType.None
+                },
                 onDismissRequest = { pickerDialog = PickerDialogType.None },
             )
         }

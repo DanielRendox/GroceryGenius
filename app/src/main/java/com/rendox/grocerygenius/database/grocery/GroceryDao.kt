@@ -54,7 +54,7 @@ abstract class GroceryDao {
         WHERE grocery.productId = :productId AND grocery.groceryListId = :listId
     """
     )
-    abstract suspend fun getGrocery(productId: String, listId: String): CombinedGrocery?
+    abstract fun getGrocery(productId: String, listId: String): Flow<CombinedGrocery?>
 
     @Query("""
         UPDATE GroceryEntity

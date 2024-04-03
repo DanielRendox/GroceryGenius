@@ -29,12 +29,16 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateProduct(product: Product) {
-        productDao.updateProduct(product.asEntity())
+    override suspend fun updateProductCategory(productId: String, categoryId: String?) {
+        productDao.updateProductCategory(productId, categoryId)
     }
 
-    override suspend fun deleteProduct(product: Product) {
-        productDao.deleteProduct(product.asEntity())
+    override suspend fun updateProductIcon(productId: String, iconId: String) {
+        productDao.updateProductIcon(productId, iconId)
+    }
+
+    override suspend fun deleteProductById(productId: String) {
+        productDao.deleteProductById(productId)
     }
 
     override suspend fun syncWith(synchronizer: Synchronizer) = synchronizer.changeListSync(

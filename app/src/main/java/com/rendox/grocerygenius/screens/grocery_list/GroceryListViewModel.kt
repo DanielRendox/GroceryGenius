@@ -30,6 +30,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
@@ -135,19 +137,17 @@ class GroceryListScreenViewModel @Inject constructor(
     val previousGroceryFlow = MutableStateFlow<GroceryPresentation?>(null)
 
     private val editGroceryIdFlow = MutableStateFlow<String?>(null)
+    @OptIn(ExperimentalCoroutinesApi::class)
     val editGroceryFlow = editGroceryIdFlow
-        .map { editGroceryIdFlow ->
-            val groceryFromRepository = groceryRepository
-                .getGrocery(
-                    productId = editGroceryIdFlow ?: return@map null,
-                    listId = groceryListId,
-                )
-            val groceryPresentation = groceryFromRepository?.let { grocery ->
-                grocery.asPresentationModel(
+        .flatMapLatest { editGroceryId ->
+            groceryRepository.getGroceryById(
+                productId = editGroceryId ?: return@flatMapLatest flowOf(null),
+                listId = groceryListId,
+            ).map { grocery ->
+                grocery?.asPresentationModel(
                     icon = groceryIconsFlow.value.find { it.id == grocery.icon?.id }
                 )
             }
-            groceryPresentation
         }
         .stateIn(
             scope = viewModelScope,
@@ -205,6 +205,11 @@ class GroceryListScreenViewModel @Inject constructor(
                 )
             }
         }
+        viewModelScope.launch {
+            editGroceryIdFlow.collect {
+                println("editGroceryIdFlow: $it")
+            }
+        }
     }
 
     fun onIntent(intent: GroceryListScreenIntent) {
@@ -238,6 +243,21 @@ class GroceryListScreenViewModel @Inject constructor(
 
             is GroceryListScreenIntent.OnCustomProductClick ->
                 addCustomProduct(intent.customProduct)
+
+            is GroceryListScreenIntent.OnCategorySelected ->
+                onCategorySelected(intent.categoryId)
+
+            is GroceryListScreenIntent.OnCustomCategorySelected ->
+                onCategorySelected(null)
+
+            is GroceryListScreenIntent.OnIconSelected ->
+                onIconSelected(intent.iconId)
+
+            is GroceryListScreenIntent.OnRemoveGroceryFromList ->
+                onRemoveGroceryFromList(intent.groceryId)
+
+            is GroceryListScreenIntent.OnDeleteProduct ->
+                onDeleteProduct(intent.productId)
         }
     }
 
@@ -374,5 +394,42 @@ class GroceryListScreenViewModel @Inject constructor(
     private fun onEditGroceryClick(grocery: GroceryPresentation) {
         editGroceryIdFlow.update { grocery.productId }
         editGroceryDescription = grocery.description
+    }
+
+    private fun onCategorySelected(categoryId: String?) {
+        editGroceryIdFlow.value?.let { groceryId ->
+            viewModelScope.launch {
+                productRepository.updateProductCategory(
+                    productId = groceryId,
+                    categoryId = categoryId,
+                )
+            }
+        }
+    }
+
+    private fun onIconSelected(iconId: String) {
+        editGroceryIdFlow.value?.let { groceryId ->
+            viewModelScope.launch {
+                productRepository.updateProductIcon(
+                    productId = groceryId,
+                    iconId = iconId,
+                )
+            }
+        }
+    }
+
+    private fun onRemoveGroceryFromList(groceryId: String) {
+        viewModelScope.launch {
+            groceryRepository.removeGroceryFromList(
+                productId = groceryId,
+                listId = groceryListId,
+            )
+        }
+    }
+
+    private fun onDeleteProduct(productId: String) {
+        viewModelScope.launch {
+            productRepository.deleteProductById(productId)
+        }
     }
 }
