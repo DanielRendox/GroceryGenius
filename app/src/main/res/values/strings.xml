@@ -18,9 +18,11 @@
     <string name="select_category_dialog_title">Choose category</string>
     <string name="select_icon_dialog_title">Choose icon</string>
     <string name="edit_grocery_settings_title">Custom item settings</string>
+    <string name="delete_product_dialog_text">This item will be removed from all your grocery lists</string>
 
     <!-- General -->
     <string name="done">Done</string>
+    <string name="delete">Delete</string>
 
     <string name="custom_category_title">Custom</string>
 

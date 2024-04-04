@@ -94,7 +94,7 @@ class GroceryListScreenViewModel @Inject constructor(
                     val sortedGroceries = if (purchased) {
                         group.value.sortedByDescending { it.purchasedLastModified }
                     } else {
-                        group.value.sortedBy { it.category?.sortingPriority }
+                        group.value.sortedBy { it.category?.sortingPriority ?: Int.MAX_VALUE }
                     }
                     val presentationGroceries = sortedGroceries.map { grocery ->
                         grocery.asPresentationModel(
@@ -206,8 +206,15 @@ class GroceryListScreenViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            editGroceryIdFlow.collect {
-                println("editGroceryIdFlow: $it")
+            editGroceryFlow.collectLatest {  editGrocery ->
+                _bottomSheetContentTypeFlow.update { contentType ->
+                    if (contentType == BottomSheetContentType.RefineItemOptions
+                        && editGrocery == null) {
+                        BottomSheetContentType.Suggestions
+                    } else {
+                        contentType
+                    }
+                }
             }
         }
     }

@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberStandardBottomSheetState
@@ -56,6 +58,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,6 +66,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.AddGroceryBottomSheetContent
@@ -213,6 +217,7 @@ private fun GroceryListScreen(
     }
 
     var pickerDialog by remember { mutableStateOf(PickerDialogType.None) }
+    var deleteProductDialogIsVisible by remember { mutableStateOf(false) }
 
     if (editGroceryBottomSheetIsVisible) {
         ModalBottomSheet(
@@ -262,13 +267,7 @@ private fun GroceryListScreen(
                         hideBottomSheet()
                     },
                     onDeleteProduct = {
-                        // TODO display a confirmation dialog instead
-                        onIntent(
-                            GroceryListScreenIntent.OnDeleteProduct(
-                                editGrocery.productId
-                            )
-                        )
-                        hideBottomSheet()
+                        deleteProductDialogIsVisible = true
                     },
                 )
             }
@@ -472,6 +471,47 @@ private fun GroceryListScreen(
             )
         }
     }
+
+    if (deleteProductDialogIsVisible) {
+        DeleteProductConfirmationDialog(
+            onConfirm = {
+                editGrocery?.productId?.let {
+                    onIntent(GroceryListScreenIntent.OnDeleteProduct(it))
+                }
+                hideBottomSheet()
+                deleteProductDialogIsVisible = false
+            },
+            onDismissRequest = { deleteProductDialogIsVisible = false },
+        )
+    }
+}
+
+@Composable
+private fun DeleteProductConfirmationDialog(
+    modifier: Modifier = Modifier,
+    onConfirm: () -> Unit,
+    onDismissRequest: () -> Unit,
+) {
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = onDismissRequest,
+        title = {
+            Text(text = "${stringResource(R.string.delete)}?")
+        },
+        text = {
+            Text(text = stringResource(R.string.delete_product_dialog_text))
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(text = stringResource(R.string.delete))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(text = stringResource(android.R.string.cancel))
+            }
+        },
+    )
 }
 
 @Composable
