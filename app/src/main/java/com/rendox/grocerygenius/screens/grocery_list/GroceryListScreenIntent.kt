@@ -14,4 +14,9 @@ sealed class GroceryListScreenIntent {
     data object OnClearGroceryDescription : GroceryListScreenIntent()
     data class OnEditGroceryClick(val grocery: GroceryPresentation) : GroceryListScreenIntent()
     data class OnCustomProductClick(val customProduct: CustomProduct) : GroceryListScreenIntent()
+    data class OnCategorySelected(val categoryId: String): GroceryListScreenIntent()
+    data object OnCustomCategorySelected : GroceryListScreenIntent()
+    data class OnIconSelected(val iconId: String): GroceryListScreenIntent()
+    data class OnRemoveGroceryFromList(val groceryId: String): GroceryListScreenIntent()
+    data class OnDeleteProduct(val productId: String): GroceryListScreenIntent()
 }

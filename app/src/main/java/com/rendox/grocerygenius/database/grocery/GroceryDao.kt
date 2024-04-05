@@ -22,7 +22,8 @@ abstract class GroceryDao {
             category.id as categoryId,
             category.name as categoryName,
             category.sortingPriority as categorySortingPriority,
-            grocery.purchasedLastModified
+            grocery.purchasedLastModified,
+            product.isDefault as productIsDefault
         FROM GroceryEntity grocery
         INNER JOIN ProductEntity product ON grocery.productId = product.id
         LEFT JOIN CategoryEntity category ON product.categoryId = category.id
@@ -44,7 +45,8 @@ abstract class GroceryDao {
             category.id as categoryId,
             category.name as categoryName,
             category.sortingPriority as categorySortingPriority,
-            grocery.purchasedLastModified
+            grocery.purchasedLastModified,
+            product.isDefault as productIsDefault
         FROM GroceryEntity grocery
         INNER JOIN ProductEntity product ON grocery.productId = product.id
         LEFT JOIN CategoryEntity category ON product.categoryId = category.id
@@ -52,7 +54,7 @@ abstract class GroceryDao {
         WHERE grocery.productId = :productId AND grocery.groceryListId = :listId
     """
     )
-    abstract suspend fun getGrocery(productId: String, listId: String): CombinedGrocery?
+    abstract fun getGrocery(productId: String, listId: String): Flow<CombinedGrocery?>
 
     @Query("""
         UPDATE GroceryEntity

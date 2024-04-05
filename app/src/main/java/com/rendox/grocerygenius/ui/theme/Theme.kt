@@ -8,6 +8,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 
 
@@ -82,9 +83,12 @@ fun GroceryGeniusTheme(
     disableDynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
+
     val dynamicColorIsSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val dynamicColor = dynamicColorIsSupported && !disableDynamicColor
 
+    val extendedColors =
+        if (useDarkTheme) DarkExtendedColors else LightExtendedColors
     val colors = when {
         dynamicColor && useDarkTheme -> dynamicDarkColorScheme(LocalContext.current)
         dynamicColor && !useDarkTheme ->
@@ -93,8 +97,12 @@ fun GroceryGeniusTheme(
         else -> LightColors
     }
 
-    MaterialTheme(
-        colorScheme = colors,
-        content = content
-    )
+    CompositionLocalProvider(
+        LocalExtendedColors provides extendedColors
+    ) {
+        MaterialTheme(
+            colorScheme = colors,
+            content = content
+        )
+    }
 }

@@ -13,6 +13,7 @@ fun CombinedGrocery.asExternalModel() = Grocery(
     icon = icon,
     category = category,
     purchasedLastModified = purchasedLastModified,
+    productIsDefault = productIsDefault,
 )
 
 val CombinedGrocery.icon
@@ -29,8 +30,7 @@ val CombinedGrocery.category
     get() = when {
         categoryId != null
                 && categoryName != null
-                && categorySortingPriority != null
-                && categoryIsDefault != null -> Category(
+                && categorySortingPriority != null -> Category(
             id = categoryId,
             name = categoryName,
             sortingPriority = categorySortingPriority,

@@ -29,12 +29,15 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberStandardBottomSheetState
@@ -55,6 +58,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,13 +66,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.AddGroceryBottomSheetContent
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.BottomSheetContentType
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.rememberAddGroceryBottomSheetState
+import com.rendox.grocerygenius.screens.grocery_list.dialogs.CategoryPickerDialog
+import com.rendox.grocerygenius.screens.grocery_list.dialogs.IconPickerDialog
 import com.rendox.grocerygenius.screens.grocery_list.edit_grocery_bottom_sheet.EditGroceryBottomSheetContent
 import com.rendox.grocerygenius.ui.GroceryPresentation
+import com.rendox.grocerygenius.ui.IconPresentation
 import com.rendox.grocerygenius.ui.components.BottomSheetDragHandle
 import com.rendox.grocerygenius.ui.components.Scrim
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbar
@@ -99,7 +107,9 @@ fun GroceryListRoute(
     val previousGrocery by viewModel.previousGroceryFlow.collectAsStateWithLifecycle()
     val editGrocery by viewModel.editGroceryFlow.collectAsStateWithLifecycle()
     val clearEditGroceryDescriptionButtonIsShown by viewModel.clearEditGroceryDescriptionButtonIsShown.collectAsStateWithLifecycle()
-    val customProduct by viewModel.customProduct.collectAsStateWithLifecycle()
+    val customProduct by viewModel.customProductFlow.collectAsStateWithLifecycle()
+    val groceryIcons by viewModel.groceryIconsFlow.collectAsStateWithLifecycle()
+    val groceryCategories by viewModel.groceryCategories.collectAsStateWithLifecycle()
 
     GroceryListScreen(
         modifier = modifier,
@@ -115,6 +125,8 @@ fun GroceryListRoute(
         editGroceryDescription = viewModel.editGroceryDescription,
         customProduct = customProduct,
         onIntent = viewModel::onIntent,
+        groceryIcons = groceryIcons,
+        groceryCategories = groceryCategories,
     )
 }
 
@@ -134,6 +146,8 @@ private fun GroceryListScreen(
     editGroceryDescription: String?,
     customProduct: CustomProduct?,
     onIntent: (GroceryListScreenIntent) -> Unit,
+    groceryIcons: List<IconPresentation>,
+    groceryCategories: List<Category>,
 ) {
     val collapsedToolbarHeight = 64.dp
     val expandedToolbarHeight = 112.dp
@@ -202,9 +216,12 @@ private fun GroceryListScreen(
         }
     }
 
+    var pickerDialog by remember { mutableStateOf(PickerDialogType.None) }
+    var deleteProductDialogIsVisible by remember { mutableStateOf(false) }
+
     if (editGroceryBottomSheetIsVisible) {
         ModalBottomSheet(
-            modifier = Modifier.padding(top = 60.dp),
+            modifier = Modifier.padding(top = 20.dp),
             onDismissRequest = hideBottomSheet,
             sheetState = editBottomSheetState,
             scrimColor = Color.Transparent,
@@ -234,6 +251,24 @@ private fun GroceryListScreen(
                     onDoneButtonClick = hideBottomSheet,
                     onKeyboardDone = hideBottomSheet,
                     itemDescriptionFocusRequester = itemDescriptionFocusRequester,
+                    onChangeCategoryClick = {
+                        pickerDialog = PickerDialogType.CategoryPicker
+                    },
+                    onChangeIconClick = {
+                        pickerDialog = PickerDialogType.IconPicker
+                    },
+                    productCanBeModified = !editGrocery.productIsDefault,
+                    onRemoveGrocery = {
+                        onIntent(
+                            GroceryListScreenIntent.OnRemoveGroceryFromList(
+                                editGrocery.productId
+                            )
+                        )
+                        hideBottomSheet()
+                    },
+                    onDeleteProduct = {
+                        deleteProductDialogIsVisible = true
+                    },
                 )
             }
         }
@@ -369,7 +404,7 @@ private fun GroceryListScreen(
                         } else {
                             MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor
                         },
-                        groceryIcon = grocery.iconBitmap,
+                        groceryIcon = grocery.icon?.iconBitmap,
                     )
                 },
                 contentPadding = PaddingValues(
@@ -394,6 +429,89 @@ private fun GroceryListScreen(
             )
         }
     }
+
+    when (pickerDialog) {
+        PickerDialogType.None -> {}
+        PickerDialogType.CategoryPicker -> {
+            CategoryPickerDialog(
+                modifier = Modifier,
+                selectedCategoryId = editGrocery?.category?.id,
+                categories = groceryCategories,
+                onCategorySelected = {
+                    onIntent(GroceryListScreenIntent.OnCategorySelected(it.id))
+                    pickerDialog = PickerDialogType.None
+                },
+                onDismissRequest = { pickerDialog = PickerDialogType.None },
+                onCustomCategorySelected = {
+                    onIntent(GroceryListScreenIntent.OnCustomCategorySelected)
+                    pickerDialog = PickerDialogType.None
+                },
+            )
+        }
+
+        PickerDialogType.IconPicker -> {
+            IconPickerDialog(
+                modifier = Modifier,
+                numOfIcons = groceryIcons.size,
+                icon = {
+                    val image = groceryIcons[it].iconBitmap
+                    image.prepareToDraw()
+                    Icon(
+                        modifier = Modifier.fillMaxSize(),
+                        bitmap = image,
+                        contentDescription = null,
+                    )
+                },
+                title = { groceryIcons[it].name },
+                onIconSelected = {
+                    onIntent(GroceryListScreenIntent.OnIconSelected(groceryIcons[it].id))
+                    pickerDialog = PickerDialogType.None
+                },
+                onDismissRequest = { pickerDialog = PickerDialogType.None },
+            )
+        }
+    }
+
+    if (deleteProductDialogIsVisible) {
+        DeleteProductConfirmationDialog(
+            onConfirm = {
+                editGrocery?.productId?.let {
+                    onIntent(GroceryListScreenIntent.OnDeleteProduct(it))
+                }
+                hideBottomSheet()
+                deleteProductDialogIsVisible = false
+            },
+            onDismissRequest = { deleteProductDialogIsVisible = false },
+        )
+    }
+}
+
+@Composable
+private fun DeleteProductConfirmationDialog(
+    modifier: Modifier = Modifier,
+    onConfirm: () -> Unit,
+    onDismissRequest: () -> Unit,
+) {
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = onDismissRequest,
+        title = {
+            Text(text = "${stringResource(R.string.delete)}?")
+        },
+        text = {
+            Text(text = stringResource(R.string.delete_product_dialog_text))
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(text = stringResource(R.string.delete))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(text = stringResource(android.R.string.cancel))
+            }
+        },
+    )
 }
 
 @Composable
@@ -463,6 +581,8 @@ fun GroceryListScreenPreview() {
             editGroceryDescription = null,
             onIntent = {},
             customProduct = null,
+            groceryIcons = emptyList(),
+            groceryCategories = emptyList(),
         )
     }
 }

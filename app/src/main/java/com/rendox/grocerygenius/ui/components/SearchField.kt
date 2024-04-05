@@ -1,6 +1,5 @@
 package com.rendox.grocerygenius.ui.components
 
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -19,6 +18,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import com.rendox.grocerygenius.R
+import com.rendox.grocerygenius.ui.theme.CornerRoundingDefault
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 
 @Composable
@@ -36,7 +36,7 @@ fun SearchField(
         value = searchInput,
         onValueChange = onSearchInputChanged,
         placeholder = placeholder,
-        shape = RoundedCornerShape(20),
+        shape = CornerRoundingDefault,
         colors = TextFieldDefaults.colors().copy(
             disabledIndicatorColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent,

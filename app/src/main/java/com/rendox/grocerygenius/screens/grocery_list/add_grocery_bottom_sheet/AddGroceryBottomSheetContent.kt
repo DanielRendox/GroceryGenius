@@ -42,6 +42,7 @@ import com.rendox.grocerygenius.ui.components.SearchField
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGrid
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
 import com.rendox.grocerygenius.ui.components.grocery_list.groceryListItemColors
+import com.rendox.grocerygenius.ui.theme.CornerRoundingDefault
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import kotlin.random.Random
 
@@ -96,7 +97,14 @@ fun AddGroceryBottomSheetContent(
                     .padding(16.dp)
             ) {
                 when (contentType) {
-                    BottomSheetContentType.Suggestions -> {}
+                    BottomSheetContentType.Suggestions -> {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().height(200.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(text = "Suggestions here")
+                        }
+                    }
 
                     BottomSheetContentType.SearchResults -> {
                         SearchResults(
@@ -193,7 +201,7 @@ private fun SearchResults(
                 } else {
                     MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor
                 },
-                groceryIcon = grocery.iconBitmap,
+                groceryIcon = grocery.icon?.iconBitmap,
             )
         },
         customProduct = customProduct?.let { product ->
@@ -230,7 +238,7 @@ private fun RefineItemOptions(
 
         Row(
             modifier = Modifier
-                .clip(shape = RoundedCornerShape(20))
+                .clip(shape = CornerRoundingDefault)
                 .background(color = MaterialTheme.colorScheme.secondaryContainer)
                 .clickable(onClick = editGroceryOnClick)
                 .padding(8.dp),
@@ -309,7 +317,7 @@ private fun Fab(
             TextButton(
                 onClick = onCancelButtonClicked
             ) {
-                Text(text = stringResource(id = android.R.string.cancel))
+                Text(text = stringResource(id = R.string.done))
             }
         } else {
             Box(

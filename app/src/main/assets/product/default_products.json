@@ -54,5 +54,166 @@
     "iconId": "default-grocery-icons-ribes",
     "categoryId": "default-category-fruits-and-vegetables",
     "isDefault": true
+  },
+  {
+    "id": "default-product-broccoli",
+    "name": "Broccoli",
+    "iconId": "default-grocery-icons-broccoli",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-cabbage",
+    "name": "Cabbage",
+    "iconId": "default-grocery-icons-cabbage",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-carrots",
+    "name": "Carrots",
+    "iconId": "default-grocery-icons-carrots",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-cheese",
+    "name": "Cheese",
+    "iconId": "default-grocery-icons-cheese",
+    "categoryId": "default-category-dairy-and-eggs",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-cottage-cheese",
+    "name": "Cottage cheese",
+    "iconId": "default-grocery-icons-cottage-cheese",
+    "categoryId": "default-category-dairy-and-eggs",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-cucumber",
+    "name": "Cucumber",
+    "iconId": "default-grocery-icons-cucumber",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-eggs",
+    "name": "Eggs",
+    "iconId": "default-grocery-icons-eggs",
+    "categoryId": "default-category-dairy-and-eggs",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-garlic",
+    "name": "Garlic",
+    "iconId": "default-grocery-icons-garlic",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-grapes",
+    "name": "Grapes",
+    "iconId": "default-grocery-icons-grapes",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-juice",
+    "name": "Juice",
+    "iconId": "default-grocery-icons-juice",
+    "categoryId": "default-category-drinks",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-lemon",
+    "name": "Lemon",
+    "iconId": "default-grocery-icons-lemon",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-melon",
+    "name": "Melon",
+    "iconId": "default-grocery-icons-melon",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-milk",
+    "name": "Milk",
+    "iconId": "default-grocery-icons-milk",
+    "categoryId": "default-category-dairy-and-eggs",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-onions",
+    "name": "Onions",
+    "iconId": "default-grocery-icons-onion",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-oranges",
+    "name": "Oranges",
+    "iconId": "default-grocery-icons-orange",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-parsley",
+    "name": "Parsley",
+    "iconId": "default-grocery-icons-parsley",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-pears",
+    "name": "Pears",
+    "iconId": "default-grocery-icons-pear",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-pepper",
+    "name": "Pepper",
+    "iconId": "default-grocery-icons-pepper",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-pineapple",
+    "name": "Pineapple",
+    "iconId": "default-grocery-icons-pineapple",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-potatoes",
+    "name": "Potatoes",
+    "iconId": "default-grocery-icons-potatoes",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-sour-cream",
+    "name": "Sour cream",
+    "iconId": "default-grocery-icons-sour-cream",
+    "categoryId": "default-category-dairy-and-eggs",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-sweet-corn",
+    "name": "Sweet corn",
+    "iconId": "default-grocery-icons-sweet-corn",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
+  },
+  {
+    "id": "default-product-tangerines",
+    "name": "Tangerines",
+    "iconId": "default-grocery-icons-tangerines",
+    "categoryId": "default-category-fruits-and-vegetables",
+    "isDefault": true
   }
 ]

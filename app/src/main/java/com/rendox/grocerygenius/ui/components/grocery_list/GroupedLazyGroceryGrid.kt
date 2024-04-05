@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.ui.GroceryPresentation
 
@@ -60,10 +61,10 @@ fun GroupedLazyGroceryGrid(
                 ) {
                     Text(
                         modifier = Modifier
-                            .padding(vertical = 4.dp)
+                            .padding(top = 16.dp, bottom = 8.dp)
                             .animateItemPlacement(),
                         text = stringResource(id = R.string.not_purchased_groceries_group_title),
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )

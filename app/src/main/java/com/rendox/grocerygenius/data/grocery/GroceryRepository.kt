@@ -26,7 +26,7 @@ interface GroceryRepository {
     )
 
     fun getGroceriesFromList(listId: String): Flow<List<Grocery>>
-    suspend fun getGrocery(productId: String, listId: String): Grocery?
+    fun getGroceryById(productId: String, listId: String): Flow<Grocery?>
 
     suspend fun updatePurchased(
         productId: String,

@@ -5,16 +5,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rendox.grocerygenius.R
+import com.rendox.grocerygenius.data.category.CategoryRepository
 import com.rendox.grocerygenius.data.grocery.GroceryRepository
 import com.rendox.grocerygenius.data.grocery_list.GroceryListRepository
+import com.rendox.grocerygenius.data.icons.IconRepository
 import com.rendox.grocerygenius.data.product.ProductRepository
 import com.rendox.grocerygenius.file_storage.BitmapLoader
 import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.BottomSheetContentType
 import com.rendox.grocerygenius.ui.GroceryPresentation
+import com.rendox.grocerygenius.ui.IconPresentation
 import com.rendox.grocerygenius.ui.asPresentationModel
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +29,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
@@ -32,6 +39,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,6 +49,8 @@ class GroceryListScreenViewModel @Inject constructor(
     groceryListRepository: GroceryListRepository,
     private val productRepository: ProductRepository,
     private val bitmapLoader: BitmapLoader,
+    categoryRepository: CategoryRepository,
+    iconRepository: IconRepository,
 ) : ViewModel() {
     private val groceryListId = "sample-grocery-list"
 
@@ -51,8 +61,28 @@ class GroceryListScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
         )
 
+    val groceryIconsFlow = iconRepository.getAllGroceryIcons()
+        .map { iconReferences ->
+            iconReferences.mapNotNull {
+                bitmapLoader.loadFromFile(
+                    File(appContext.filesDir, it.filePath).absolutePath
+                )?.let { bitmap ->
+                    IconPresentation(
+                        id = it.id,
+                        iconBitmap = bitmap.asImageBitmap(),
+                        name = it.name,
+                    )
+                }
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = emptyList(),
+            started = SharingStarted.WhileSubscribed(5_000),
+        )
+
     val groceriesFlow = groceryRepository.getGroceriesFromList(groceryListId)
-        .map { groceryList ->
+        .combine(groceryIconsFlow) { groceryList, icons ->
             groceryList
                 .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name })
                 .sortedBy { it.purchased }
@@ -64,15 +94,12 @@ class GroceryListScreenViewModel @Inject constructor(
                     val sortedGroceries = if (purchased) {
                         group.value.sortedByDescending { it.purchasedLastModified }
                     } else {
-                        group.value.sortedBy { it.category?.sortingPriority }
+                        group.value.sortedBy { it.category?.sortingPriority ?: Int.MAX_VALUE }
                     }
                     val presentationGroceries = sortedGroceries.map { grocery ->
-                        val iconBitmap = grocery.icon?.let {
-                            bitmapLoader.loadFromFile(
-                                File(appContext.filesDir, it.filePath).absolutePath
-                            )
-                        }
-                        grocery.asPresentationModel(iconBitmap)
+                        grocery.asPresentationModel(
+                            icon = icons.find { it.id == grocery.icon?.id }
+                        )
                     }
                     GroceryGroup(
                         titleId = titleId,
@@ -110,20 +137,17 @@ class GroceryListScreenViewModel @Inject constructor(
     val previousGroceryFlow = MutableStateFlow<GroceryPresentation?>(null)
 
     private val editGroceryIdFlow = MutableStateFlow<String?>(null)
+    @OptIn(ExperimentalCoroutinesApi::class)
     val editGroceryFlow = editGroceryIdFlow
-        .map { editGroceryIdFlow ->
-            val groceryFromRepository = groceryRepository
-                .getGrocery(
-                    productId = editGroceryIdFlow ?: return@map null,
-                    listId = groceryListId,
+        .flatMapLatest { editGroceryId ->
+            groceryRepository.getGroceryById(
+                productId = editGroceryId ?: return@flatMapLatest flowOf(null),
+                listId = groceryListId,
+            ).map { grocery ->
+                grocery?.asPresentationModel(
+                    icon = groceryIconsFlow.value.find { it.id == grocery.icon?.id }
                 )
-            val groceryPresentation = groceryFromRepository?.let { grocery ->
-                val iconBitmap = grocery.icon?.let {
-                    bitmapLoader.loadFromFile(File(appContext.filesDir, it.filePath).absolutePath)
-                }
-                grocery.asPresentationModel(iconBitmap)
             }
-            groceryPresentation
         }
         .stateIn(
             scope = viewModelScope,
@@ -147,8 +171,15 @@ class GroceryListScreenViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5_000),
             )
 
-    private val _customProduct = MutableStateFlow<CustomProduct?>(null)
-    val customProduct = _customProduct.asStateFlow()
+    private val _customProductFlow = MutableStateFlow<CustomProduct?>(null)
+    val customProductFlow = _customProductFlow.asStateFlow()
+
+    val groceryCategories = categoryRepository.getAllCategories()
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = emptyList(),
+            started = SharingStarted.WhileSubscribed(5_000),
+        )
 
     init {
         viewModelScope.launch {
@@ -161,7 +192,7 @@ class GroceryListScreenViewModel @Inject constructor(
                     }
                 } else {
                     _grocerySearchResultsFlow.update { emptyList() }
-                    _customProduct.update { null }
+                    _customProductFlow.update { null }
                 }
             }
         }
@@ -172,6 +203,18 @@ class GroceryListScreenViewModel @Inject constructor(
                     listId = groceryListId,
                     description = description,
                 )
+            }
+        }
+        viewModelScope.launch {
+            editGroceryFlow.collectLatest {  editGrocery ->
+                _bottomSheetContentTypeFlow.update { contentType ->
+                    if (contentType == BottomSheetContentType.RefineItemOptions
+                        && editGrocery == null) {
+                        BottomSheetContentType.Suggestions
+                    } else {
+                        contentType
+                    }
+                }
             }
         }
     }
@@ -207,6 +250,21 @@ class GroceryListScreenViewModel @Inject constructor(
 
             is GroceryListScreenIntent.OnCustomProductClick ->
                 addCustomProduct(intent.customProduct)
+
+            is GroceryListScreenIntent.OnCategorySelected ->
+                onCategorySelected(intent.categoryId)
+
+            is GroceryListScreenIntent.OnCustomCategorySelected ->
+                onCategorySelected(null)
+
+            is GroceryListScreenIntent.OnIconSelected ->
+                onIconSelected(intent.iconId)
+
+            is GroceryListScreenIntent.OnRemoveGroceryFromList ->
+                onRemoveGroceryFromList(intent.groceryId)
+
+            is GroceryListScreenIntent.OnDeleteProduct ->
+                onDeleteProduct(intent.productId)
         }
     }
 
@@ -223,7 +281,7 @@ class GroceryListScreenViewModel @Inject constructor(
             val isPerfectMatch =
                 searchResults.firstOrNull()?.name.equals(searchInput, ignoreCase = true)
 
-            _customProduct.update {
+            _customProductFlow.update {
                 if (!isPerfectMatch) {
                     CustomProduct(name = searchInput)
                 } else null
@@ -238,10 +296,7 @@ class GroceryListScreenViewModel @Inject constructor(
                 GroceryPresentation(
                     productId = product.id,
                     name = product.name,
-                    icon = product.icon,
-                    iconBitmap = iconFilePath?.let {
-                        bitmapLoader.loadFromFile(File(appContext.filesDir, it).absolutePath)
-                    },
+                    icon = groceryIconsFlow.value.find { it.id == product.icon?.id },
                     purchased = correspondingGroceryInTheList?.purchased ?: false,
                     description = correspondingGroceryInTheList?.description,
                     category = product.category,
@@ -274,7 +329,7 @@ class GroceryListScreenViewModel @Inject constructor(
 
     private fun addOrUpdateGrocery(grocery: GroceryPresentation) {
         viewModelScope.launch {
-            val groceryIsAlreadyInList = groceriesFlow.value.any {  groceryGroup ->
+            val groceryIsAlreadyInList = groceriesFlow.value.any { groceryGroup ->
                 groceryGroup.groceries.any { it.productId == grocery.productId }
             }
             if (groceryIsAlreadyInList) {
@@ -299,7 +354,7 @@ class GroceryListScreenViewModel @Inject constructor(
     }
 
     private fun onSearchInputKeyboardDone() {
-        val customProduct = _customProduct.value
+        val customProduct = _customProductFlow.value
         if (customProduct != null) {
             addCustomProduct(customProduct)
         } else {
@@ -317,15 +372,26 @@ class GroceryListScreenViewModel @Inject constructor(
     }
 
     private fun addCustomProduct(customProduct: CustomProduct) {
+        val productId = UUID.randomUUID().toString()
+        val purchased = false
         viewModelScope.launch {
             groceryRepository.insertProductAndGrocery(
+                productId = productId,
                 name = customProduct.name,
                 categoryId = customProduct.category?.id,
                 groceryListId = groceryListId,
                 description = customProduct.description,
             )
         }
-
+        previousGroceryFlow.update {
+            GroceryPresentation(
+                productId = productId,
+                name = customProduct.name,
+                description = customProduct.description,
+                category = customProduct.category,
+                purchased = purchased,
+            )
+        }
         searchInput = null
         _bottomSheetContentTypeFlow.update {
             BottomSheetContentType.RefineItemOptions
@@ -335,5 +401,42 @@ class GroceryListScreenViewModel @Inject constructor(
     private fun onEditGroceryClick(grocery: GroceryPresentation) {
         editGroceryIdFlow.update { grocery.productId }
         editGroceryDescription = grocery.description
+    }
+
+    private fun onCategorySelected(categoryId: String?) {
+        editGroceryIdFlow.value?.let { groceryId ->
+            viewModelScope.launch {
+                productRepository.updateProductCategory(
+                    productId = groceryId,
+                    categoryId = categoryId,
+                )
+            }
+        }
+    }
+
+    private fun onIconSelected(iconId: String) {
+        editGroceryIdFlow.value?.let { groceryId ->
+            viewModelScope.launch {
+                productRepository.updateProductIcon(
+                    productId = groceryId,
+                    iconId = iconId,
+                )
+            }
+        }
+    }
+
+    private fun onRemoveGroceryFromList(groceryId: String) {
+        viewModelScope.launch {
+            groceryRepository.removeGroceryFromList(
+                productId = groceryId,
+                listId = groceryListId,
+            )
+        }
+    }
+
+    private fun onDeleteProduct(productId: String) {
+        viewModelScope.launch {
+            productRepository.deleteProductById(productId)
+        }
     }
 }

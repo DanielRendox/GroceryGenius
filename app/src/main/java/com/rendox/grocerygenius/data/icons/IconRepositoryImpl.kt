@@ -12,6 +12,9 @@ class IconRepositoryImpl @Inject constructor(
     private val iconDao: IconDao,
     private val iconNetworkDataSource: IconNetworkDataSource,
 ) : IconRepository {
+
+    override fun getAllGroceryIcons() = iconDao.getAllGroceryIcons()
+
     override suspend fun syncWith(synchronizer: Synchronizer) = synchronizer.changeListSync(
         checkIfExistingDataIsEmpty = {
             iconDao.getAllGroceryIcons().first().isEmpty()

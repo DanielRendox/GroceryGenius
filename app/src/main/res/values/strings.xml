@@ -1,22 +1,32 @@
 <resources>
-    <!-- GroceryListScreen -->
     <string name="app_name">Grocery Genius</string>
+
+    <!-- GroceryListScreen -->
     <string name="not_purchased_groceries_group_title">Recently used</string>
     <string name="add_grocery_search_field_placeholder_collapsed">Add a grocery</string>
     <string name="add_grocery_search_field_placeholder_expanded">e.g. bread</string>
     <string name="add_grocery_search_field_trailing_icon_description">Clear text in search bar</string>
-    <string name="add_grocery_item_description_placeholder">Quantity, description</string>
     <string name="add_grocery_refine_item_options_title">Refine «%s»</string>
     <string name="add_grocery_add_new_category_chip_title">Add new category</string>
     <string name="add_grocery_add_new_category_chip_description">Selected</string>
     <string name="add_grocery_edit_item_button_title">Enter item details</string>
+    <string name="edit_grocery_item_description_placeholder">Quantity, description</string>
+    <string name="edit_grocery_change_icon_button_title">Change icon</string>
+    <string name="edit_grocery_change_category_button_title">Change category</string>
+    <string name="edit_grocery_remove_item_button_title">Remove item from the list</string>
+    <string name="edit_grocery_delete_grocery_button_title">Delete item</string>
+    <string name="select_category_dialog_title">Choose category</string>
+    <string name="select_icon_dialog_title">Choose icon</string>
+    <string name="edit_grocery_settings_title">Custom item settings</string>
+    <string name="delete_product_dialog_text">This item will be removed from all your grocery lists</string>
 
     <!-- General -->
     <string name="done">Done</string>
+    <string name="delete">Delete</string>
+
+    <string name="custom_category_title">Custom</string>
 
     <string name="sync_work_notification_channel_name">Sync</string>
     <string name="sync_work_notification_channel_description">Background tasks for Grocery Genius</string>
     <string name="sync_work_notification_title">Syncing your groceries</string>
-    <string name="toggle_dropdown_menu_visibility">Toggle dropdown menu visibility</string>
-    <string name="grocery_choose_category_dropdown_title">Category</string>
 </resources>

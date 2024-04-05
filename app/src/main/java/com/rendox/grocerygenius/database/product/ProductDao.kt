@@ -1,10 +1,8 @@
 package com.rendox.grocerygenius.database.product
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
 import androidx.room.Upsert
 
 @Dao
@@ -25,7 +23,7 @@ interface ProductDao {
             category.id as categoryId,
             category.name as categoryName,
             category.sortingPriority as categorySortingPriority,
-            product.deletable
+            product.isDefault
         FROM ProductEntity product
         LEFT JOIN CategoryEntity category ON product.categoryId = category.id
         LEFT JOIN IconEntity icon ON product.iconId = icon.id
@@ -44,7 +42,7 @@ interface ProductDao {
             category.id as categoryId,
             category.name as categoryName,
             category.sortingPriority as categorySortingPriority,
-            product.deletable
+            product.isDefault
         FROM ProductEntity product
         LEFT JOIN CategoryEntity category ON product.categoryId = category.id
         LEFT JOIN IconEntity icon ON product.iconId = icon.id
@@ -56,11 +54,14 @@ interface ProductDao {
     @Query("SELECT * FROM ProductEntity")
     suspend fun getAllProducts(): List<ProductEntity>
 
-    @Update
-    suspend fun updateProduct(product: ProductEntity)
+    @Query("UPDATE ProductEntity SET categoryId = :categoryId WHERE id = :productId")
+    suspend fun updateProductCategory(productId: String, categoryId: String?)
 
-    @Delete
-    suspend fun deleteProduct(product: ProductEntity)
+    @Query("UPDATE ProductEntity SET iconId = :iconId WHERE id = :productId")
+    suspend fun updateProductIcon(productId: String, iconId: String)
+
+    @Query("DELETE FROM ProductEntity WHERE id = :productId")
+    suspend fun deleteProductById(productId: String)
 
     @Query(
         """
