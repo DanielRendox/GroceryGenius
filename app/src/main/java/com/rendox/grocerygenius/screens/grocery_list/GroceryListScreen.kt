@@ -34,6 +34,7 @@ import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -54,17 +55,19 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Grocery
-import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.AddGroceryBottomSheetContent
-import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.AddGroceryBottomSheetState
-import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.rememberAddGroceryBottomSheetState
 import com.rendox.grocerygenius.screens.edit_grocery.EditGroceryScreen
 import com.rendox.grocerygenius.screens.edit_grocery.EditGroceryScreenIntent
 import com.rendox.grocerygenius.screens.edit_grocery.EditGroceryViewModel
+import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.AddGroceryBottomSheetContent
+import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.AddGroceryBottomSheetState
+import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.rememberAddGroceryBottomSheetState
 import com.rendox.grocerygenius.ui.components.BottomSheetDragHandle
 import com.rendox.grocerygenius.ui.components.Scrim
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbar
@@ -76,6 +79,7 @@ import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
 import com.rendox.grocerygenius.ui.components.grocery_list.GroupedLazyGroceryGrid
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
 import com.rendox.grocerygenius.ui.components.grocery_list.groceryListItemColors
+import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -161,7 +165,7 @@ fun GroceryListRoute(
         val editGroceryScreenState by editGroceryViewModel.screenState.collectAsStateWithLifecycle()
         EditGroceryScreen(
             modifier = Modifier.fillMaxSize(),
-            uiState = editGroceryScreenState,
+            screenState = editGroceryScreenState,
             editGroceryDescription = editGroceryViewModel.editGroceryDescription,
             editBottomSheetState = editBottomSheetState,
             hideBottomSheet = {
@@ -187,14 +191,14 @@ fun GroceryListScreen(
     toolbarState: ToolbarState,
     toolbarHeightRange: IntRange,
     screenState: GroceryListScreenState,
-    nestedScrollConnection: NestedScrollConnection,
-    scaffoldState: BottomSheetScaffoldState,
-    addGroceryBottomSheetState: AddGroceryBottomSheetState,
-    lazyGridState: LazyGridState,
-    scrimIsShown: Boolean,
-    toolbarIsHidden: Boolean,
-    onIntent: (GroceryListScreenIntent) -> Unit,
-    showEditGroceryBottomSheet: (String) -> Unit,
+    nestedScrollConnection: NestedScrollConnection? = null,
+    scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
+    addGroceryBottomSheetState: AddGroceryBottomSheetState = rememberAddGroceryBottomSheetState(),
+    lazyGridState: LazyGridState = rememberLazyGridState(),
+    scrimIsShown: Boolean = false,
+    toolbarIsHidden: Boolean = false,
+    onIntent: (GroceryListScreenIntent) -> Unit = {},
+    showEditGroceryBottomSheet: (String) -> Unit = {},
 ) {
     val navigationBarHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     BottomSheetScaffold(
@@ -250,7 +254,11 @@ fun GroceryListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .nestedScroll(nestedScrollConnection)
+                .then(
+                    if (nestedScrollConnection != null) {
+                        Modifier.nestedScroll(nestedScrollConnection)
+                    } else Modifier
+                )
         ) {
             GroceryListCollapsingToolbar(
                 listName = screenState.listName,
@@ -385,4 +393,50 @@ private fun GroceryGrid(
         ),
         lazyGridState = lazyGridState,
     )
+}
+
+val sampleGroceryGroups = listOf(
+    GroceryGroup(
+        titleId = null,
+        groceries = List(5) {
+            Grocery(
+                name = "Not purchased grocery $it",
+                purchased = false,
+                productId = "not_purchased_$it"
+            )
+        }
+    ),
+    GroceryGroup(
+        titleId = R.string.purchased_groceries_group_title,
+        groceries = List(10) {
+            Grocery(
+                name = "Purchased grocery $it",
+                purchased = true,
+                productId = "purchased_$it"
+            )
+        }
+    ),
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun GroceryListScreenPreview() {
+    GroceryGeniusTheme {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            val collapsedToolbarHeight = 64.dp
+            val expandedToolbarHeight = 112.dp
+            val toolbarHeightRange = with(LocalDensity.current) {
+                collapsedToolbarHeight.roundToPx()..expandedToolbarHeight.roundToPx()
+            }
+            val toolbarState = rememberExitUntilCollapsedToolbarState(toolbarHeightRange)
+            GroceryListScreen(
+                groceryGroups = sampleGroceryGroups,
+                searchQuery = "",
+                toolbarState = toolbarState,
+                toolbarHeightRange = toolbarHeightRange,
+                screenState = GroceryListScreenState(listName = "My Grocery List"),
+            )
+        }
+    }
 }

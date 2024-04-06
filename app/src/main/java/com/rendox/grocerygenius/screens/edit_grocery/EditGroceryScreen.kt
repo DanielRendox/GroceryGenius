@@ -43,7 +43,7 @@ fun EditGroceryScreen(
     editBottomSheetState: SheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     ),
-    uiState: EditGroceryScreenState,
+    screenState: EditGroceryScreenState,
     editGroceryDescription: String?,
     hideBottomSheet: () -> Unit,
     onIntent: (EditGroceryScreenIntent) -> Unit,
@@ -69,9 +69,9 @@ fun EditGroceryScreen(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .fillMaxSize(),
-            groceryName = uiState.editGrocery?.name ?: "",
+            groceryName = screenState.editGrocery?.name ?: "",
             groceryDescription = editGroceryDescription,
-            clearGroceryDescriptionButtonIsShown = uiState.clearEditGroceryDescriptionButtonIsShown,
+            clearGroceryDescriptionButtonIsShown = screenState.clearEditGroceryDescriptionButtonIsShown,
             onGroceryDescriptionChanged = {
                 onIntent(EditGroceryScreenIntent.OnDescriptionChanged(it))
             },
@@ -90,7 +90,7 @@ fun EditGroceryScreen(
             onChangeIconClick = {
                 pickerDialog = PickerDialogType.IconPicker
             },
-            productCanBeModified = uiState.editGrocery?.productIsDefault == false,
+            productCanBeModified = screenState.editGrocery?.productIsDefault == false,
             onRemoveGrocery = {
                 onIntent(EditGroceryScreenIntent.OnRemoveGroceryFromList)
                 hideBottomSheet()
@@ -106,8 +106,8 @@ fun EditGroceryScreen(
         PickerDialogType.CategoryPicker -> {
             CategoryPickerDialog(
                 modifier = Modifier,
-                selectedCategoryId = uiState.editGrocery?.category?.id,
-                categories = uiState.groceryCategories,
+                selectedCategoryId = screenState.editGrocery?.category?.id,
+                categories = screenState.groceryCategories,
                 onCategorySelected = {
                     onIntent(EditGroceryScreenIntent.OnCategorySelected(it.id))
                     pickerDialog = PickerDialogType.None
@@ -123,7 +123,7 @@ fun EditGroceryScreen(
         PickerDialogType.IconPicker -> {
             IconPickerDialog(
                 modifier = Modifier,
-                numOfIcons = uiState.icons.size,
+                numOfIcons = screenState.icons.size,
                 icon = {
                     Icon(
                         modifier = Modifier.fillMaxSize(),
@@ -131,9 +131,9 @@ fun EditGroceryScreen(
                         contentDescription = null,
                     )
                 },
-                title = { uiState.icons[it].name },
+                title = { screenState.icons[it].name },
                 onIconSelected = {
-                    onIntent(EditGroceryScreenIntent.OnIconSelected(uiState.icons[it].id))
+                    onIntent(EditGroceryScreenIntent.OnIconSelected(screenState.icons[it].id))
                     pickerDialog = PickerDialogType.None
                 },
                 onDismissRequest = { pickerDialog = PickerDialogType.None },
@@ -144,7 +144,7 @@ fun EditGroceryScreen(
     if (deleteProductDialogIsVisible) {
         DeleteProductConfirmationDialog(
             onConfirm = {
-                uiState.editGrocery?.productId?.let {
+                screenState.editGrocery?.productId?.let {
                     onIntent(EditGroceryScreenIntent.OnDeleteProduct)
                 }
                 hideBottomSheet()

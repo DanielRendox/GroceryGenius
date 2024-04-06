@@ -63,7 +63,7 @@ fun GroupedLazyGroceryGrid(
                         modifier = Modifier
                             .padding(top = 16.dp, bottom = 8.dp)
                             .animateItemPlacement(),
-                        text = stringResource(id = R.string.not_purchased_groceries_group_title),
+                        text = stringResource(id = R.string.purchased_groceries_group_title),
                         style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

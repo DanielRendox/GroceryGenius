@@ -54,7 +54,7 @@ class GroceryListViewModel @Inject constructor(
                 .map { group ->
                     val purchased = group.key
                     val titleId =
-                        if (purchased) R.string.not_purchased_groceries_group_title else null
+                        if (purchased) R.string.purchased_groceries_group_title else null
                     val sortedGroceries = if (purchased) {
                         group.value.sortedByDescending { it.purchasedLastModified }
                     } else {
@@ -161,9 +161,9 @@ class GroceryListViewModel @Inject constructor(
 
     private fun addOrUpdateGrocery(grocery: Grocery) {
         viewModelScope.launch {
-            val groceryIsAlreadyInList = groceryGroupsFlow.value.any { groceryGroup ->
-                groceryGroup.groceries.any { it.productId == grocery.productId }
-            }
+            val groceryIsAlreadyInList = groceryGroupsFlow.value
+                .flatMap { it.groceries }
+                .any { it.productId == grocery.productId }
             if (groceryIsAlreadyInList) {
                 toggleItemPurchased(grocery)
             } else {
