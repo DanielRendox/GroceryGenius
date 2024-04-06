@@ -167,14 +167,12 @@ class GroceryListViewModel @Inject constructor(
             if (groceryIsAlreadyInList) {
                 toggleItemPurchased(grocery)
             } else {
-                viewModelScope.launch {
-                    groceryRepository.addGroceryToList(
-                        productId = grocery.productId,
-                        listId = groceryListId,
-                        description = grocery.description,
-                        purchased = grocery.purchased,
-                    )
-                }
+                groceryRepository.addGroceryToList(
+                    productId = grocery.productId,
+                    listId = groceryListId,
+                    description = grocery.description,
+                    purchased = grocery.purchased,
+                )
             }
             _screenStateFlow.update {
                 it.copy(
