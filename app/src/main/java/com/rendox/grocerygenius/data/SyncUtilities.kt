@@ -65,7 +65,6 @@ suspend fun Synchronizer.changeListSync(
         updateChangeListVersions {
             versionUpdater(latestVersion ?: 0)
         }
-        println("Initial data populated. Sync complete. Change list versions = ${getChangeListVersions()}")
         return@suspendRunCatching true
     }
     if (latestVersion == null) return@suspendRunCatching true

@@ -2,7 +2,13 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="EditGroceryBottomSheetContentPreview">
+      <entry key="AssetToFileSaverTest">
+        <State />
+      </entry>
+      <entry key="ChangeListVersionsDataSourceTest">
+        <State />
+      </entry>
+      <entry key="SyncWorkerTest">
         <State />
       </entry>
       <entry key="app">

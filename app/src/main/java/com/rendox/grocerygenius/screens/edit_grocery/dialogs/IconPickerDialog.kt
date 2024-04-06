@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.screens.grocery_list.dialogs
+package com.rendox.grocerygenius.screens.edit_grocery.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

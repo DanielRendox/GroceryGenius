@@ -2,7 +2,7 @@
     <string name="app_name">Grocery Genius</string>
 
     <!-- GroceryListScreen -->
-    <string name="not_purchased_groceries_group_title">Recently used</string>
+    <string name="purchased_groceries_group_title">Recently used</string>
     <string name="add_grocery_search_field_placeholder_collapsed">Add a grocery</string>
     <string name="add_grocery_search_field_placeholder_expanded">e.g. bread</string>
     <string name="add_grocery_search_field_trailing_icon_description">Clear text in search bar</string>

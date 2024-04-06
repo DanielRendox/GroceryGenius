@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.screens.grocery_list.edit_grocery_bottom_sheet
+package com.rendox.grocerygenius.screens.edit_grocery
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,11 +13,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,14 +24,10 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.ui.components.SearchField
 import com.rendox.grocerygenius.ui.theme.CornerRoundingDefault
-import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import com.rendox.grocerygenius.ui.theme.extendedColors
 
 @Composable
@@ -95,7 +89,7 @@ fun EditGroceryBottomSheetContent(
                 onChangeIconClick = onChangeIconClick,
             )
         }
-        
+
         FilledTonalButton(
             modifier = Modifier
                 .fillMaxWidth()
@@ -192,36 +186,5 @@ private fun SettingButton(
             text = title,
             style = MaterialTheme.typography.labelSmall,
         )
-    }
-}
-
-class ParameterProvider : PreviewParameterProvider<Boolean> {
-    override val values = sequenceOf(true, false)
-}
-
-@Preview
-@Composable
-private fun EditGroceryBottomSheetContentPreview(
-    @PreviewParameter(ParameterProvider::class) productCanBeModified: Boolean,
-) {
-    GroceryGeniusTheme {
-        Surface {
-            EditGroceryBottomSheetContent(
-                modifier = Modifier.padding(16.dp),
-                groceryName = "Tea",
-                groceryDescription = "Green, 32 bags",
-                clearGroceryDescriptionButtonIsShown = false,
-                onGroceryDescriptionChanged = {},
-                onClearGroceryDescription = {},
-                onKeyboardDone = {},
-                onDoneButtonClick = {},
-                itemDescriptionFocusRequester = remember { FocusRequester() },
-                onChangeCategoryClick = {},
-                onChangeIconClick = {},
-                productCanBeModified = productCanBeModified,
-                onRemoveGrocery = {},
-                onDeleteProduct = {},
-            )
-        }
     }
 }
