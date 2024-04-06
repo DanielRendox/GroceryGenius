@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.screens.grocery_list
+package com.rendox.grocerygenius.screens.edit_grocery.dialogs
 
 enum class PickerDialogType {
     None,

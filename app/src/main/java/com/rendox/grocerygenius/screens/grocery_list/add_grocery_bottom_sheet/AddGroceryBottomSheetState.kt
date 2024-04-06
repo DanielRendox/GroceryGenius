@@ -20,13 +20,13 @@ class AddGroceryBottomSheetState(
     val bottomSheetState: SheetState,
     private val coroutineScope: CoroutineScope,
 ) {
-    private val sheetIsExpanding = bottomSheetState.targetValue == SheetValue.Expanded
+    val sheetIsExpanding = bottomSheetState.targetValue == SheetValue.Expanded
     val sheetIsCollapsing = bottomSheetState.targetValue == SheetValue.PartiallyExpanded
     private val sheetIsFullyExpanded = bottomSheetState.currentValue == SheetValue.Expanded
 
     val showCancelButtonInsteadOfFab = sheetIsExpanding
     val handleBackButtonPress = sheetIsExpanding
-    val useExpandedPlaceHolderText = sheetIsExpanding
+    val useExpandedPlaceholderText = sheetIsExpanding
 
     var showExtendedContent = false
         private set
@@ -94,13 +94,11 @@ class AddGroceryBottomSheetState(
 @Composable
 fun rememberAddGroceryBottomSheetState(
     bottomSheetState: SheetState = rememberStandardBottomSheetState(),
-    searchInput: String? = null,
 ): AddGroceryBottomSheetState {
     val coroutineScope = rememberCoroutineScope()
     return remember(
         bottomSheetState.currentValue,
         bottomSheetState.targetValue,
-        searchInput,
     ) {
         AddGroceryBottomSheetState(
             bottomSheetState = bottomSheetState,

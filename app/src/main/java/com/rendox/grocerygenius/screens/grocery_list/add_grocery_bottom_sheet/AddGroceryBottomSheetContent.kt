@@ -1,6 +1,5 @@
 package com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -31,17 +30,20 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.CustomProduct
-import com.rendox.grocerygenius.ui.GroceryPresentation
+import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.ui.components.SearchField
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGrid
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
 import com.rendox.grocerygenius.ui.components.grocery_list.groceryListItemColors
+import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
+import com.rendox.grocerygenius.ui.helpers.UiEvent
 import com.rendox.grocerygenius.ui.theme.CornerRoundingDefault
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import kotlin.random.Random
@@ -49,46 +51,50 @@ import kotlin.random.Random
 @Composable
 fun AddGroceryBottomSheetContent(
     modifier: Modifier = Modifier,
-    searchInput: String,
-    useExpandedPlaceholderText: Boolean,
-    clearSearchInputButtonIsShown: Boolean,
-    showCancelButtonInsteadOfFab: Boolean,
-    grocerySearchResults: List<GroceryPresentation>,
-    handleBackButtonPress: Boolean,
+    searchQuery: String,
+    clearSearchQueryButtonIsShown: Boolean,
     contentType: BottomSheetContentType,
-    previousGrocery: GroceryPresentation?,
+    customProduct: CustomProduct?,
+    previousGrocery: Grocery?,
+    grocerySearchResults: List<Grocery>,
     showExtendedContent: Boolean,
-    focusRequester: FocusRequester,
-    customProduct: CustomProduct? = null,
-    onGrocerySearchResultClick: (GroceryPresentation) -> Unit,
-    onSearchFieldFocusChanged: (FocusState) -> Unit,
-    onBackButtonClicked: () -> Unit,
+    useExpandedPlaceholderText: Boolean,
+    showCancelButtonInsteadOfFab: Boolean,
+    changeSearchFieldFocusEvent: UiEvent<Boolean>?,
     onKeyboardDone: () -> Unit,
-    cancelButtonOnClick: () -> Unit,
-    fabOnClick: () -> Unit,
-    onSearchInputChanged: (String) -> Unit,
-    clearSearchInput: () -> Unit,
-    editGroceryOnClick: (GroceryPresentation) -> Unit,
+    onCancelButtonClicked: () -> Unit,
+    onFabClicked: () -> Unit,
+    onSearchFieldFocusChanged: (FocusState) -> Unit,
+    onSearchQueryChanged: (String) -> Unit,
+    onClearSearchQuery: () -> Unit,
+    onGrocerySearchResultClick: (Grocery) -> Unit,
     onCustomProductClick: (CustomProduct) -> Unit,
+    onEditGroceryClicked: () -> Unit,
 ) {
-    BackHandler(
-        enabled = handleBackButtonPress,
-        onBack = onBackButtonClicked,
-    )
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
+    ObserveUiEvent(changeSearchFieldFocusEvent) { isFocused ->
+        if (isFocused) {
+            focusRequester.requestFocus()
+        } else {
+            focusManager.clearFocus()
+        }
+    }
 
     Column(modifier = modifier) {
         BottomSheetHeader(
-            searchInput = searchInput,
+            searchInput = searchQuery,
             useExpandedPlaceholderText = useExpandedPlaceholderText,
-            clearSearchInputButtonIsShown = clearSearchInputButtonIsShown,
+            clearSearchInputButtonIsShown = clearSearchQueryButtonIsShown,
             showCancelButtonInsteadOfFab = showCancelButtonInsteadOfFab,
             onFocusChanged = onSearchFieldFocusChanged,
             onKeyboardDone = onKeyboardDone,
-            cancelButtonOnClick = cancelButtonOnClick,
-            fabOnClick = fabOnClick,
+            onCancelButtonClicked = onCancelButtonClicked,
+            onFabClicked = onFabClicked,
             focusRequester = focusRequester,
-            onSearchInputChanged = onSearchInputChanged,
-            clearSearchInput = clearSearchInput,
+            onSearchQueryChanged = onSearchQueryChanged,
+            clearSearchQuery = onClearSearchQuery,
         )
         if (showExtendedContent) {
             Box(
@@ -99,7 +105,9 @@ fun AddGroceryBottomSheetContent(
                 when (contentType) {
                     BottomSheetContentType.Suggestions -> {
                         Box(
-                            modifier = Modifier.fillMaxWidth().height(200.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(text = "Suggestions here")
@@ -119,9 +127,7 @@ fun AddGroceryBottomSheetContent(
                         if (previousGrocery != null) {
                             RefineItemOptions(
                                 groceryName = previousGrocery.name,
-                                editGroceryOnClick = {
-                                    editGroceryOnClick(previousGrocery)
-                                },
+                                onEditGroceryClicked = onEditGroceryClicked,
                             )
                         }
                     }
@@ -139,11 +145,11 @@ private fun BottomSheetHeader(
     showCancelButtonInsteadOfFab: Boolean,
     focusRequester: FocusRequester,
     onFocusChanged: (FocusState) -> Unit,
-    cancelButtonOnClick: () -> Unit,
-    fabOnClick: () -> Unit,
+    onCancelButtonClicked: () -> Unit,
+    onFabClicked: () -> Unit,
     onKeyboardDone: () -> Unit,
-    onSearchInputChanged: (String) -> Unit,
-    clearSearchInput: () -> Unit,
+    onSearchQueryChanged: (String) -> Unit,
+    clearSearchQuery: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -166,14 +172,14 @@ private fun BottomSheetHeader(
                 )
             },
             clearSearchInputButtonIsShown = clearSearchInputButtonIsShown,
-            onClearSearchInputClicked = clearSearchInput,
+            onClearSearchInputClicked = clearSearchQuery,
             onKeyboardDone = onKeyboardDone,
-            onSearchInputChanged = onSearchInputChanged,
+            onSearchInputChanged = onSearchQueryChanged,
         )
         Fab(
             showCancelButtonInsteadOfFab = showCancelButtonInsteadOfFab,
-            onCancelButtonClicked = cancelButtonOnClick,
-            onFabClicked = fabOnClick,
+            onCancelButtonClicked = onCancelButtonClicked,
+            onFabClicked = onFabClicked,
         )
     }
 }
@@ -181,9 +187,9 @@ private fun BottomSheetHeader(
 @Composable
 private fun SearchResults(
     modifier: Modifier = Modifier,
-    grocerySearchResults: List<GroceryPresentation>,
+    grocerySearchResults: List<Grocery>,
     customProduct: CustomProduct?,
-    onGrocerySearchResultClick: (GroceryPresentation) -> Unit,
+    onGrocerySearchResultClick: (Grocery) -> Unit,
     onCustomProductClick: (CustomProduct) -> Unit,
 ) {
     LazyGroceryGrid(
@@ -201,7 +207,7 @@ private fun SearchResults(
                 } else {
                     MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor
                 },
-                groceryIcon = grocery.icon?.iconBitmap,
+                groceryIcon = null,
             )
         },
         customProduct = customProduct?.let { product ->
@@ -224,7 +230,7 @@ private fun SearchResults(
 private fun RefineItemOptions(
     modifier: Modifier = Modifier,
     groceryName: String,
-    editGroceryOnClick: () -> Unit,
+    onEditGroceryClicked: () -> Unit,
 ) {
     Column(modifier = modifier) {
         Text(
@@ -240,7 +246,7 @@ private fun RefineItemOptions(
             modifier = Modifier
                 .clip(shape = CornerRoundingDefault)
                 .background(color = MaterialTheme.colorScheme.secondaryContainer)
-                .clickable(onClick = editGroceryOnClick)
+                .clickable(onClick = onEditGroceryClicked)
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -262,7 +268,7 @@ private fun RefineItemOptions(
 private fun SearchResultsPreview() {
     val searchResults = remember {
         List(8) { index ->
-            GroceryPresentation(
+            Grocery(
                 productId = index.toString(),
                 name = "Grocery $index",
                 purchased = Random.nextBoolean(),
@@ -295,7 +301,7 @@ private fun RefineItemOptionsPreview() {
         Surface {
             RefineItemOptions(
                 groceryName = "Test grocery",
-                editGroceryOnClick = {},
+                onEditGroceryClicked = {},
             )
         }
     }
