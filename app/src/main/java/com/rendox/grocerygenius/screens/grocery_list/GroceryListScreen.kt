@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.text.style.TextOverflow
@@ -81,6 +82,7 @@ import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
 import com.rendox.grocerygenius.ui.components.grocery_list.groceryListItemColors
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -184,7 +186,7 @@ fun GroceryListRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GroceryListScreen(
+private fun GroceryListScreen(
     modifier: Modifier = Modifier,
     groceryGroups: List<GroceryGroup>,
     searchQuery: String,
@@ -365,6 +367,7 @@ private fun GroceryGrid(
     onGroceryClick: (Grocery) -> Unit,
     onGroceryLongClick: (Grocery) -> Unit,
 ) {
+    val context = LocalContext.current
     GroupedLazyGroceryGrid(
         modifier = modifier,
         groceryGroups = groceryGroups,
@@ -383,7 +386,11 @@ private fun GroceryGrid(
                 } else {
                     MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor
                 },
-                groceryIcon = null,
+                iconFile = remember(grocery.icon?.filePath) {
+                    grocery.icon?.filePath?.let { filePath ->
+                        File(context.filesDir, filePath)
+                    }
+                }
             )
         },
         contentPadding = PaddingValues(
