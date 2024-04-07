@@ -30,6 +30,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,6 +47,7 @@ import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
 import com.rendox.grocerygenius.ui.helpers.UiEvent
 import com.rendox.grocerygenius.ui.theme.CornerRoundingDefault
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
+import java.io.File
 import kotlin.random.Random
 
 @Composable
@@ -192,6 +194,7 @@ private fun SearchResults(
     onGrocerySearchResultClick: (Grocery) -> Unit,
     onCustomProductClick: (CustomProduct) -> Unit,
 ) {
+    val context = LocalContext.current
     LazyGroceryGrid(
         modifier = modifier,
         groceries = grocerySearchResults,
@@ -207,7 +210,11 @@ private fun SearchResults(
                 } else {
                     MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor
                 },
-                groceryIcon = null,
+                iconFile = remember(grocery.icon?.filePath) {
+                    grocery.icon?.filePath?.let { filePath ->
+                        File(context.filesDir, filePath)
+                    }
+                }
             )
         },
         customProduct = customProduct?.let { product ->
@@ -219,7 +226,7 @@ private fun SearchResults(
                     groceryName = product.name,
                     groceryDescription = product.description,
                     color = MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor,
-                    groceryIcon = null,
+                    iconFile = null,
                 )
             }
         }

@@ -254,6 +254,7 @@ class GroceryListViewModel @Inject constructor(
                     category = product.category,
                     purchasedLastModified = correspondingGroceryInTheList?.purchasedLastModified
                         ?: System.currentTimeMillis(),
+                    icon = product.icon,
                 )
             }
 

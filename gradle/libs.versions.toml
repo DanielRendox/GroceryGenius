@@ -5,6 +5,7 @@ androidLifecycle = "2.7.0"
 androidxWork = "2.9.0"
 androidxTestRunner = "1.5.2"
 agp = "8.2.1"
+coilCompose = "2.6.0"
 coreKtx = "1.12.0"
 composeBom = "2024.02.01"
 coreSplashscreen = "1.0.1"
@@ -54,6 +55,8 @@ com-squareup-moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", versio
 com-squareup-moshi-kotlin-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }
 
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+
+io-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
 

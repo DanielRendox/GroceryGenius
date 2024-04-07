@@ -99,6 +99,8 @@ dependencies {
 
     implementation(libs.androidx.datastore.preferences)
 
+    implementation(libs.io.coil.compose)
+
     testImplementation(platform(libs.org.junit.bom))
     testImplementation(libs.org.junit.jupiter.api)
     testImplementation(libs.org.junit.jupiter.engine)
