@@ -10,7 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.rendox.grocerygenius.screens.grocery_list.GroceryListRoute
+import com.rendox.grocerygenius.screens.grocery_lists_dashboard.GroceryListDashboardRoute
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    GroceryListRoute()
+                    GroceryListDashboardRoute()
                 }
             }
         }
