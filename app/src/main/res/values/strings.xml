@@ -20,6 +20,9 @@
     <string name="edit_grocery_settings_title">Custom item settings</string>
     <string name="delete_product_dialog_text">This item will be removed from all your grocery lists</string>
 
+    <!-- GroceryListsDashboardScreen -->
+    <string name="dashboard_item_num_of_groceries_title">%d items</string>
+
     <!-- General -->
     <string name="done">Done</string>
     <string name="delete">Delete</string>

@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rendox.grocerygenius.R
@@ -73,13 +72,11 @@ fun GroceryListsDashboardScreen(
                     layoutManager = LinearLayoutManager(context)
                     println("trying to initialize recyclerview with groceryLists: $groceryLists")
                     val adapter = GroceryListsDashboardAdapter(
+                        recyclerView = this,
                         groceryLists = groceryLists,
                         onMoveItem = onMoveItem,
                     )
                     this.adapter = adapter
-                    val callback = ItemTouchHelperCallback(adapter)
-                    val touchHelper = ItemTouchHelper(callback)
-                    touchHelper.attachToRecyclerView(this)
                 }
             },
             update = { recyclerView ->

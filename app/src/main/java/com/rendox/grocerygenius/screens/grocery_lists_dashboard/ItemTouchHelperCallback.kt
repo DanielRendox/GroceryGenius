@@ -8,6 +8,9 @@ class ItemTouchHelperCallback(
 ) : ItemTouchHelper.SimpleCallback(
     ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0
 ) {
+    override fun isLongPressDragEnabled() = false
+
+    override fun isItemViewSwipeEnabled() = false
 
     override fun getMovementFlags(
         recyclerView: RecyclerView,
