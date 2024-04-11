@@ -1,9 +1,8 @@
 package com.rendox.grocerygenius.screens.grocery_lists_dashboard
 
 import androidx.lifecycle.ViewModel
-import com.rendox.grocerygenius.data.grocery.GroceryRepository
-import com.rendox.grocerygenius.data.grocery_list.GroceryListRepository
 import androidx.lifecycle.viewModelScope
+import com.rendox.grocerygenius.data.grocery_list.GroceryListRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map

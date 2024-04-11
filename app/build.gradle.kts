@@ -43,6 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.10"
@@ -98,8 +99,9 @@ dependencies {
     kapt(libs.com.squareup.moshi.kotlin.codegen)
 
     implementation(libs.androidx.datastore.preferences)
-
     implementation(libs.io.coil.compose)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.compose.ui.viewbinding)
 
     testImplementation(platform(libs.org.junit.bom))
     testImplementation(libs.org.junit.jupiter.api)
