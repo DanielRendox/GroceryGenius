@@ -9,5 +9,5 @@ interface GroceryListRepository : Syncable {
     fun getGroceryListById(id: String): Flow<GroceryList?>
     fun getAllGroceryLists(): Flow<List<GroceryList>>
     suspend fun updateGroceryList(groceryList: GroceryList)
-    suspend fun deleteGroceryList(groceryList: GroceryList)
+    suspend fun deleteGroceryListById(groceryListId: String)
 }

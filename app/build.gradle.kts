@@ -101,7 +101,6 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.io.coil.compose)
     implementation(libs.androidx.recyclerview)
-    implementation(libs.androidx.compose.ui.viewbinding)
 
     testImplementation(platform(libs.org.junit.bom))
     testImplementation(libs.org.junit.jupiter.api)

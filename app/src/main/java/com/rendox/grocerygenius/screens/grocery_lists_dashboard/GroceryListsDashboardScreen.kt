@@ -1,6 +1,7 @@
 package com.rendox.grocerygenius.screens.grocery_lists_dashboard
 
 
+import android.view.ViewGroup
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -18,11 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidViewBinding
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.rendox.grocerygenius.R
-import com.rendox.grocerygenius.databinding.GroceryListsRecyclerviewBinding
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 
 @Composable
@@ -33,6 +36,7 @@ fun GroceryListDashboardRoute(
 
     GroceryListsDashboardScreen(
         groceryLists = groceryLists,
+        onMoveItem = groceryListsDashboardViewModel::onMoveItem,
     )
 }
 
@@ -41,6 +45,7 @@ fun GroceryListDashboardRoute(
 fun GroceryListsDashboardScreen(
     modifier: Modifier = Modifier,
     groceryLists: List<GroceryListsDashboardItem>,
+    onMoveItem: (Int, Int) -> Unit = { _, _ -> },
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -55,14 +60,34 @@ fun GroceryListsDashboardScreen(
             )
         }
     ) { paddingValues ->
-        AndroidViewBinding(
-            modifier = Modifier.padding(paddingValues).padding(bottom = 12.dp),
-            factory = GroceryListsRecyclerviewBinding::inflate,
-        ) {
-            groceryListsDashboardRecyclerview.adapter = GroceryListsDashboardAdapter(
-                groceryLists = groceryLists,
-            )
-        }
+        AndroidView(
+            modifier = Modifier
+                .padding(paddingValues)
+                .padding(bottom = 12.dp),
+            factory = { context ->
+                RecyclerView(context).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                    )
+                    layoutManager = LinearLayoutManager(context)
+                    println("trying to initialize recyclerview with groceryLists: $groceryLists")
+                    val adapter = GroceryListsDashboardAdapter(
+                        groceryLists = groceryLists,
+                        onMoveItem = onMoveItem,
+                    )
+                    this.adapter = adapter
+                    val callback = ItemTouchHelperCallback(adapter)
+                    val touchHelper = ItemTouchHelper(callback)
+                    touchHelper.attachToRecyclerView(this)
+                }
+            },
+            update = { recyclerView ->
+                println("UpdateRecyclerview debug update recyclerview with groceryLists: $groceryLists")
+                val adapter = recyclerView.adapter as GroceryListsDashboardAdapter
+                adapter.updateGroceryLists(groceryLists)
+            }
+        )
     }
 }
 

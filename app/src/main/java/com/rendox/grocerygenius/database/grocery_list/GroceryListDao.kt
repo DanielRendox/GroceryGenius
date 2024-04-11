@@ -1,14 +1,17 @@
 package com.rendox.grocerygenius.database.grocery_list
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GroceryListDao {
+    @Upsert
+    suspend fun upsertGroceryLists(groceryLists: List<GroceryListEntity>)
+
     @Insert
     suspend fun insertGroceryList(groceryList: GroceryListEntity)
 
@@ -21,6 +24,6 @@ interface GroceryListDao {
     @Update
     suspend fun updateGroceryList(groceryList: GroceryListEntity)
 
-    @Delete
-    suspend fun deleteGroceryList(groceryList: GroceryListEntity)
+    @Query("DELETE FROM GroceryListEntity WHERE id = :groceryListId")
+    suspend fun deleteGroceryListById(groceryListId: String)
 }

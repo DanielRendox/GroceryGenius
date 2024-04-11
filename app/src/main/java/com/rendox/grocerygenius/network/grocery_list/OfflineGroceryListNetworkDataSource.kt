@@ -4,8 +4,10 @@ import com.rendox.grocerygenius.model.GroceryList
 import javax.inject.Inject
 
 class OfflineGroceryListNetworkDataSource @Inject constructor() : GroceryListNetworkDataSource {
-    override suspend fun getSampleGroceryList(): GroceryList = GroceryList(
-        id = "sample-grocery-list",
-        name = "Sample Grocery List"
-    )
+    override suspend fun getAllGroceryLists(): List<GroceryList> = List(20) {
+        GroceryList(
+            id = "sample-grocery-list-$it",
+            name = "Sample Grocery List $it"
+        )
+    }
 }

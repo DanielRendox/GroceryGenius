@@ -3,10 +3,13 @@ package com.rendox.grocerygenius.screens.grocery_lists_dashboard
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.recyclerview.widget.RecyclerView
+import java.util.Collections
 
 class GroceryListsDashboardAdapter(
-    private val groceryLists: List<GroceryListsDashboardItem>,
-) : RecyclerView.Adapter<GroceryListsDashboardViewHolder>() {
+    private var groceryLists: List<GroceryListsDashboardItem>,
+    private val onMoveItem: (Int, Int) -> Unit,
+) : RecyclerView.Adapter<GroceryListsDashboardViewHolder>(), ItemTouchHelperAdapter {
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -22,7 +25,18 @@ class GroceryListsDashboardAdapter(
         )
     }
 
-    override fun getItemCount(): Int {
-        return groceryLists.size
+    override fun getItemCount() =  groceryLists.size
+
+    override fun onItemMove(fromPosition: Int, toPosition: Int) {
+        groceryLists = this.groceryLists.toMutableList().also {
+            Collections.swap(it, fromPosition, toPosition)
+        }
+        notifyItemMoved(fromPosition, toPosition)
+        onMoveItem(fromPosition, toPosition)
+    }
+
+    fun updateGroceryLists(newGroceryLists: List<GroceryListsDashboardItem>) {
+        groceryLists = newGroceryLists
+        notifyDataSetChanged()
     }
 }
