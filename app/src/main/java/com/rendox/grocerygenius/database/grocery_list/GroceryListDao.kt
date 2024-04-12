@@ -24,6 +24,9 @@ interface GroceryListDao {
     @Update
     suspend fun updateGroceryList(groceryList: GroceryListEntity)
 
+    @Update
+    suspend fun updateGroceryLists(groceryLists: List<GroceryListEntity>)
+
     @Query("DELETE FROM GroceryListEntity WHERE id = :groceryListId")
     suspend fun deleteGroceryListById(groceryListId: String)
 }

@@ -38,6 +38,14 @@ class GroceryListRepositoryImpl @Inject constructor(
         groceryListDao.deleteGroceryListById(groceryListId)
     }
 
+    override suspend fun upsertGroceryLists(groceryLists: List<GroceryList>) {
+        groceryListDao.upsertGroceryLists(groceryLists.map { it.asEntity() })
+    }
+
+    override suspend fun updateGroceryLists(groceryLists: List<GroceryList>) {
+        groceryListDao.updateGroceryLists(groceryLists.map { it.asEntity() })
+    }
+
     override suspend fun syncWith(synchronizer: Synchronizer) = suspendRunCatching {
         val existingGroceryLists = groceryListDao.getAllGroceryLists().first()
         if (existingGroceryLists.isEmpty()) {

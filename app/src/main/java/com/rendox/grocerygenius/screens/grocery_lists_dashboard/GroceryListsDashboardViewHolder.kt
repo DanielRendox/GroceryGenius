@@ -1,8 +1,8 @@
 package com.rendox.grocerygenius.screens.grocery_lists_dashboard
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.draggable2D
-import androidx.compose.foundation.gestures.rememberDraggable2DState
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,7 +45,6 @@ class GroceryListsDashboardViewHolder(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ListItem(
     modifier: Modifier = Modifier,
@@ -74,9 +73,10 @@ private fun ListItem(
         Box(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .draggable2D(
-                    state = rememberDraggable2DState { onDrag() },
+                .draggable(
+                    state = rememberDraggableState { onDrag() },
                     startDragImmediately = true,
+                    orientation = Orientation.Vertical,
                 ),
             contentAlignment = Alignment.Center,
         ) {

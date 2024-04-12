@@ -4,7 +4,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
 class ItemTouchHelperCallback(
-    private val adapter: ItemTouchHelperAdapter
+    private val adapter: ItemTouchHelperAdapter,
+    private val onClearView: () -> Unit,
 ) : ItemTouchHelper.SimpleCallback(
     ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0
 ) {
@@ -34,5 +35,10 @@ class ItemTouchHelperCallback(
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
 
+    }
+
+    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        onClearView()
+        super.clearView(recyclerView, viewHolder)
     }
 }

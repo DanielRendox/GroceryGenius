@@ -31,11 +31,11 @@ import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 fun GroceryListDashboardRoute(
     groceryListsDashboardViewModel: GroceryListsDashboardViewModel = viewModel(),
 ) {
-    val groceryLists by groceryListsDashboardViewModel.groceryListsFlow.collectAsStateWithLifecycle()
+    val groceryLists by groceryListsDashboardViewModel.dashboardItemsFlow.collectAsStateWithLifecycle()
 
     GroceryListsDashboardScreen(
         groceryLists = groceryLists,
-        onMoveItem = groceryListsDashboardViewModel::onMoveItem,
+        updateLists = groceryListsDashboardViewModel::updateLists,
     )
 }
 
@@ -44,12 +44,13 @@ fun GroceryListDashboardRoute(
 fun GroceryListsDashboardScreen(
     modifier: Modifier = Modifier,
     groceryLists: List<GroceryListsDashboardItem>,
-    onMoveItem: (Int, Int) -> Unit = { _, _ -> },
+    updateLists: (List<GroceryListsDashboardItem>) -> Unit = { },
+    onFabClick: () -> Unit = { },
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
-            FloatingActionButton(onClick = {}) {
+            FloatingActionButton(onClick = onFabClick) {
                 Icon(Icons.Default.Add, contentDescription = null)
             }
         },
@@ -70,17 +71,15 @@ fun GroceryListsDashboardScreen(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                     )
                     layoutManager = LinearLayoutManager(context)
-                    println("trying to initialize recyclerview with groceryLists: $groceryLists")
                     val adapter = GroceryListsDashboardAdapter(
                         recyclerView = this,
                         groceryLists = groceryLists,
-                        onMoveItem = onMoveItem,
+                        updateLists = updateLists,
                     )
                     this.adapter = adapter
                 }
             },
             update = { recyclerView ->
-                println("UpdateRecyclerview debug update recyclerview with groceryLists: $groceryLists")
                 val adapter = recyclerView.adapter as GroceryListsDashboardAdapter
                 adapter.updateGroceryLists(groceryLists)
             }
