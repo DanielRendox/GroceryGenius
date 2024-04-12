@@ -25,17 +25,19 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rendox.grocerygenius.R
+import com.rendox.grocerygenius.model.GroceryList
+import com.rendox.grocerygenius.screens.grocery_lists_dashboard.recyclerview.DashboardRecyclerViewAdapter
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 
 @Composable
 fun GroceryListDashboardRoute(
     groceryListsDashboardViewModel: GroceryListsDashboardViewModel = viewModel(),
 ) {
-    val groceryLists by groceryListsDashboardViewModel.dashboardItemsFlow.collectAsStateWithLifecycle()
+    val screenState by groceryListsDashboardViewModel.groceryListsFlow.collectAsStateWithLifecycle()
 
     GroceryListsDashboardScreen(
-        groceryLists = groceryLists,
-        updateLists = groceryListsDashboardViewModel::updateLists,
+        groceryLists = screenState,
+        onIntent = groceryListsDashboardViewModel::onIntent,
     )
 }
 
@@ -43,8 +45,8 @@ fun GroceryListDashboardRoute(
 @Composable
 fun GroceryListsDashboardScreen(
     modifier: Modifier = Modifier,
-    groceryLists: List<GroceryListsDashboardItem>,
-    updateLists: (List<GroceryListsDashboardItem>) -> Unit = { },
+    groceryLists: List<GroceryList>,
+    onIntent: (GroceryListsDashboardIntent) -> Unit = { },
     onFabClick: () -> Unit = { },
 ) {
     Scaffold(
@@ -71,16 +73,20 @@ fun GroceryListsDashboardScreen(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                     )
                     layoutManager = LinearLayoutManager(context)
-                    val adapter = GroceryListsDashboardAdapter(
+                    val adapter = DashboardRecyclerViewAdapter(
                         recyclerView = this,
                         groceryLists = groceryLists,
-                        updateLists = updateLists,
+                        updateLists = {
+                            onIntent(
+                                GroceryListsDashboardIntent.OnUpdateGroceryLists(groceryLists)
+                            )
+                        },
                     )
                     this.adapter = adapter
                 }
             },
             update = { recyclerView ->
-                val adapter = recyclerView.adapter as GroceryListsDashboardAdapter
+                val adapter = recyclerView.adapter as DashboardRecyclerViewAdapter
                 adapter.updateGroceryLists(groceryLists)
             }
         )
@@ -99,41 +105,10 @@ private fun GroceryListsDashboardPreview() {
     }
 }
 
-val sampleDashboard = listOf(
-    GroceryListsDashboardItem(
-        id = "1",
-        name = "Sample List",
-        itemCount = 5,
-        items = emptyList()
-    ),
-    GroceryListsDashboardItem(
-        id = "2",
-        name = "Sample List 2",
-        itemCount = 3,
-        items = emptyList()
-    ),
-    GroceryListsDashboardItem(
-        id = "3",
-        name = "Sample List 3",
-        itemCount = 7,
-        items = emptyList()
-    ),
-    GroceryListsDashboardItem(
-        id = "4",
-        name = "Sample List 4",
-        itemCount = 7,
-        items = emptyList()
-    ),
-    GroceryListsDashboardItem(
-        id = "5",
-        name = "Sample List 5",
-        itemCount = 11,
-        items = emptyList()
-    ),
-    GroceryListsDashboardItem(
-        id = "6",
-        name = "Sample List 6",
-        itemCount = 9,
-        items = emptyList()
-    ),
-)
+val sampleDashboard = List(20) {
+    GroceryList(
+        id = it.toString(),
+        name = "List $it",
+        numOfGroceries = it,
+    )
+}

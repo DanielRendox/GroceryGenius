@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.screens.grocery_lists_dashboard
+package com.rendox.grocerygenius.screens.grocery_lists_dashboard.recyclerview
 
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -24,15 +24,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.rendox.grocerygenius.R
+import com.rendox.grocerygenius.model.GroceryList
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 
-class GroceryListsDashboardViewHolder(
+class DashboardItemViewHolder(
     private val composeView: ComposeView,
     private val onDrag: (ViewHolder) -> Unit,
 ) : ViewHolder(composeView) {
-    fun bind(
-        groceryList: GroceryListsDashboardItem,
-    ) {
+    fun bind(groceryList: GroceryList) {
         composeView.setContent {
             ListItem(
                 modifier = Modifier
@@ -48,7 +47,7 @@ class GroceryListsDashboardViewHolder(
 @Composable
 private fun ListItem(
     modifier: Modifier = Modifier,
-    list: GroceryListsDashboardItem,
+    list: GroceryList,
     onDrag: () -> Unit = {},
 ) = ElevatedCard(modifier = modifier) {
     Box(
@@ -66,7 +65,7 @@ private fun ListItem(
             Text(
                 text = stringResource(
                     id = R.string.dashboard_item_num_of_groceries_title,
-                    list.itemCount,
+                    list.numOfGroceries,
                 )
             )
         }
@@ -96,11 +95,10 @@ fun PreviewListItem() {
         Surface {
             ListItem(
                 modifier = Modifier.width(400.dp),
-                list = GroceryListsDashboardItem(
+                list = GroceryList(
                     id = "1",
                     name = "Sample List",
-                    itemCount = 5,
-                    items = emptyList()
+                    numOfGroceries = 5,
                 )
             )
         }

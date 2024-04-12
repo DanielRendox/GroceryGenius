@@ -1,10 +1,10 @@
-package com.rendox.grocerygenius.screens.grocery_lists_dashboard
+package com.rendox.grocerygenius.ui.helpers
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
-class ItemTouchHelperCallback(
-    private val adapter: ItemTouchHelperAdapter,
+class DragHandleReorderItemTouchHelperCallback(
+    private val onItemMove: (fromPosition: Int, toPosition: Int) -> Unit,
     private val onClearView: () -> Unit,
 ) : ItemTouchHelper.SimpleCallback(
     ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0
@@ -26,7 +26,7 @@ class ItemTouchHelperCallback(
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
-        adapter.onItemMove(
+        onItemMove(
             viewHolder.bindingAdapterPosition,
             target.bindingAdapterPosition
         )

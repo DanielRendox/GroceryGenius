@@ -1,10 +1,11 @@
-package com.rendox.grocerygenius.screens.grocery_lists_dashboard
+package com.rendox.grocerygenius.screens.grocery_lists_dashboard.recyclerview
 
 import androidx.recyclerview.widget.DiffUtil
+import com.rendox.grocerygenius.model.GroceryList
 
-class DashboardListDiffUtilCallback(
-    private val oldList: List<GroceryListsDashboardItem>,
-    private val newList: List<GroceryListsDashboardItem>,
+class DashboardDiffUtilCallback(
+    private val oldList: List<GroceryList>,
+    private val newList: List<GroceryList>,
 ) : DiffUtil.Callback() {
     override fun getOldListSize() = oldList.size
     override fun getNewListSize() = newList.size

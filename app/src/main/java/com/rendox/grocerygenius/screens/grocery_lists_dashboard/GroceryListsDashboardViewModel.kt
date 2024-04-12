@@ -16,18 +16,9 @@ class GroceryListsDashboardViewModel @Inject constructor(
     private val groceryListRepository: GroceryListRepository,
 ) : ViewModel() {
 
-    val dashboardItemsFlow = groceryListRepository.getAllGroceryLists()
+    val groceryListsFlow = groceryListRepository.getAllGroceryLists()
         .map { groceryLists ->
-            groceryLists
-                .sortedBy { it.sortingPriority }
-                .map { groceryList ->
-                    GroceryListsDashboardItem(
-                        id = groceryList.id,
-                        name = groceryList.name,
-                        itemCount = 10,
-                        items = emptyList(),
-                    )
-                }
+            groceryLists.sortedBy { it.sortingPriority }
         }
         .stateIn(
             scope = viewModelScope,
@@ -35,14 +26,21 @@ class GroceryListsDashboardViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
         )
 
-    fun updateLists(
-        dashboardItems: List<GroceryListsDashboardItem>
+    fun onIntent(intent: GroceryListsDashboardIntent) = when (intent) {
+        is GroceryListsDashboardIntent.OnUpdateGroceryLists -> {
+            updateLists(intent.groceryLists)
+        }
+    }
+
+    private fun updateLists(
+        dashboardItems: List<GroceryList>
     ) = viewModelScope.launch {
         val groceryLists = dashboardItems.mapIndexed { index, dashboardItem ->
             GroceryList(
                 id = dashboardItem.id,
                 name = dashboardItem.name,
-                sortingPriority = index,
+                sortingPriority = index.toLong(),
+                numOfGroceries = dashboardItem.numOfGroceries,
             )
         }
         groceryListRepository.upsertGroceryLists(groceryLists)

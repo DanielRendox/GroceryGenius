@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
+import com.rendox.grocerygenius.model.GroceryList
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -15,11 +16,33 @@ interface GroceryListDao {
     @Insert
     suspend fun insertGroceryList(groceryList: GroceryListEntity)
 
-    @Query("SELECT * FROM GroceryListEntity WHERE id = :id")
-    fun getGroceryListById(id: String): Flow<GroceryListEntity?>
+    @Query(
+        """
+         SELECT 
+             groceryList.id, 
+             groceryList.name, 
+             groceryList.sortingPriority, 
+             COUNT(grocery.productId) as numOfGroceries
+         FROM GroceryListEntity groceryList
+         LEFT JOIN GroceryEntity grocery ON grocery.groceryListId = groceryList.id
+         WHERE groceryList.id = :id
+    """
+    )
+    fun getGroceryListById(id: String): Flow<GroceryList?>
 
-    @Query("SELECT * FROM GroceryListEntity")
-    fun getAllGroceryLists(): Flow<List<GroceryListEntity>>
+    @Query(
+        """
+        SELECT 
+            groceryList.id, 
+            groceryList.name, 
+            groceryList.sortingPriority, 
+            COUNT(grocery.productId) as numOfGroceries
+        FROM GroceryListEntity groceryList
+        LEFT JOIN GroceryEntity grocery ON grocery.groceryListId = groceryList.id
+        GROUP BY groceryList.id
+    """
+    )
+    fun getAllGroceryLists(): Flow<List<GroceryList>>
 
     @Update
     suspend fun updateGroceryList(groceryList: GroceryListEntity)
