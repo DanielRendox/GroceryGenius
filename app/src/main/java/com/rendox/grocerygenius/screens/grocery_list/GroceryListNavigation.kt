@@ -6,6 +6,7 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.rendox.grocerygenius.ui.GroceryGeniusTransition
 
 const val GroceryListIdArg = "groceryListId"
 const val GroceryListRoute = "grocery_list_route"
@@ -26,6 +27,12 @@ fun NavGraphBuilder.groceryListScreen() {
         arguments = listOf(
             navArgument(GroceryListIdArg) { type = NavType.StringType },
         ),
+        enterTransition = {
+            GroceryGeniusTransition.sharedZAxisEnterForward
+        },
+        exitTransition = {
+            GroceryGeniusTransition.sharedZAxisExitBackward
+        },
     ) {
         GroceryListRoute()
     }
