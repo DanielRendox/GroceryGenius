@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rendox.grocerygenius.R
@@ -32,11 +33,12 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class GroceryListViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val groceryRepository: GroceryRepository,
     groceryListRepository: GroceryListRepository,
     private val productRepository: ProductRepository,
 ) : ViewModel() {
-    val groceryListId = "sample-grocery-list"
+    val groceryListId: String = checkNotNull(savedStateHandle[GroceryListIdArg])
 
     var searchQuery by mutableStateOf("")
         private set

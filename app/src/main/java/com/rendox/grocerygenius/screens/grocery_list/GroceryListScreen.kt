@@ -59,8 +59,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.screens.edit_grocery.EditGroceryScreen
@@ -88,7 +88,7 @@ import java.io.File
 @Composable
 fun GroceryListRoute(
     modifier: Modifier = Modifier,
-    groceryListViewModel: GroceryListViewModel = viewModel(),
+    groceryListViewModel: GroceryListViewModel = hiltViewModel(),
 ) {
     val groceryGroups by groceryListViewModel.groceryGroupsFlow.collectAsStateWithLifecycle()
     val screenState by groceryListViewModel.screenStateFlow.collectAsStateWithLifecycle()
@@ -154,7 +154,7 @@ fun GroceryListRoute(
 
     val productId = productIdState.value
     if (editGroceryScreenIsVisible && productId != null) {
-        val editGroceryViewModel: EditGroceryViewModel = viewModel()
+        val editGroceryViewModel: EditGroceryViewModel = hiltViewModel()
         LaunchedEffect(productId) {
             editGroceryViewModel.onIntent(
                 EditGroceryScreenIntent.OnEditOtherGrocery(

@@ -1,5 +1,6 @@
 package com.rendox.grocerygenius.screens.grocery_lists_dashboard.recyclerview
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
@@ -30,7 +31,9 @@ import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 class DashboardItemViewHolder(
     private val composeView: ComposeView,
     private val onDrag: (ViewHolder) -> Unit,
+    private val onViewClicked: (String) -> Unit,
 ) : ViewHolder(composeView) {
+
     fun bind(groceryList: GroceryList) {
         composeView.setContent {
             ListItem(
@@ -38,7 +41,8 @@ class DashboardItemViewHolder(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 4.dp),
                 list = groceryList,
-                onDrag = { onDrag(this) }
+                onDrag = { onDrag(this) },
+                onClick = { onViewClicked(groceryList.id) },
             )
         }
     }
@@ -49,11 +53,13 @@ private fun ListItem(
     modifier: Modifier = Modifier,
     list: GroceryList,
     onDrag: () -> Unit = {},
+    onClick: () -> Unit = {},
 ) = ElevatedCard(modifier = modifier) {
     Box(
         modifier = Modifier
-            .padding(16.dp)
             .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(16.dp)
     ) {
         Column(modifier = Modifier.padding(end = 50.dp)) {
             Text(

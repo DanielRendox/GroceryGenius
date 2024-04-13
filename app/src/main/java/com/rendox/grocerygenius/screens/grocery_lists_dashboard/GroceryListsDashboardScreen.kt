@@ -20,8 +20,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rendox.grocerygenius.R
@@ -30,14 +30,16 @@ import com.rendox.grocerygenius.screens.grocery_lists_dashboard.recyclerview.Das
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 
 @Composable
-fun GroceryListDashboardRoute(
-    groceryListsDashboardViewModel: GroceryListsDashboardViewModel = viewModel(),
+fun GroceryListsDashboardRoute(
+    groceryListsDashboardViewModel: GroceryListsDashboardViewModel = hiltViewModel(),
+    navigateToGroceryListScreen: (String) -> Unit,
 ) {
     val screenState by groceryListsDashboardViewModel.groceryListsFlow.collectAsStateWithLifecycle()
 
     GroceryListsDashboardScreen(
         groceryLists = screenState,
-        onIntent = groceryListsDashboardViewModel::onIntent,
+        updateGroceryLists = groceryListsDashboardViewModel::updateGroceryLists,
+        navigateToGroceryListScreen = navigateToGroceryListScreen,
     )
 }
 
@@ -46,8 +48,9 @@ fun GroceryListDashboardRoute(
 fun GroceryListsDashboardScreen(
     modifier: Modifier = Modifier,
     groceryLists: List<GroceryList>,
-    onIntent: (GroceryListsDashboardIntent) -> Unit = { },
-    onFabClick: () -> Unit = { },
+    updateGroceryLists: (List<GroceryList>) -> Unit = {},
+    onFabClick: () -> Unit = {},
+    navigateToGroceryListScreen: (String) -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -76,11 +79,8 @@ fun GroceryListsDashboardScreen(
                     val adapter = DashboardRecyclerViewAdapter(
                         recyclerView = this,
                         groceryLists = groceryLists,
-                        updateLists = {
-                            onIntent(
-                                GroceryListsDashboardIntent.OnUpdateGroceryLists(groceryLists)
-                            )
-                        },
+                        updateLists = updateGroceryLists,
+                        onItemClicked = navigateToGroceryListScreen,
                     )
                     this.adapter = adapter
                 }

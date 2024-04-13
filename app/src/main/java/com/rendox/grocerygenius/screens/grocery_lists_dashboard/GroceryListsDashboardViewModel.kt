@@ -26,13 +26,7 @@ class GroceryListsDashboardViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
         )
 
-    fun onIntent(intent: GroceryListsDashboardIntent) = when (intent) {
-        is GroceryListsDashboardIntent.OnUpdateGroceryLists -> {
-            updateLists(intent.groceryLists)
-        }
-    }
-
-    private fun updateLists(
+    fun updateGroceryLists(
         dashboardItems: List<GroceryList>
     ) = viewModelScope.launch {
         val groceryLists = dashboardItems.mapIndexed { index, dashboardItem ->
@@ -43,6 +37,7 @@ class GroceryListsDashboardViewModel @Inject constructor(
                 numOfGroceries = dashboardItem.numOfGroceries,
             )
         }
+        println("updating grocery lists with $dashboardItems")
         groceryListRepository.upsertGroceryLists(groceryLists)
     }
 }

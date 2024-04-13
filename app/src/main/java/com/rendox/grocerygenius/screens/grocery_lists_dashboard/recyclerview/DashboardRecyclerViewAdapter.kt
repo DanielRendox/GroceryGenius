@@ -13,6 +13,7 @@ class DashboardRecyclerViewAdapter(
     recyclerView: RecyclerView,
     private var groceryLists: List<GroceryList>,
     private val updateLists: (List<GroceryList>) -> Unit,
+    private val onItemClicked: (String) -> Unit,
 ) : RecyclerView.Adapter<DashboardItemViewHolder>() {
 
     private val touchHelperCallback = DragHandleReorderItemTouchHelperCallback(
@@ -34,6 +35,7 @@ class DashboardRecyclerViewAdapter(
         return DashboardItemViewHolder(
             composeView = ComposeView(parent.context),
             onDrag = { touchHelper.startDrag(it) },
+            onViewClicked = onItemClicked,
         )
     }
 

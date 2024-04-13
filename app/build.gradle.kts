@@ -102,6 +102,9 @@ dependencies {
     implementation(libs.io.coil.compose)
     implementation(libs.androidx.recyclerview)
 
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
+
     testImplementation(platform(libs.org.junit.bom))
     testImplementation(libs.org.junit.jupiter.api)
     testImplementation(libs.org.junit.jupiter.engine)

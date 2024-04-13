@@ -8,6 +8,7 @@ agp = "8.2.1"
 coilCompose = "2.6.0"
 coreKtx = "1.12.0"
 composeBom = "2024.02.01"
+composeNavigation = "2.7.7"
 coreSplashscreen = "1.0.1"
 datastore = "1.0.0"
 espressoCore = "3.5.1"
@@ -58,6 +59,9 @@ com-squareup-moshi-kotlin-codegen = { module = "com.squareup.moshi:moshi-kotlin-
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 io-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
+androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "andoridxHilt" }
 
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
 
