@@ -2,8 +2,12 @@ package com.rendox.grocerygenius.screens.grocery_lists_dashboard
 
 
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -18,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -74,33 +77,38 @@ fun GroceryListsDashboardScreen(
             )
         }
     ) { paddingValues ->
-        AndroidView(
+        Column(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(bottom = 12.dp),
-            factory = { context ->
-                RecyclerView(context).apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                    )
-                    layoutManager = LinearLayoutManager(context)
-                    val adapter = DashboardRecyclerViewAdapter(
-                        recyclerView = this,
-                        groceryLists = groceryLists,
-                        updateLists = { newValue ->
-                            onIntent(GroceryListsDashboardIntent.OnUpdateGroceryLists(newValue))
-                        },
-                        onItemClicked = navigateToGroceryListScreen,
-                    )
-                    this.adapter = adapter
+                // required to preserve the scroll position in recycler view
+                .verticalScroll(state = rememberScrollState())
+                .navigationBarsPadding()
+        ) {
+            AndroidView(
+                factory = { context ->
+                    RecyclerView(context).apply {
+                        layoutParams = ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                        )
+                        layoutManager = LinearLayoutManager(context)
+                        val adapter = DashboardRecyclerViewAdapter(
+                            recyclerView = this,
+                            groceryLists = groceryLists,
+                            updateLists = { newValue ->
+                                onIntent(GroceryListsDashboardIntent.OnUpdateGroceryLists(newValue))
+                            },
+                            onItemClicked = navigateToGroceryListScreen,
+                        )
+                        this.adapter = adapter
+                    }
+                },
+                update = { recyclerView ->
+                    val adapter = recyclerView.adapter as DashboardRecyclerViewAdapter
+                    adapter.updateGroceryLists(groceryLists)
                 }
-            },
-            update = { recyclerView ->
-                val adapter = recyclerView.adapter as DashboardRecyclerViewAdapter
-                adapter.updateGroceryLists(groceryLists)
-            }
-        )
+            )
+        }
     }
 }
 
