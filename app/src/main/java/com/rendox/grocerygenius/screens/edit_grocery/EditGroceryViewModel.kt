@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -57,9 +58,6 @@ class EditGroceryViewModel @Inject constructor(
         viewModelScope.launch {
             groceryFlow.collectLatest { grocery ->
                 _screenStateFlow.update { it.copy(editGrocery = grocery) }
-                if (editGroceryDescription == null) {
-                    editGroceryDescription = grocery.description
-                }
             }
         }
         viewModelScope.launch {
@@ -90,6 +88,11 @@ class EditGroceryViewModel @Inject constructor(
                 _screenStateFlow.update { screenState ->
                     screenState.copy(icons = icons.sortedBy { it.name })
                 }
+            }
+        }
+        viewModelScope.launch {
+            editGroceryDescriptionFlow.collect {
+                println("EditGroceryViewModel: editGroceryDescriptionFlow: $it")
             }
         }
     }
@@ -162,7 +165,9 @@ class EditGroceryViewModel @Inject constructor(
     }
 
     private fun onEditOtherGrocery(productId: String, groceryListId: String) {
-        editGroceryDescription = null
+        viewModelScope.launch {
+            editGroceryDescription = groceryFlow.first().description
+        }
         compoundGroceryIdFlow.update {
             CompoundGroceryId(
                 productId = productId,
