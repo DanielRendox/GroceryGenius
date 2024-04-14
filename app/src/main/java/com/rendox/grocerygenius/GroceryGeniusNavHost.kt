@@ -8,6 +8,7 @@ import com.rendox.grocerygenius.screens.grocery_list.groceryListScreen
 import com.rendox.grocerygenius.screens.grocery_list.navigateToGroceryList
 import com.rendox.grocerygenius.screens.grocery_lists_dashboard.GroceryListsDashboardRoute
 import com.rendox.grocerygenius.screens.grocery_lists_dashboard.groceryListsDashboardScreen
+import com.rendox.grocerygenius.screens.grocery_lists_dashboard.navigateToGroceryListsDashboard
 
 @Composable
 fun GroceryGeniusNavHost(
@@ -25,6 +26,14 @@ fun GroceryGeniusNavHost(
                 navController.navigateToGroceryList(listId = it)
             }
         )
-        groceryListScreen()
+        groceryListScreen(
+            navigateBack = {
+                if (navController.previousBackStackEntry != null) {
+                    navController.popBackStack()
+                } else {
+                    navController.navigateToGroceryListsDashboard()
+                }
+            }
+        )
     }
 }

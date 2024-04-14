@@ -80,7 +80,7 @@ fun CollapsingToolbar(
             val textCompressedEndPadding = when {
                 actions == null -> 0.dp
                 navigationIcon == null -> 30.dp
-                else -> 100.dp
+                else -> 128.dp
             }
             val textEndPadding: Dp = lerp(
                 start = textCompressedEndPadding,
@@ -135,7 +135,10 @@ fun CollapsingToolbar(
                         .fillMaxWidth(),
                     contentAlignment = Alignment.CenterEnd,
                 ) {
-                    Row(content = actions)
+                    Row(
+                        modifier = Modifier.padding(end = 12.dp),
+                        content = actions
+                    )
                 }
             } else {
                 Spacer(modifier = Modifier)

@@ -21,11 +21,16 @@ fun NavController.navigateToGroceryList(
     )
 }
 
-fun NavGraphBuilder.groceryListScreen() {
+fun NavGraphBuilder.groceryListScreen(
+    navigateBack: () -> Unit,
+) {
     composable(
         route = "$GroceryListRoute/{$GroceryListIdArg}",
         arguments = listOf(
-            navArgument(GroceryListIdArg) { type = NavType.StringType },
+            navArgument(GroceryListIdArg) {
+                type = NavType.StringType
+                defaultValue = "sample-grocery-list-0"
+            },
         ),
         enterTransition = {
             GroceryGeniusTransition.sharedZAxisEnterForward
@@ -34,6 +39,6 @@ fun NavGraphBuilder.groceryListScreen() {
             GroceryGeniusTransition.sharedZAxisExitBackward
         },
     ) {
-        GroceryListRoute()
+        GroceryListRoute(navigateBack = navigateBack)
     }
 }
