@@ -63,6 +63,7 @@ private fun ListItem(
     ) {
         Column(modifier = Modifier.padding(end = 50.dp)) {
             Text(
+                modifier = Modifier.padding(bottom = 2.dp),
                 text = list.name,
                 style = MaterialTheme.typography.titleLarge,
                 maxLines = 1,
