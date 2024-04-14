@@ -27,18 +27,24 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.GroceryList
 import com.rendox.grocerygenius.screens.grocery_lists_dashboard.recyclerview.DashboardRecyclerViewAdapter
+import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 
 @Composable
 fun GroceryListsDashboardRoute(
-    groceryListsDashboardViewModel: GroceryListsDashboardViewModel = hiltViewModel(),
+    viewModel: GroceryListsDashboardViewModel = hiltViewModel(),
     navigateToGroceryListScreen: (String) -> Unit,
 ) {
-    val screenState by groceryListsDashboardViewModel.groceryListsFlow.collectAsStateWithLifecycle()
+    val screenState by viewModel.groceryListsFlow.collectAsStateWithLifecycle()
+    val navigateToNewlyCreatedGroceryListEvent by viewModel.navigateToNewlyCreatedGroceryListEvent.collectAsStateWithLifecycle()
+
+    ObserveUiEvent(navigateToNewlyCreatedGroceryListEvent) { groceryListId ->
+        navigateToGroceryListScreen(groceryListId)
+    }
 
     GroceryListsDashboardScreen(
         groceryLists = screenState,
-        updateGroceryLists = groceryListsDashboardViewModel::updateGroceryLists,
+        onIntent = viewModel::onIntent,
         navigateToGroceryListScreen = navigateToGroceryListScreen,
     )
 }
@@ -48,14 +54,17 @@ fun GroceryListsDashboardRoute(
 fun GroceryListsDashboardScreen(
     modifier: Modifier = Modifier,
     groceryLists: List<GroceryList>,
-    updateGroceryLists: (List<GroceryList>) -> Unit = {},
-    onFabClick: () -> Unit = {},
+    onIntent: (GroceryListsDashboardIntent) -> Unit = {},
     navigateToGroceryListScreen: (String) -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
-            FloatingActionButton(onClick = onFabClick) {
+            FloatingActionButton(
+                onClick = {
+                    onIntent(GroceryListsDashboardIntent.OnCreateNewGroceryList)
+                },
+            ) {
                 Icon(Icons.Default.Add, contentDescription = null)
             }
         },
@@ -79,7 +88,9 @@ fun GroceryListsDashboardScreen(
                     val adapter = DashboardRecyclerViewAdapter(
                         recyclerView = this,
                         groceryLists = groceryLists,
-                        updateLists = updateGroceryLists,
+                        updateLists = { newValue ->
+                            onIntent(GroceryListsDashboardIntent.OnUpdateGroceryLists(newValue))
+                        },
                         onItemClicked = navigateToGroceryListScreen,
                     )
                     this.adapter = adapter

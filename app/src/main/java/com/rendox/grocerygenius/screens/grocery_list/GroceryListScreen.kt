@@ -11,7 +11,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,6 +23,7 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -29,6 +32,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,14 +52,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextMotion
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
@@ -150,6 +158,7 @@ fun GroceryListRoute(
         scrimIsShown = addGroceryBottomSheetState.sheetIsExpanding ||
                 editBottomSheetState.targetValue == SheetValue.Expanded,
         toolbarIsHidden = addGroceryBottomSheetState.sheetIsExpanding,
+        groceryListName = groceryListViewModel.groceryListName,
     )
 
     val productId = productIdState.value
@@ -184,7 +193,7 @@ fun GroceryListRoute(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 private fun GroceryListScreen(
     modifier: Modifier = Modifier,
@@ -193,6 +202,7 @@ private fun GroceryListScreen(
     toolbarState: ToolbarState,
     toolbarHeightRange: IntRange,
     screenState: GroceryListScreenState,
+    groceryListName: String = "",
     nestedScrollConnection: NestedScrollConnection? = null,
     scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
     addGroceryBottomSheetState: AddGroceryBottomSheetState = rememberAddGroceryBottomSheetState(),
@@ -202,6 +212,11 @@ private fun GroceryListScreen(
     onIntent: (GroceryListScreenIntent) -> Unit = {},
     showEditGroceryBottomSheet: (String) -> Unit = {},
 ) {
+    val imeIsVisible = WindowInsets.isImeVisible
+    LaunchedEffect(imeIsVisible) {
+        if (!imeIsVisible) onIntent(GroceryListScreenIntent.OnKeyboardHidden)
+    }
+
     val navigationBarHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     BottomSheetScaffold(
         modifier = modifier
@@ -263,10 +278,14 @@ private fun GroceryListScreen(
                 )
         ) {
             GroceryListCollapsingToolbar(
-                listName = screenState.listName,
+                listName = groceryListName,
                 toolbarHeightRange = toolbarHeightRange,
                 toolbarState = toolbarState,
                 toolbarIsHidden = toolbarIsHidden,
+                onUpdateGroceryListName = {
+                    onIntent(GroceryListScreenIntent.UpdateGroceryListName(it))
+                },
+                listNameFieldIsEditable = screenState.groceryListNameFieldIsEditable,
             )
 
             GroceryGrid(
@@ -297,9 +316,11 @@ private fun GroceryListScreen(
 private fun GroceryListCollapsingToolbar(
     modifier: Modifier = Modifier,
     listName: String,
+    listNameFieldIsEditable: Boolean,
     toolbarIsHidden: Boolean,
     toolbarHeightRange: IntRange,
     toolbarState: ToolbarState,
+    onUpdateGroceryListName: (String) -> Unit,
 ) {
     Column(modifier = modifier) {
         val toolbarEnterTransition = remember {
@@ -329,6 +350,12 @@ private fun GroceryListCollapsingToolbar(
             )
         }
 
+        val listNameFieldFocusRequester = remember { FocusRequester() }
+        LaunchedEffect(listNameFieldIsEditable) {
+            println("ListNameFieldFocusDebug listNameFieldIsEditable: $listNameFieldIsEditable")
+            listNameFieldFocusRequester.requestFocus()
+        }
+
         AnimatedVisibility(
             visible = !toolbarIsHidden,
             enter = toolbarEnterTransition,
@@ -340,19 +367,52 @@ private fun GroceryListCollapsingToolbar(
                     translationY = toolbarState.offset
                 },
                 titleExpanded = {
-                    Text(
-                        text = listName,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = expandedTitleStyle.copy(
-                            textMotion = TextMotion.Animated
-                        ),
+                    GroceryListTitleField(
+                        listName = listName,
+                        listNameFieldFocusRequester = listNameFieldFocusRequester,
+                        listNameFieldIsEditable = listNameFieldIsEditable,
+                        textStyle = expandedTitleStyle,
+                        onUpdateGroceryListName = onUpdateGroceryListName,
                     )
                 },
                 expandedTitleFontSize = expandedTitleStyle.fontSize,
                 titleBottomPadding = 24.dp,
                 toolbarState = toolbarState,
                 toolbarHeightRange = toolbarHeightRange,
+            )
+        }
+    }
+}
+
+@Composable
+private fun GroceryListTitleField(
+    modifier: Modifier = Modifier,
+    listName: String,
+    listNameFieldFocusRequester: FocusRequester,
+    listNameFieldIsEditable: Boolean,
+    textStyle: TextStyle,
+    onUpdateGroceryListName: (String) -> Unit,
+) {
+    Box(modifier = modifier) {
+        BasicTextField(
+            modifier = Modifier.focusRequester(listNameFieldFocusRequester),
+            value = listName,
+            onValueChange = onUpdateGroceryListName,
+            enabled = listNameFieldIsEditable,
+            singleLine = true,
+            textStyle = textStyle.copy(
+                textMotion = TextMotion.Animated,
+                color = MaterialTheme.colorScheme.onSurface,
+            ),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
+        )
+        if (listName.isEmpty()) {
+            Text(
+                text = stringResource(R.string.grocery_list_name_text_field_placeholder),
+                style = textStyle.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
+                maxLines = 1,
             )
         }
     }
@@ -442,7 +502,7 @@ fun GroceryListScreenPreview() {
                 searchQuery = "",
                 toolbarState = toolbarState,
                 toolbarHeightRange = toolbarHeightRange,
-                screenState = GroceryListScreenState(listName = "My Grocery List"),
+                screenState = GroceryListScreenState(),
             )
         }
     }

@@ -5,7 +5,7 @@ import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.BottomSheetContentType
 
 data class GroceryListScreenState(
-    val listName: String = "",
+    val groceryListNameFieldIsEditable: Boolean = false,
     val bottomSheetContentType: BottomSheetContentType = BottomSheetContentType.Suggestions,
     val grocerySearchResults: List<Grocery> = emptyList(),
     val customProduct: CustomProduct? = null,

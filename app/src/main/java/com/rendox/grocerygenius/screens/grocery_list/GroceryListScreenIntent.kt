@@ -10,4 +10,6 @@ sealed interface GroceryListScreenIntent {
     data object OnClearSearchQuery : GroceryListScreenIntent
     data object OnAddGroceryBottomSheetCollapsing : GroceryListScreenIntent
     data object OnCustomProductClick : GroceryListScreenIntent
+    data class UpdateGroceryListName(val name: String) : GroceryListScreenIntent
+    data object OnKeyboardHidden : GroceryListScreenIntent
 }

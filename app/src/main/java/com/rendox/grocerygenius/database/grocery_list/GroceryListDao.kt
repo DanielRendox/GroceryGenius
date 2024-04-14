@@ -44,8 +44,8 @@ interface GroceryListDao {
     )
     fun getAllGroceryLists(): Flow<List<GroceryList>>
 
-    @Update
-    suspend fun updateGroceryList(groceryList: GroceryListEntity)
+    @Query("UPDATE GroceryListEntity SET name = :name WHERE id = :listId")
+    suspend fun updateGroceryListName(listId: String, name: String)
 
     @Update
     suspend fun updateGroceryLists(groceryLists: List<GroceryListEntity>)

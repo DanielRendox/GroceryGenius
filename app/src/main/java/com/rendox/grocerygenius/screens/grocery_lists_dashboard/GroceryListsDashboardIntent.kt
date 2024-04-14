@@ -6,4 +6,6 @@ sealed interface GroceryListsDashboardIntent {
     data class OnUpdateGroceryLists(
         val groceryLists: List<GroceryList>
     ) : GroceryListsDashboardIntent
+
+    data object OnCreateNewGroceryList : GroceryListsDashboardIntent
 }

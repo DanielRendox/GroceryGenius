@@ -26,8 +26,8 @@ class GroceryListRepositoryImpl @Inject constructor(
         return groceryListDao.getAllGroceryLists()
     }
 
-    override suspend fun updateGroceryList(groceryList: GroceryList) {
-        groceryListDao.updateGroceryList(groceryList.asEntity())
+    override suspend fun updateGroceryListName(listId: String, name: String) {
+        groceryListDao.updateGroceryListName(listId, name)
     }
 
     override suspend fun deleteGroceryListById(groceryListId: String) {

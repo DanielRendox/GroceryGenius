@@ -19,6 +19,7 @@
     <string name="select_icon_dialog_title">Choose icon</string>
     <string name="edit_grocery_settings_title">Custom item settings</string>
     <string name="delete_product_dialog_text">This item will be removed from all your grocery lists</string>
+    <string name="grocery_list_name_text_field_placeholder">Enter a name</string>
 
     <!-- GroceryListsDashboardScreen -->
     <string name="dashboard_item_num_of_groceries_title">%d items</string>
@@ -26,6 +27,7 @@
     <!-- General -->
     <string name="done">Done</string>
     <string name="delete">Delete</string>
+    <string name="untitled">Untitled</string>
 
     <string name="custom_category_title">Custom</string>
 

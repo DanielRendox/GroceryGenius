@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -46,6 +47,10 @@ class GroceryListViewModel @Inject constructor(
 
     private val _screenStateFlow = MutableStateFlow(GroceryListScreenState())
     val screenStateFlow = _screenStateFlow.asStateFlow()
+
+    var groceryListName by mutableStateOf("")
+        private set
+    private val groceryListNameFlow = snapshotFlow { groceryListName }
 
     val groceryGroupsFlow = groceryRepository.getGroceriesFromList(groceryListId)
         .map { groceries ->
@@ -91,9 +96,14 @@ class GroceryListViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            groceryListRepository.getGroceryListById(groceryListId).collect {
-                _screenStateFlow.update { uiState ->
-                    uiState.copy(listName = it?.name ?: "")
+            val groceryList = groceryListRepository.getGroceryListById(groceryListId).first()
+            if (groceryListName.isEmpty()) {
+                if (groceryList != null && groceryList.name.isNotEmpty()) {
+                    groceryListName = groceryList.name
+                } else {
+                    _screenStateFlow.update {
+                        it.copy(groceryListNameFieldIsEditable = true)
+                    }
                 }
             }
         }
@@ -116,6 +126,16 @@ class GroceryListViewModel @Inject constructor(
                         }
                     }
                 }
+        }
+        viewModelScope.launch {
+            groceryListNameFlow.collectLatest { listName ->
+                groceryListRepository.updateGroceryListName(groceryListId, listName.trim())
+            }
+        }
+        viewModelScope.launch {
+            groceryListNameFlow.collect {
+                println("Grocery list name: $it")
+            }
         }
     }
 
@@ -140,6 +160,12 @@ class GroceryListViewModel @Inject constructor(
 
         is GroceryListScreenIntent.OnCustomProductClick ->
             _screenStateFlow.value.customProduct?.let { addCustomProduct(it) }
+
+        is GroceryListScreenIntent.UpdateGroceryListName ->
+            groceryListName = intent.name
+
+        is GroceryListScreenIntent.OnKeyboardHidden ->
+            onKeyboardHidden()
     }
 
     private fun toggleItemPurchased(item: Grocery) {
@@ -267,6 +293,14 @@ class GroceryListViewModel @Inject constructor(
                     ) else null,
                     grocerySearchResults = newResults,
                 )
+            }
+        }
+    }
+
+    private fun onKeyboardHidden() {
+        if (groceryListName.isNotEmpty()) {
+            _screenStateFlow.update {
+                it.copy(groceryListNameFieldIsEditable = false)
             }
         }
     }
