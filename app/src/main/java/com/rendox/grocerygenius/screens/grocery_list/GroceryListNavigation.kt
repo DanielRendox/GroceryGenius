@@ -39,6 +39,8 @@ fun NavGraphBuilder.groceryListScreen(
             GroceryGeniusTransition.sharedZAxisExitBackward
         },
     ) {
-        GroceryListRoute(navigateBack = navigateBack)
+        GroceryListRoute(
+            navigateBack = navigateBack,
+        )
     }
 }

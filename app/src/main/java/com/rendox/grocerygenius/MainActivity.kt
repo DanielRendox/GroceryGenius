@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    GroceryGeniusNavHost(modifier = Modifier.fillMaxSize())
+                    GroceryGeniusNavHost()
                 }
             }
         }

@@ -106,7 +106,6 @@ import java.io.File
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroceryListRoute(
-    modifier: Modifier = Modifier,
     groceryListViewModel: GroceryListViewModel = hiltViewModel(),
     navigateBack: () -> Unit,
 ) {
@@ -157,7 +156,7 @@ fun GroceryListRoute(
     val productIdState = rememberSaveable { mutableStateOf<String?>(null) }
 
     GroceryListScreen(
-        modifier = modifier,
+        modifier = Modifier.fillMaxSize(),
         groceryGroups = groceryGroups,
         searchQuery = groceryListViewModel.searchQuery,
         toolbarState = toolbarState,

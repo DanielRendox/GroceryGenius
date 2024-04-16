@@ -50,7 +50,6 @@ fun GroceryListsDashboardRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroceryListsDashboardScreen(
-    modifier: Modifier = Modifier,
     groceryLists: List<GroceryList>,
     onIntent: (GroceryListsDashboardIntent) -> Unit = {},
     navigateToGroceryListScreen: (String) -> Unit = {},
@@ -58,7 +57,7 @@ fun GroceryListsDashboardScreen(
     var scrollState by rememberSaveable { mutableIntStateOf(0) }
 
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(text = stringResource(id = R.string.app_name)) }
