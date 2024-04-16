@@ -13,6 +13,7 @@ import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.data.grocery.GroceryRepository
 import com.rendox.grocerygenius.data.grocery_list.GroceryListRepository
 import com.rendox.grocerygenius.data.product.ProductRepository
+import com.rendox.grocerygenius.data.user_preferences.UserPreferencesRepository
 import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.BottomSheetContentType
@@ -43,6 +44,7 @@ class GroceryListViewModel @Inject constructor(
     private val groceryRepository: GroceryRepository,
     private val groceryListRepository: GroceryListRepository,
     private val productRepository: ProductRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
     val groceryListId: String = checkNotNull(savedStateHandle[GROCERY_LIST_ID_ARG])
 
@@ -139,6 +141,9 @@ class GroceryListViewModel @Inject constructor(
                 .collectLatest { listName ->
                     groceryListRepository.updateGroceryListName(groceryListId, listName.trim())
                 }
+        }
+        viewModelScope.launch {
+            userPreferencesRepository.updateDefaultListId(groceryListId)
         }
     }
 

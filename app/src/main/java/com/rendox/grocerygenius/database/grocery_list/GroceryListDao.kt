@@ -26,6 +26,7 @@ interface GroceryListDao {
          FROM GroceryListEntity groceryList
          LEFT JOIN GroceryEntity grocery ON grocery.groceryListId = groceryList.id
          WHERE groceryList.id = :id
+         GROUP BY groceryList.id HAVING groceryList.id IS NOT NULL
     """
     )
     fun getGroceryListById(id: String): Flow<GroceryList?>
@@ -39,7 +40,7 @@ interface GroceryListDao {
             COUNT(grocery.productId) as numOfGroceries
         FROM GroceryListEntity groceryList
         LEFT JOIN GroceryEntity grocery ON grocery.groceryListId = groceryList.id
-        GROUP BY groceryList.id
+        GROUP BY groceryList.id HAVING groceryList.id IS NOT NULL
     """
     )
     fun getAllGroceryLists(): Flow<List<GroceryList>>

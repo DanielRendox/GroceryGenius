@@ -5,6 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.rendox.grocerygenius.screens.grocery_list.GROCERY_LIST_ID_ARG
+import com.rendox.grocerygenius.screens.grocery_list.GROCERY_LIST_ROUTE
 import com.rendox.grocerygenius.screens.grocery_list.groceryListScreen
 import com.rendox.grocerygenius.screens.grocery_list.navigateToGroceryList
 import com.rendox.grocerygenius.screens.grocery_lists_dashboard.GROCERY_LISTS_DASHBOARD_ROUTE
@@ -13,12 +15,16 @@ import com.rendox.grocerygenius.screens.grocery_lists_dashboard.navigateToGrocer
 
 @Composable
 fun GroceryGeniusNavHost(
-    startDestination: String = GROCERY_LISTS_DASHBOARD_ROUTE,
+    defaultListId: String? = null,
 ) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = startDestination,
+        startDestination = if (defaultListId != null) {
+            "$GROCERY_LIST_ROUTE/{$GROCERY_LIST_ID_ARG}"
+        } else {
+            GROCERY_LISTS_DASHBOARD_ROUTE
+        },
         modifier = Modifier.fillMaxSize(),
     ) {
         groceryListsDashboardScreen(
@@ -31,9 +37,14 @@ fun GroceryGeniusNavHost(
                 if (navController.previousBackStackEntry != null) {
                     navController.popBackStack()
                 } else {
-                    navController.navigateToGroceryListsDashboard()
+                    navController.navigateToGroceryListsDashboard {
+                        popUpTo(route = "$GROCERY_LIST_ROUTE/{$GROCERY_LIST_ID_ARG}") {
+                            inclusive = true
+                        }
+                    }
                 }
-            }
+            },
+            defaultListId = defaultListId,
         )
     }
 }

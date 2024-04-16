@@ -12,8 +12,8 @@ const val GROCERY_LIST_ID_ARG = "groceryListId"
 const val GROCERY_LIST_ROUTE = "grocery_list_route"
 
 fun NavController.navigateToGroceryList(
-    navOptions: NavOptionsBuilder.() -> Unit = {},
     listId: String,
+    navOptions: NavOptionsBuilder.() -> Unit = {},
 ) {
     this.navigate(
         route = "$GROCERY_LIST_ROUTE/$listId",
@@ -23,13 +23,14 @@ fun NavController.navigateToGroceryList(
 
 fun NavGraphBuilder.groceryListScreen(
     navigateBack: () -> Unit,
+    defaultListId: String?,
 ) {
     composable(
         route = "$GROCERY_LIST_ROUTE/{$GROCERY_LIST_ID_ARG}",
         arguments = listOf(
             navArgument(GROCERY_LIST_ID_ARG) {
                 type = NavType.StringType
-                defaultValue = "sample-grocery-list-0"
+                defaultValue = defaultListId ?: ""
             },
         ),
         enterTransition = {

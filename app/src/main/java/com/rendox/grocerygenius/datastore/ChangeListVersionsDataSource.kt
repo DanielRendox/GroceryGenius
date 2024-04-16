@@ -12,9 +12,9 @@ import java.io.IOException
 import javax.inject.Inject
 
 class ChangeListVersionsDataSource @Inject constructor(
-    private val userPreferences: DataStore<Preferences>,
+    private val dataStore: DataStore<Preferences>,
 ) {
-    suspend fun getChangeListVersions() = userPreferences.data
+    suspend fun getChangeListVersions() = dataStore.data
         .map {
             ChangeListVersions(
                 iconVersion = it[ICON_VERSION] ?: -1,
@@ -26,7 +26,7 @@ class ChangeListVersionsDataSource @Inject constructor(
 
     suspend fun updateChangeListVersion(update: ChangeListVersions.() -> ChangeListVersions) {
         try {
-            userPreferences.edit { currentPreferences ->
+            dataStore.edit { currentPreferences ->
                 val updatedChangeListVersions = update(
                     ChangeListVersions(
                         iconVersion = currentPreferences[ICON_VERSION] ?: -1,
