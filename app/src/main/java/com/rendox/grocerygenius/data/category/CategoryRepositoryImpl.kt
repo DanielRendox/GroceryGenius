@@ -31,7 +31,7 @@ class CategoryRepositoryImpl @Inject constructor(
         },
         prepopulateWithInitialData = {
             val categories = categoryNetworkDataSource.getAllCategories()
-            categoryDao.upsertCategories(categories.map { it.asEntity() })
+            categoryDao.insertCategories(categories.map { it.asEntity() })
         },
         versionReader = { it.categoryVersion },
         changeListFetcher = { currentVersion ->

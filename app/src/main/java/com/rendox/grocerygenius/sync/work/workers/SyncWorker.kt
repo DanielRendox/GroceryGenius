@@ -61,10 +61,10 @@ class SyncWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result = withContext(ioDispatcher) {
         val syncedSuccessfully = listOf(
-            groceryListRepository.sync(),
             iconRepository.sync(),
             categoryRepository.sync(),
             productRepository.sync(),
+            groceryListRepository.sync(),
         ).all { it }
         if (syncedSuccessfully) Result.success() else Result.failure()
     }

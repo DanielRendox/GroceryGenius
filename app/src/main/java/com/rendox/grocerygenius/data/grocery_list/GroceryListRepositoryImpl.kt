@@ -4,7 +4,10 @@ import com.rendox.grocerygenius.data.Synchronizer
 import com.rendox.grocerygenius.data.model.asEntity
 import com.rendox.grocerygenius.data.model.asExternalModel
 import com.rendox.grocerygenius.data.suspendRunCatching
+import com.rendox.grocerygenius.database.grocery.GroceryDao
+import com.rendox.grocerygenius.database.grocery.GroceryEntity
 import com.rendox.grocerygenius.database.grocery_list.GroceryListDao
+import com.rendox.grocerygenius.database.product.ProductDao
 import com.rendox.grocerygenius.model.GroceryList
 import com.rendox.grocerygenius.network.grocery_list.GroceryListNetworkDataSource
 import kotlinx.coroutines.flow.Flow
@@ -15,6 +18,8 @@ import javax.inject.Inject
 class GroceryListRepositoryImpl @Inject constructor(
     private val groceryListDao: GroceryListDao,
     private val groceryListNetworkDataSource: GroceryListNetworkDataSource,
+    private val groceryDao: GroceryDao,
+    private val productDao: ProductDao,
 ) : GroceryListRepository {
     override suspend fun insertGroceryList(groceryList: GroceryList) {
         groceryListDao.insertGroceryList(groceryList.asEntity())
@@ -25,7 +30,7 @@ class GroceryListRepositoryImpl @Inject constructor(
     }
 
     override fun getAllGroceryLists(): Flow<List<GroceryList>> {
-        return groceryListDao.getAllGroceryLists().map {  groceryList ->
+        return groceryListDao.getAllGroceryLists().map { groceryList ->
             groceryList.map { it.asExternalModel() }
         }
     }
@@ -43,6 +48,17 @@ class GroceryListRepositoryImpl @Inject constructor(
         if (existingGroceryLists.isEmpty()) {
             val groceryList = groceryListNetworkDataSource.getSampleGroceryList()
             groceryListDao.insertGroceryList(groceryList.asEntity())
+            val groceries = productDao.getAllProducts().map {
+                GroceryEntity(
+                    productId = it.id,
+                    groceryListId = groceryList.id,
+                    purchased = false,
+                    description = null,
+                    purchasedLastModified = System.currentTimeMillis(),
+                )
+            }
+            println("inserting sample groceries: $groceries")
+            groceryDao.insertGroceries(groceries)
         }
     }.isSuccess
 }

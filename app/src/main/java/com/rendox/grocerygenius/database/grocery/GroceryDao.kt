@@ -8,6 +8,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 abstract class GroceryDao {
     @Insert
+    abstract suspend fun insertGroceries(groceries: List<GroceryEntity>)
+
+    @Insert
     abstract suspend fun insertGrocery(grocery: GroceryEntity)
 
     @Query(

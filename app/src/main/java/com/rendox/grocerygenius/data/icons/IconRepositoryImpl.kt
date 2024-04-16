@@ -21,7 +21,7 @@ class IconRepositoryImpl @Inject constructor(
         },
         prepopulateWithInitialData = {
             val icons = iconNetworkDataSource.downloadIcons()
-            iconDao.upsertGroceryIcons(icons.map { it.asEntity() })
+            iconDao.insertGroceryIcons(icons.map { it.asEntity() })
         },
         versionReader = { it.iconVersion },
         changeListFetcher = { currentVersion ->

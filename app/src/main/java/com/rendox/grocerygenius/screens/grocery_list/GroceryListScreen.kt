@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
@@ -215,7 +216,8 @@ private fun GroceryListScreen(
             AddGroceryBottomSheetContent(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(LocalConfiguration.current.screenHeightDp * 0.75F.dp),
+                    .height(LocalConfiguration.current.screenHeightDp * 0.75F.dp)
+                    .navigationBarsPadding(),
                 searchQuery = searchQuery,
                 contentType = screenState.bottomSheetContentType,
                 clearSearchQueryButtonIsShown = screenState.clearSearchQueryButtonIsShown,

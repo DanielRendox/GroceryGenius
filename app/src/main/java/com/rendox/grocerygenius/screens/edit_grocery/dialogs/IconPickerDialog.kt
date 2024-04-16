@@ -42,7 +42,7 @@ fun IconPickerDialog(
     ) {
         LazyVerticalGrid(
             modifier = modifier.weight(1F).padding(16.dp),
-            columns = GridCells.Adaptive(80.dp),
+            columns = GridCells.Adaptive(88.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {

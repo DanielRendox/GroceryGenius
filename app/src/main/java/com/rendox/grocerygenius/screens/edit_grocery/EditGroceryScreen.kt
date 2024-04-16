@@ -136,7 +136,7 @@ fun EditGroceryScreen(
                         colorFilter = ColorFilter.tint(color = LocalContentColor.current)
                     )
                 },
-                title = { screenState.icons[it].name },
+                title = { screenState.icons[it].name ?: "" },
                 onIconSelected = {
                     onIntent(EditGroceryScreenIntent.OnIconSelected(screenState.icons[it].id))
                     pickerDialog = PickerDialogType.None

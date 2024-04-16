@@ -47,7 +47,7 @@ class ProductRepositoryImpl @Inject constructor(
         },
         prepopulateWithInitialData = {
             val products = productNetworkDataSource.getAllProducts()
-            productDao.upsertProducts(products.map { it.asEntity() })
+            productDao.insertProducts(products.map { it.asEntity() })
         },
         versionReader = { it.productVersion },
         changeListFetcher = { currentVersion ->

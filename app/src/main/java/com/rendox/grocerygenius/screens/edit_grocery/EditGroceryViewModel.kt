@@ -85,6 +85,7 @@ class EditGroceryViewModel @Inject constructor(
         }
         viewModelScope.launch {
             iconRepository.getAllGroceryIcons().collectLatest { icons ->
+                println("all grocery icons: $icons")
                 _screenStateFlow.update { screenState ->
                     screenState.copy(icons = icons.sortedBy { it.name })
                 }
