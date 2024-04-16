@@ -7,13 +7,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.rendox.grocerygenius.screens.grocery_list.groceryListScreen
 import com.rendox.grocerygenius.screens.grocery_list.navigateToGroceryList
-import com.rendox.grocerygenius.screens.grocery_lists_dashboard.GroceryListsDashboardRoute
+import com.rendox.grocerygenius.screens.grocery_lists_dashboard.GROCERY_LISTS_DASHBOARD_ROUTE
 import com.rendox.grocerygenius.screens.grocery_lists_dashboard.groceryListsDashboardScreen
 import com.rendox.grocerygenius.screens.grocery_lists_dashboard.navigateToGroceryListsDashboard
 
 @Composable
 fun GroceryGeniusNavHost(
-    startDestination: String = GroceryListsDashboardRoute,
+    startDestination: String = GROCERY_LISTS_DASHBOARD_ROUTE,
 ) {
     val navController = rememberNavController()
     NavHost(

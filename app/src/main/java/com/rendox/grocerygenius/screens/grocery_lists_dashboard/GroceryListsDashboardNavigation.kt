@@ -6,13 +6,13 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import com.rendox.grocerygenius.ui.GroceryGeniusTransition
 
-const val GroceryListsDashboardRoute = "grocery_lists_dashboard_route"
+const val GROCERY_LISTS_DASHBOARD_ROUTE = "grocery_lists_dashboard_route"
 
 fun NavController.navigateToGroceryListsDashboard(
     navOptions: (NavOptionsBuilder.() -> Unit) = {},
 ) {
     this.navigate(
-        route = GroceryListsDashboardRoute,
+        route = GROCERY_LISTS_DASHBOARD_ROUTE,
         builder = navOptions,
     )
 }
@@ -21,7 +21,7 @@ fun NavGraphBuilder.groceryListsDashboardScreen(
     navigateToGroceryListScreen: (String) -> Unit,
 ) {
     composable(
-        route = GroceryListsDashboardRoute,
+        route = GROCERY_LISTS_DASHBOARD_ROUTE,
         enterTransition = {
             GroceryGeniusTransition.sharedZAxisEnterBackward
         },

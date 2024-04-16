@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.datastore
+package com.rendox.grocerygenius.model
 
 data class ChangeListVersions(
     val iconVersion: Int = -1,

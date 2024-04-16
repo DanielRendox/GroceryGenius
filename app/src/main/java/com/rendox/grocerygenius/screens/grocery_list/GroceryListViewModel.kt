@@ -44,7 +44,7 @@ class GroceryListViewModel @Inject constructor(
     private val groceryListRepository: GroceryListRepository,
     private val productRepository: ProductRepository,
 ) : ViewModel() {
-    val groceryListId: String = checkNotNull(savedStateHandle[GroceryListIdArg])
+    val groceryListId: String = checkNotNull(savedStateHandle[GROCERY_LIST_ID_ARG])
 
     var searchQuery by mutableStateOf("")
         private set

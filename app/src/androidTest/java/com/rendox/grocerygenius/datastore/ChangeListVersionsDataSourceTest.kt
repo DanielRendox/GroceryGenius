@@ -13,6 +13,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import com.google.common.truth.Truth.assertThat
+import com.rendox.grocerygenius.model.ChangeListVersions
 
 private const val TEST_DATASTORE_NAME = "test_datastore"
 
