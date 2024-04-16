@@ -395,7 +395,6 @@ private fun GroceryListCollapsingToolbar(
             if (editModeIsEnabled) FocusRequester() else null
         }
         LaunchedEffect(editModeIsEnabled) {
-            println("ListNameFieldFocusDebug listNameFieldIsEditable: $editModeIsEnabled")
             listNameFieldFocusRequester?.requestFocus()
         }
 

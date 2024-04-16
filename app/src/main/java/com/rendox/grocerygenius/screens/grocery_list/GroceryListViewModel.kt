@@ -105,8 +105,6 @@ class GroceryListViewModel @Inject constructor(
         }
         viewModelScope.launch {
             val groceryList = groceryListRepository.getGroceryListById(groceryListId).first()
-            println("NullifyDebug groceryListName is empty ${groceryListName.text.isEmpty()}")
-            println("NullifyDebug groceryList from repo: $groceryList")
             if (groceryListName.text.isEmpty()) {
                 if (groceryList != null && groceryList.name.isNotEmpty()) {
                     groceryListName = TextFieldValue(groceryList.name)
