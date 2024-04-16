@@ -11,10 +11,11 @@ import java.util.Collections
 
 class DashboardRecyclerViewAdapter(
     recyclerView: RecyclerView,
-    private var groceryLists: List<GroceryList>,
+    var groceryLists: List<GroceryList>,
     private val updateLists: (List<GroceryList>) -> Unit,
     private val onItemClicked: (String) -> Unit,
-) : RecyclerView.Adapter<DashboardItemViewHolder>() {
+    private val onAdderItemClicked: () -> Unit,
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val touchHelperCallback = DragHandleReorderItemTouchHelperCallback(
         onItemMove = { fromPosition, toPosition ->
@@ -28,24 +29,41 @@ class DashboardRecyclerViewAdapter(
         touchHelper.attachToRecyclerView(recyclerView)
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return if (position == groceryLists.size) {
+            VIEW_TYPE_ADDER
+        } else {
+            VIEW_TYPE_GROCERY_LIST
+        }
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): DashboardItemViewHolder {
-        return DashboardItemViewHolder(
+    ): RecyclerView.ViewHolder = when(viewType) {
+        VIEW_TYPE_GROCERY_LIST -> DashboardItemViewHolder(
             composeView = ComposeView(parent.context),
             onDrag = { touchHelper.startDrag(it) },
             onViewClicked = onItemClicked,
         )
-    }
-
-    override fun onBindViewHolder(holder: DashboardItemViewHolder, position: Int) {
-        return holder.bind(
-            groceryList = groceryLists[position]
+        VIEW_TYPE_ADDER -> GroceryListAdderItemViewHolder(
+            composeView = ComposeView(parent.context),
+            onViewClicked = onAdderItemClicked,
         )
+
+        else -> throw IllegalArgumentException("Unknown view type: $viewType")
     }
 
-    override fun getItemCount() = groceryLists.size
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int
+    ) = when(holder) {
+        is DashboardItemViewHolder -> holder.bind(groceryLists[position])
+        is GroceryListAdderItemViewHolder -> holder.bind()
+        else -> throw IllegalArgumentException("Unknown view holder: $holder")
+    }
+
+    override fun getItemCount() = groceryLists.size + 1
 
     private fun onItemMove(fromPosition: Int, toPosition: Int) {
         groceryLists = this.groceryLists.toMutableList().also {
@@ -59,5 +77,10 @@ class DashboardRecyclerViewAdapter(
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         groceryLists = newGroceryLists
         diffResult.dispatchUpdatesTo(this)
+    }
+
+    companion object {
+        private const val VIEW_TYPE_GROCERY_LIST = 0
+        private const val VIEW_TYPE_ADDER = 1
     }
 }

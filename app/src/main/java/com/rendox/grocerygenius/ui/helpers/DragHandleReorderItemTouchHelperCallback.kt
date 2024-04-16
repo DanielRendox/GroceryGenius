@@ -2,6 +2,7 @@ package com.rendox.grocerygenius.ui.helpers
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.rendox.grocerygenius.screens.grocery_lists_dashboard.recyclerview.GroceryListAdderItemViewHolder
 
 class DragHandleReorderItemTouchHelperCallback(
     private val onItemMove: (fromPosition: Int, toPosition: Int) -> Unit,
@@ -26,6 +27,7 @@ class DragHandleReorderItemTouchHelperCallback(
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
+        if (target is GroceryListAdderItemViewHolder) return false
         onItemMove(
             viewHolder.bindingAdapterPosition,
             target.bindingAdapterPosition

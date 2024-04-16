@@ -27,6 +27,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             GroceryGeniusTheme {
                 Surface(
+                    modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
                     GroceryGeniusNavHost(modifier = Modifier.fillMaxSize())

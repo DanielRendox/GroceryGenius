@@ -97,7 +97,7 @@ private fun ListItem(
 
 @Composable
 @Preview
-fun PreviewListItem() {
+private fun PreviewListItem() {
     GroceryGeniusTheme {
         Surface {
             ListItem(

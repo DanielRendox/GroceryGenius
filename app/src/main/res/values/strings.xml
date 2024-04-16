@@ -24,6 +24,7 @@
 
     <!-- GroceryListsDashboardScreen -->
     <string name="dashboard_item_num_of_groceries_title">%d items</string>
+    <string name="add_grocery_list_button_description">Add new grocery list</string>
 
     <!-- General -->
     <string name="done">Done</string>
