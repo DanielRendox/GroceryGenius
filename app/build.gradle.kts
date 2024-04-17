@@ -75,7 +75,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.activity.compose)
 
-    implementation(libs.material)
+    implementation(libs.com.google.android.material)
     implementation(libs.androidx.core.splashscreen)
 
     implementation(libs.com.google.dagger.hilt.android)
@@ -110,7 +110,7 @@ dependencies {
     testImplementation(libs.org.junit.jupiter.engine)
     testImplementation(libs.org.junit.jupiter.params)
 
-    testImplementation(libs.truth)
+    testImplementation(libs.com.google.truth)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -118,7 +118,7 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.work.testing)
     androidTestImplementation(libs.com.google.dagger.hilt.android.testing)
-    androidTestImplementation(libs.truth)
+    androidTestImplementation(libs.com.google.truth)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
