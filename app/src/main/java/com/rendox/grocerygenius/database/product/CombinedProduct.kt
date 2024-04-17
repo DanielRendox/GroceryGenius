@@ -8,6 +8,5 @@ data class CombinedProduct(
     val categoryId: String?,
     val categoryName: String?,
     val categorySortingPriority: Int?,
-    val categoryIsDefault: Boolean?,
     val isDefault: Boolean,
 )

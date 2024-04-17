@@ -30,7 +30,7 @@ import com.rendox.grocerygenius.data.category.CategoryRepository
 import com.rendox.grocerygenius.data.grocery_list.GroceryListRepository
 import com.rendox.grocerygenius.data.icons.IconRepository
 import com.rendox.grocerygenius.data.product.ProductRepository
-import com.rendox.grocerygenius.datastore.ChangeListVersions
+import com.rendox.grocerygenius.model.ChangeListVersions
 import com.rendox.grocerygenius.datastore.ChangeListVersionsDataSource
 import com.rendox.grocerygenius.network.di.Dispatcher
 import com.rendox.grocerygenius.network.di.GroceryGeniusDispatchers

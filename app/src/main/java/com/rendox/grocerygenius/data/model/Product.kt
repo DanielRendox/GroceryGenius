@@ -37,8 +37,7 @@ val CombinedProduct.category
     get() = when {
         categoryId != null
                 && categoryName != null
-                && categorySortingPriority != null
-                && categoryIsDefault != null -> Category(
+                && categorySortingPriority != null -> Category(
             id = categoryId,
             name = categoryName,
             sortingPriority = categorySortingPriority,

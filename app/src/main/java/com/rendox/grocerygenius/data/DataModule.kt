@@ -10,6 +10,8 @@ import com.rendox.grocerygenius.data.icons.IconRepository
 import com.rendox.grocerygenius.data.icons.IconRepositoryImpl
 import com.rendox.grocerygenius.data.product.ProductRepository
 import com.rendox.grocerygenius.data.product.ProductRepositoryImpl
+import com.rendox.grocerygenius.data.user_preferences.UserPreferencesRepository
+import com.rendox.grocerygenius.data.user_preferences.UserPreferencesRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -49,4 +51,10 @@ abstract class DataModule {
     abstract fun bindIconRepository(
         iconRepositoryImpl: IconRepositoryImpl
     ): IconRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserPreferencesRepository(
+        userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl
+    ): UserPreferencesRepository
 }
