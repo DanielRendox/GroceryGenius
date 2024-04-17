@@ -50,12 +50,12 @@ class GroceryListRepositoryImpl @Inject constructor(
     override suspend fun syncWith(synchronizer: Synchronizer) = suspendRunCatching {
         val existingGroceryLists = groceryListDao.getAllGroceryLists().first()
         if (existingGroceryLists.isEmpty()) {
-            val groceryList = groceryListNetworkDataSource.getSampleGroceryList()
-            groceryListDao.insertGroceryList(groceryList.asEntity())
+            val groceryLists = groceryListNetworkDataSource.getAllGroceryLists()
+            groceryListDao.upsertGroceryLists(groceryLists.map { it.asEntity() })
             val groceries = productDao.getAllProducts().map {
                 GroceryEntity(
                     productId = it.id,
-                    groceryListId = groceryList.id,
+                    groceryListId = groceryLists.first().id,
                     purchased = false,
                     description = null,
                     purchasedLastModified = System.currentTimeMillis(),

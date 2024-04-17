@@ -36,12 +36,16 @@
     "assetFilePath": "grocery/icons/berries_v1.png"
   },
   {
-    "id": "default-grocery-icons-bottle-small",
-    "assetFilePath": "grocery/icons/bottle_small_v1.png"
-  },
-  {
     "id": "default-grocery-icons-bottle-narrow",
     "assetFilePath": "grocery/icons/bottle_narrow_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-bottle-plastic",
+    "assetFilePath": "grocery/icons/bottle_plastic_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-bottle-small",
+    "assetFilePath": "grocery/icons/bottle_small_v1.png"
   },
   {
     "id": "default-grocery-icons-bread",
@@ -76,6 +80,10 @@
     "assetFilePath": "grocery/icons/cat_v1.png"
   },
   {
+    "id": "default-grocery-icons-cereal",
+    "assetFilePath": "grocery/icons/cereal_v1.png"
+  },
+  {
     "id": "default-grocery-icons-cheese",
     "assetFilePath": "grocery/icons/cheese_v1.png"
   },
@@ -84,12 +92,12 @@
     "assetFilePath": "grocery/icons/cherries_v1.png"
   },
   {
-    "id": "default-grocery-icons-chicken-legs",
-    "assetFilePath": "grocery/icons/chicken_legs_v1.png"
-  },
-  {
     "id": "default-grocery-icons-chicken",
     "assetFilePath": "grocery/icons/chicken_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-chicken-legs",
+    "assetFilePath": "grocery/icons/chicken_legs_v1.png"
   },
   {
     "id": "default-grocery-icons-chips",
@@ -200,8 +208,8 @@
     "assetFilePath": "grocery/icons/jam_v1.png"
   },
   {
-    "id": "default-grocery-icons-jar",
-    "assetFilePath": "grocery/icons/jar_v1.png"
+    "id": "default-grocery-icons-jar-of-spices",
+    "assetFilePath": "grocery/icons/jar_of_spices_v1.png"
   },
   {
     "id": "default-grocery-icons-juice",
@@ -244,14 +252,6 @@
     "assetFilePath": "grocery/icons/milk_v1.png"
   },
   {
-    "id": "default-grocery-icons-mocarella",
-    "assetFilePath": "grocery/icons/mocarella_v1.png"
-  },
-  {
-    "id": "default-grocery-icons-cereal",
-    "assetFilePath": "grocery/icons/cereal_v1.png"
-  },
-  {
     "id": "default-grocery-icons-mushroom",
     "assetFilePath": "grocery/icons/mushroom_v1.png"
   },
@@ -278,10 +278,6 @@
   {
     "id": "default-grocery-icons-pads",
     "assetFilePath": "grocery/icons/pads_v1.png"
-  },
-  {
-    "id": "default-grocery-icons-paprika",
-    "assetFilePath": "grocery/icons/paprika_v1.png"
   },
   {
     "id": "default-grocery-icons-parsley",
@@ -318,10 +314,6 @@
   {
     "id": "default-grocery-icons-pizza",
     "assetFilePath": "grocery/icons/pizza_v1.png"
-  },
-  {
-    "id": "default-grocery-icons-plastic-bottle",
-    "assetFilePath": "grocery/icons/plastic_bottle_v1.png"
   },
   {
     "id": "default-grocery-icons-plums",
@@ -380,10 +372,6 @@
     "assetFilePath": "grocery/icons/shopping_bag_v1.png"
   },
   {
-    "id": "default-grocery-icons-washing-liquid",
-    "assetFilePath": "grocery/icons/washing_liquid_v1.png"
-  },
-  {
     "id": "default-grocery-icons-shrimp",
     "assetFilePath": "grocery/icons/shrimp_v1.png"
   },
@@ -416,12 +404,12 @@
     "assetFilePath": "grocery/icons/sugar_cubes_v1.png"
   },
   {
-    "id": "default-grocery-icons-sweets",
-    "assetFilePath": "grocery/icons/sweets_v1.png"
-  },
-  {
     "id": "default-grocery-icons-sweet-corn",
     "assetFilePath": "grocery/icons/sweet_corn_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-sweets",
+    "assetFilePath": "grocery/icons/sweets_v1.png"
   },
   {
     "id": "default-grocery-icons-tangerines",
@@ -454,6 +442,10 @@
   {
     "id": "default-grocery-icons-walnuts",
     "assetFilePath": "grocery/icons/walnuts_v1.png"
+  },
+  {
+    "id": "default-grocery-icons-washing-liquid",
+    "assetFilePath": "grocery/icons/washing_liquid_v1.png"
   },
   {
     "id": "default-grocery-icons-watermelon",
