@@ -216,7 +216,7 @@ fun GroceryListRoute(
 private fun GroceryListScreen(
     modifier: Modifier = Modifier,
     groceryGroups: List<GroceryGroup>,
-    searchQuery: String,
+    searchQuery: TextFieldValue,
     toolbarState: ToolbarState,
     toolbarHeightRange: IntRange,
     screenState: GroceryListScreenState,
@@ -584,7 +584,7 @@ fun GroceryListScreenPreview() {
             val toolbarState = rememberExitUntilCollapsedToolbarState(toolbarHeightRange)
             GroceryListScreen(
                 groceryGroups = sampleGroceryGroups,
-                searchQuery = "",
+                searchQuery = TextFieldValue(""),
                 toolbarState = toolbarState,
                 toolbarHeightRange = toolbarHeightRange,
                 screenState = GroceryListScreenState(),

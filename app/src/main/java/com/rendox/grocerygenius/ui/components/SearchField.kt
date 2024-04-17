@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.ui.theme.CornerRoundingDefault
@@ -24,8 +25,8 @@ import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 @Composable
 fun SearchField(
     modifier: Modifier = Modifier,
-    searchInput: String,
-    onSearchInputChanged: (String) -> Unit,
+    searchInput: TextFieldValue,
+    onSearchInputChanged: (TextFieldValue) -> Unit,
     placeholder: @Composable () -> Unit,
     clearSearchInputButtonIsShown: Boolean,
     onClearSearchInputClicked: () -> Unit,
@@ -71,7 +72,7 @@ private fun SearchFieldPreview() {
     GroceryGeniusTheme {
         Surface {
             SearchField(
-                searchInput = "",
+                searchInput = TextFieldValue(""),
                 onSearchInputChanged = {},
                 clearSearchInputButtonIsShown = true,
                 onClearSearchInputClicked = {},

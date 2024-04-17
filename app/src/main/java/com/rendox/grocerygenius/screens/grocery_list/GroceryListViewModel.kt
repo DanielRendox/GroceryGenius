@@ -48,9 +48,9 @@ class GroceryListViewModel @Inject constructor(
 ) : ViewModel() {
     val groceryListId: String = checkNotNull(savedStateHandle[GROCERY_LIST_ID_ARG])
 
-    var searchQuery by mutableStateOf("")
+    var searchQuery by mutableStateOf(TextFieldValue(""))
         private set
-    private val searchQueryFlow = snapshotFlow { searchQuery }
+    private val searchQueryFlow = snapshotFlow { searchQuery.text }
 
     private val _screenStateFlow = MutableStateFlow(GroceryListScreenState())
     val screenStateFlow = _screenStateFlow.asStateFlow()
@@ -192,9 +192,9 @@ class GroceryListViewModel @Inject constructor(
         }
     }
 
-    private fun updateSearchQuery(query: String) {
+    private fun updateSearchQuery(query: TextFieldValue) {
         this.searchQuery = query
-        if (query.isEmpty()) {
+        if (query.text.isEmpty()) {
             _screenStateFlow.update {
                 it.copy(bottomSheetContentType = BottomSheetContentType.Suggestions)
             }
@@ -223,7 +223,7 @@ class GroceryListViewModel @Inject constructor(
                 )
             }
         }
-        searchQuery = ""
+        searchQuery = TextFieldValue("")
     }
 
     private fun onSearchInputKeyboardDone() {
@@ -238,7 +238,7 @@ class GroceryListViewModel @Inject constructor(
     }
 
     private fun resetAddGroceryBottomSheet() {
-        searchQuery = ""
+        searchQuery = TextFieldValue("")
         _screenStateFlow.update {
             it.copy(bottomSheetContentType = BottomSheetContentType.Suggestions)
         }
@@ -268,7 +268,7 @@ class GroceryListViewModel @Inject constructor(
                 )
             }
         }
-        searchQuery = ""
+        searchQuery = TextFieldValue("")
     }
 
     private fun updateSearchResults(searchInput: String) {

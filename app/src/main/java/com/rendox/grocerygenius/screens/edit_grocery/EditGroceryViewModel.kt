@@ -4,6 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rendox.grocerygenius.data.category.CategoryRepository
@@ -41,9 +43,9 @@ class EditGroceryViewModel @Inject constructor(
     private val _screenStateFlow = MutableStateFlow(EditGroceryScreenState())
     val screenState = _screenStateFlow.asStateFlow()
 
-    var editGroceryDescription by mutableStateOf<String?>(null)
+    var editGroceryDescription by mutableStateOf(TextFieldValue(""))
         private set
-    private val editGroceryDescriptionFlow = snapshotFlow { editGroceryDescription }
+    private val editGroceryDescriptionFlow = snapshotFlow { editGroceryDescription.text }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val groceryFlow: Flow<Grocery> = compoundGroceryIdFlow
@@ -67,7 +69,7 @@ class EditGroceryViewModel @Inject constructor(
             editGroceryDescriptionFlow.collectLatest { description ->
                 _screenStateFlow.update {
                     it.copy(
-                        clearEditGroceryDescriptionButtonIsShown = !description.isNullOrEmpty()
+                        clearEditGroceryDescriptionButtonIsShown = description.isNotEmpty()
                     )
                 }
             }
@@ -106,7 +108,7 @@ class EditGroceryViewModel @Inject constructor(
             editGroceryDescription = intent.description
 
         is EditGroceryScreenIntent.OnClearDescription ->
-            editGroceryDescription = null
+            editGroceryDescription = TextFieldValue("")
 
         is EditGroceryScreenIntent.OnCategorySelected ->
             onCategorySelected(intent.categoryId)
@@ -170,7 +172,12 @@ class EditGroceryViewModel @Inject constructor(
 
     private fun onEditOtherGrocery(productId: String, groceryListId: String) {
         viewModelScope.launch {
-            editGroceryDescription = groceryFlow.first().description
+            val grocery = groceryFlow.first()
+            val nameLength = grocery.description?.length ?: 0
+            editGroceryDescription = TextFieldValue(
+                text = grocery.description ?: "",
+                selection = TextRange(nameLength, nameLength),
+            )
         }
         compoundGroceryIdFlow.update {
             CompoundGroceryId(

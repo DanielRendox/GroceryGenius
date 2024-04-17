@@ -23,6 +23,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rendox.grocerygenius.R
@@ -34,10 +35,10 @@ import com.rendox.grocerygenius.ui.theme.extendedColors
 fun EditGroceryBottomSheetContent(
     modifier: Modifier = Modifier,
     groceryName: String,
-    groceryDescription: String?,
+    groceryDescription: TextFieldValue,
     clearGroceryDescriptionButtonIsShown: Boolean,
     productCanBeModified: Boolean,
-    onGroceryDescriptionChanged: (String) -> Unit,
+    onGroceryDescriptionChanged: (TextFieldValue) -> Unit,
     onClearGroceryDescription: () -> Unit,
     onDoneButtonClick: () -> Unit,
     onKeyboardDone: () -> Unit,
@@ -72,7 +73,7 @@ fun EditGroceryBottomSheetContent(
                 .fillMaxWidth()
                 .padding(top = 12.dp)
                 .focusRequester(itemDescriptionFocusRequester),
-            searchInput = groceryDescription ?: "",
+            searchInput = groceryDescription,
             onSearchInputChanged = onGroceryDescriptionChanged,
             placeholder = {
                 Text(text = stringResource(R.string.edit_grocery_item_description_placeholder))

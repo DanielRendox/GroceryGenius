@@ -33,6 +33,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rendox.grocerygenius.R
@@ -53,7 +54,7 @@ import kotlin.random.Random
 @Composable
 fun AddGroceryBottomSheetContent(
     modifier: Modifier = Modifier,
-    searchQuery: String,
+    searchQuery: TextFieldValue,
     clearSearchQueryButtonIsShown: Boolean,
     contentType: BottomSheetContentType,
     customProduct: CustomProduct?,
@@ -67,7 +68,7 @@ fun AddGroceryBottomSheetContent(
     onCancelButtonClicked: () -> Unit,
     onFabClicked: () -> Unit,
     onSearchFieldFocusChanged: (FocusState) -> Unit,
-    onSearchQueryChanged: (String) -> Unit,
+    onSearchQueryChanged: (TextFieldValue) -> Unit,
     onClearSearchQuery: () -> Unit,
     onGrocerySearchResultClick: (Grocery) -> Unit,
     onCustomProductClick: (CustomProduct) -> Unit,
@@ -86,7 +87,7 @@ fun AddGroceryBottomSheetContent(
 
     Column(modifier = modifier) {
         BottomSheetHeader(
-            searchInput = searchQuery,
+            searchQuery = searchQuery,
             useExpandedPlaceholderText = useExpandedPlaceholderText,
             clearSearchInputButtonIsShown = clearSearchQueryButtonIsShown,
             showCancelButtonInsteadOfFab = showCancelButtonInsteadOfFab,
@@ -141,7 +142,7 @@ fun AddGroceryBottomSheetContent(
 
 @Composable
 private fun BottomSheetHeader(
-    searchInput: String,
+    searchQuery: TextFieldValue,
     useExpandedPlaceholderText: Boolean,
     clearSearchInputButtonIsShown: Boolean,
     showCancelButtonInsteadOfFab: Boolean,
@@ -150,7 +151,7 @@ private fun BottomSheetHeader(
     onCancelButtonClicked: () -> Unit,
     onFabClicked: () -> Unit,
     onKeyboardDone: () -> Unit,
-    onSearchQueryChanged: (String) -> Unit,
+    onSearchQueryChanged: (TextFieldValue) -> Unit,
     clearSearchQuery: () -> Unit,
 ) {
     Row(
@@ -163,7 +164,7 @@ private fun BottomSheetHeader(
                 .weight(1F)
                 .onFocusChanged(onFocusChanged = onFocusChanged)
                 .focusRequester(focusRequester),
-            searchInput = searchInput,
+            searchInput = searchQuery,
             placeholder = {
                 Text(
                     text = if (useExpandedPlaceholderText) {

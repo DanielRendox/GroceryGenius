@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -45,7 +46,7 @@ fun EditGroceryScreen(
         skipPartiallyExpanded = true
     ),
     screenState: EditGroceryScreenState,
-    editGroceryDescription: String?,
+    editGroceryDescription: TextFieldValue,
     hideBottomSheet: () -> Unit,
     onIntent: (EditGroceryScreenIntent) -> Unit,
 ) = Box(modifier = modifier) {
@@ -173,7 +174,7 @@ private fun EditGroceryBottomSheetContentPreview(
             EditGroceryBottomSheetContent(
                 modifier = Modifier.padding(16.dp),
                 groceryName = "Tea",
-                groceryDescription = "Green, 32 bags",
+                groceryDescription = TextFieldValue("Green, 32 bags"),
                 clearGroceryDescriptionButtonIsShown = false,
                 onGroceryDescriptionChanged = {},
                 onClearGroceryDescription = {},

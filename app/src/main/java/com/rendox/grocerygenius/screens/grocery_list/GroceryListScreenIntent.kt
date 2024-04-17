@@ -5,7 +5,7 @@ import com.rendox.grocerygenius.model.Grocery
 
 sealed interface GroceryListScreenIntent {
     data class OnGroceryItemClick(val item: Grocery) : GroceryListScreenIntent
-    data class OnSearchQueryChanged(val searchInput: String) : GroceryListScreenIntent
+    data class OnSearchQueryChanged(val searchInput: TextFieldValue) : GroceryListScreenIntent
     data class OnGrocerySearchResultClick(val grocery: Grocery) : GroceryListScreenIntent
     data object OnSearchFieldKeyboardDone : GroceryListScreenIntent
     data object OnClearSearchQuery : GroceryListScreenIntent
