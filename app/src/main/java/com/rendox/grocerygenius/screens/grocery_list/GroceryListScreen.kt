@@ -180,8 +180,8 @@ fun GroceryListRoute(
     )
 
     val productId = productIdState.value
+    val editGroceryViewModel: EditGroceryViewModel = hiltViewModel()
     if (editGroceryScreenIsVisible && productId != null) {
-        val editGroceryViewModel: EditGroceryViewModel = hiltViewModel()
         LaunchedEffect(productId) {
             editGroceryViewModel.onIntent(
                 EditGroceryScreenIntent.OnEditOtherGrocery(

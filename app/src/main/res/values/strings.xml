@@ -23,7 +23,10 @@
     <string name="delete_grocery_list_dialog_text">Are you sure you want to delete this list?</string>
 
     <!-- GroceryListsDashboardScreen -->
-    <string name="dashboard_item_num_of_groceries_title">%d items</string>
+    <plurals name="dashboard_item_num_of_groceries_title">
+        <item quantity="one">%d item</item>
+        <item quantity="other">%d items</item>
+    </plurals>
     <string name="add_grocery_list_button_description">Add new grocery list</string>
 
     <!-- General -->

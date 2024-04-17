@@ -14,10 +14,12 @@ import com.rendox.grocerygenius.model.CompoundGroceryId
 import com.rendox.grocerygenius.model.Grocery
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -26,6 +28,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class EditGroceryViewModel @Inject constructor(
     categoryRepository: CategoryRepository,
@@ -67,14 +70,20 @@ class EditGroceryViewModel @Inject constructor(
                         clearEditGroceryDescriptionButtonIsShown = !description.isNullOrEmpty()
                     )
                 }
-                compoundGroceryIdFlow.value?.let { (productId, groceryListId) ->
-                    groceryRepository.updateDescription(
-                        productId = productId,
-                        listId = groceryListId,
-                        description = description,
-                    )
-                }
             }
+        }
+        viewModelScope.launch {
+            editGroceryDescriptionFlow
+                .debounce(800)
+                .collectLatest { description ->
+                    compoundGroceryIdFlow.value?.let { (productId, groceryListId) ->
+                        groceryRepository.updateDescription(
+                            productId = productId,
+                            listId = groceryListId,
+                            description = description,
+                        )
+                    }
+                }
         }
         viewModelScope.launch {
             categoryRepository.getAllCategories().collectLatest { categories ->
@@ -85,15 +94,9 @@ class EditGroceryViewModel @Inject constructor(
         }
         viewModelScope.launch {
             iconRepository.getAllGroceryIcons().collectLatest { icons ->
-                println("all grocery icons: $icons")
                 _screenStateFlow.update { screenState ->
                     screenState.copy(icons = icons.sortedBy { it.name })
                 }
-            }
-        }
-        viewModelScope.launch {
-            editGroceryDescriptionFlow.collect {
-                println("EditGroceryViewModel: editGroceryDescriptionFlow: $it")
             }
         }
     }
