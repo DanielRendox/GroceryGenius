@@ -4,22 +4,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.data.grocery.GroceryRepository
 import com.rendox.grocerygenius.data.grocery_list.GroceryListRepository
 import com.rendox.grocerygenius.data.product.ProductRepository
+import com.rendox.grocerygenius.data.user_preferences.UserPreferencesRepository
 import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.BottomSheetContentType
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
+import com.rendox.grocerygenius.ui.helpers.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -29,14 +37,16 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @HiltViewModel
 class GroceryListViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val groceryRepository: GroceryRepository,
-    groceryListRepository: GroceryListRepository,
+    private val groceryListRepository: GroceryListRepository,
     private val productRepository: ProductRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
-    val groceryListId = "sample-grocery-list"
+    val groceryListId: String = checkNotNull(savedStateHandle[GROCERY_LIST_ID_ARG])
 
     var searchQuery by mutableStateOf("")
         private set
@@ -44,6 +54,10 @@ class GroceryListViewModel @Inject constructor(
 
     private val _screenStateFlow = MutableStateFlow(GroceryListScreenState())
     val screenStateFlow = _screenStateFlow.asStateFlow()
+
+    var groceryListName by mutableStateOf(TextFieldValue(""))
+        private set
+    private val groceryListNameFlow = snapshotFlow { groceryListName.text }
 
     val groceryGroupsFlow = groceryRepository.getGroceriesFromList(groceryListId)
         .map { groceries ->
@@ -69,6 +83,9 @@ class GroceryListViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000)
         )
 
+    private val _closeGroceryListScreenEvent = MutableStateFlow<UiEvent<Unit>?>(null)
+    val closeGroceryListScreenEvent = _closeGroceryListScreenEvent.asStateFlow()
+
     init {
         viewModelScope.launch {
             searchQueryFlow.collectLatest { searchQuery ->
@@ -85,13 +102,6 @@ class GroceryListViewModel @Inject constructor(
                     _screenStateFlow.update {
                         it.copy(grocerySearchResults = emptyList(), customProduct = null)
                     }
-                }
-            }
-        }
-        viewModelScope.launch {
-            groceryListRepository.getGroceryListById(groceryListId).collect {
-                _screenStateFlow.update { uiState ->
-                    uiState.copy(listName = it?.name ?: "")
                 }
             }
         }
@@ -114,6 +124,26 @@ class GroceryListViewModel @Inject constructor(
                         }
                     }
                 }
+        }
+        viewModelScope.launch {
+            val groceryList = groceryListRepository.getGroceryListById(groceryListId).first()
+            if (groceryListName.text.isEmpty()) {
+                if (groceryList != null && groceryList.name.isNotEmpty()) {
+                    groceryListName = TextFieldValue(groceryList.name)
+                } else {
+                    _screenStateFlow.update {
+                        it.copy(groceryListEditModeIsEnabled = true)
+                    }
+                }
+            }
+            groceryListNameFlow
+                .debounce(800)
+                .collectLatest { listName ->
+                    groceryListRepository.updateGroceryListName(groceryListId, listName.trim())
+                }
+        }
+        viewModelScope.launch {
+            userPreferencesRepository.updateDefaultListId(groceryListId)
         }
     }
 
@@ -138,6 +168,18 @@ class GroceryListViewModel @Inject constructor(
 
         is GroceryListScreenIntent.OnCustomProductClick ->
             _screenStateFlow.value.customProduct?.let { addCustomProduct(it) }
+
+        is GroceryListScreenIntent.UpdateGroceryListName ->
+            groceryListName = intent.name
+
+        is GroceryListScreenIntent.OnKeyboardHidden ->
+            onKeyboardHidden()
+
+        is GroceryListScreenIntent.OnDeleteGroceryList ->
+            deleteGroceryList()
+
+        is GroceryListScreenIntent.OnEditGroceryListToggle ->
+            onEditGroceryListToggle(intent.editModeIsEnabled)
     }
 
     private fun toggleItemPurchased(item: Grocery) {
@@ -203,9 +245,9 @@ class GroceryListViewModel @Inject constructor(
     }
 
     private fun addCustomProduct(customProduct: CustomProduct) {
-        val productId = UUID.randomUUID().toString()
-        val purchased = false
         viewModelScope.launch {
+            val productId = UUID.randomUUID().toString()
+            val purchased = false
             groceryRepository.insertProductAndGrocery(
                 productId = productId,
                 name = customProduct.name,
@@ -268,4 +310,40 @@ class GroceryListViewModel @Inject constructor(
             }
         }
     }
+
+    private fun onKeyboardHidden() {
+        if (groceryListName.text.isNotEmpty()) {
+            groceryListName = TextFieldValue(groceryListName.text.trim())
+            _screenStateFlow.update {
+                it.copy(groceryListEditModeIsEnabled = false)
+            }
+        }
+    }
+
+    private fun deleteGroceryList() {
+        viewModelScope.launch {
+            groceryListRepository.deleteGroceryListById(groceryListId)
+            _closeGroceryListScreenEvent.update {
+                object : UiEvent<Unit> {
+                    override val data = Unit
+                    override fun onConsumed() {
+                        _closeGroceryListScreenEvent.update { null }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun onEditGroceryListToggle(editModeIsEnabled: Boolean) {
+        if (editModeIsEnabled) {
+            val nameLength = groceryListName.text.length
+            groceryListName = groceryListName.copy(
+                selection = TextRange(nameLength, nameLength),
+            )
+        }
+        _screenStateFlow.update {
+            it.copy(groceryListEditModeIsEnabled = editModeIsEnabled)
+        }
+    }
+
 }

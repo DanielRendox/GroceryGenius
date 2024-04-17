@@ -3,15 +3,12 @@ package com.rendox.grocerygenius.screens.edit_grocery
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +33,7 @@ import com.rendox.grocerygenius.screens.edit_grocery.dialogs.CategoryPickerDialo
 import com.rendox.grocerygenius.screens.edit_grocery.dialogs.IconPickerDialog
 import com.rendox.grocerygenius.screens.edit_grocery.dialogs.PickerDialogType
 import com.rendox.grocerygenius.ui.components.BottomSheetDragHandle
+import com.rendox.grocerygenius.ui.components.DeleteConfirmationDialog
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import java.io.File
 
@@ -147,7 +145,7 @@ fun EditGroceryScreen(
     }
 
     if (deleteProductDialogIsVisible) {
-        DeleteProductConfirmationDialog(
+        DeleteConfirmationDialog(
             onConfirm = {
                 screenState.editGrocery?.productId?.let {
                     onIntent(EditGroceryScreenIntent.OnDeleteProduct)
@@ -156,36 +154,9 @@ fun EditGroceryScreen(
                 deleteProductDialogIsVisible = false
             },
             onDismissRequest = { deleteProductDialogIsVisible = false },
+            bodyText = stringResource(R.string.delete_product_dialog_text),
         )
     }
-}
-
-@Composable
-fun DeleteProductConfirmationDialog(
-    modifier: Modifier = Modifier,
-    onConfirm: () -> Unit,
-    onDismissRequest: () -> Unit,
-) {
-    AlertDialog(
-        modifier = modifier,
-        onDismissRequest = onDismissRequest,
-        title = {
-            Text(text = "${stringResource(R.string.delete)}?")
-        },
-        text = {
-            Text(text = stringResource(R.string.delete_product_dialog_text))
-        },
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text(text = stringResource(R.string.delete))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text(text = stringResource(android.R.string.cancel))
-            }
-        },
-    )
 }
 
 class ParameterProvider : PreviewParameterProvider<Boolean> {

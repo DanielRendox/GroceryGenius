@@ -11,7 +11,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,6 +23,7 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -29,9 +32,17 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
@@ -48,19 +59,25 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.screens.edit_grocery.EditGroceryScreen
@@ -70,6 +87,7 @@ import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.Ad
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.AddGroceryBottomSheetState
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.rememberAddGroceryBottomSheetState
 import com.rendox.grocerygenius.ui.components.BottomSheetDragHandle
+import com.rendox.grocerygenius.ui.components.DeleteConfirmationDialog
 import com.rendox.grocerygenius.ui.components.Scrim
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbar
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbarScaffoldScrollableState
@@ -80,6 +98,7 @@ import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
 import com.rendox.grocerygenius.ui.components.grocery_list.GroupedLazyGroceryGrid
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
 import com.rendox.grocerygenius.ui.components.grocery_list.groceryListItemColors
+import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import kotlinx.coroutines.launch
 import java.io.File
@@ -87,11 +106,16 @@ import java.io.File
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroceryListRoute(
-    modifier: Modifier = Modifier,
-    groceryListViewModel: GroceryListViewModel = viewModel(),
+    groceryListViewModel: GroceryListViewModel = hiltViewModel(),
+    navigateBack: () -> Unit,
 ) {
     val groceryGroups by groceryListViewModel.groceryGroupsFlow.collectAsStateWithLifecycle()
     val screenState by groceryListViewModel.screenStateFlow.collectAsStateWithLifecycle()
+    val closeGroceryListScreenEvent by groceryListViewModel.closeGroceryListScreenEvent.collectAsStateWithLifecycle()
+
+    ObserveUiEvent(closeGroceryListScreenEvent) {
+        navigateBack()
+    }
 
     val collapsedToolbarHeight = 64.dp
     val expandedToolbarHeight = 112.dp
@@ -132,7 +156,7 @@ fun GroceryListRoute(
     val productIdState = rememberSaveable { mutableStateOf<String?>(null) }
 
     GroceryListScreen(
-        modifier = modifier,
+        modifier = Modifier.fillMaxSize(),
         groceryGroups = groceryGroups,
         searchQuery = groceryListViewModel.searchQuery,
         toolbarState = toolbarState,
@@ -150,11 +174,13 @@ fun GroceryListRoute(
         scrimIsShown = addGroceryBottomSheetState.sheetIsExpanding ||
                 editBottomSheetState.targetValue == SheetValue.Expanded,
         toolbarIsHidden = addGroceryBottomSheetState.sheetIsExpanding,
+        groceryListName = groceryListViewModel.groceryListName,
+        navigateBack = navigateBack,
     )
 
     val productId = productIdState.value
     if (editGroceryScreenIsVisible && productId != null) {
-        val editGroceryViewModel: EditGroceryViewModel = viewModel()
+        val editGroceryViewModel: EditGroceryViewModel = hiltViewModel()
         LaunchedEffect(productId) {
             editGroceryViewModel.onIntent(
                 EditGroceryScreenIntent.OnEditOtherGrocery(
@@ -184,7 +210,7 @@ fun GroceryListRoute(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 private fun GroceryListScreen(
     modifier: Modifier = Modifier,
@@ -193,15 +219,34 @@ private fun GroceryListScreen(
     toolbarState: ToolbarState,
     toolbarHeightRange: IntRange,
     screenState: GroceryListScreenState,
+    groceryListName: TextFieldValue = TextFieldValue(""),
     nestedScrollConnection: NestedScrollConnection? = null,
     scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
     addGroceryBottomSheetState: AddGroceryBottomSheetState = rememberAddGroceryBottomSheetState(),
     lazyGridState: LazyGridState = rememberLazyGridState(),
     scrimIsShown: Boolean = false,
     toolbarIsHidden: Boolean = false,
+    navigateBack: () -> Unit = {},
     onIntent: (GroceryListScreenIntent) -> Unit = {},
     showEditGroceryBottomSheet: (String) -> Unit = {},
 ) {
+    val imeIsVisible = WindowInsets.isImeVisible
+    LaunchedEffect(imeIsVisible) {
+        if (!imeIsVisible) onIntent(GroceryListScreenIntent.OnKeyboardHidden)
+    }
+
+    var deleteGroceryListDialogIsShown by remember { mutableStateOf(false) }
+    if (deleteGroceryListDialogIsShown) {
+        DeleteConfirmationDialog(
+            bodyText = stringResource(id = R.string.delete_grocery_list_dialog_text),
+            onConfirm = {
+                deleteGroceryListDialogIsShown = false
+                onIntent(GroceryListScreenIntent.OnDeleteGroceryList)
+            },
+            onDismissRequest = { deleteGroceryListDialogIsShown = false },
+        )
+    }
+
     val navigationBarHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     BottomSheetScaffold(
         modifier = modifier
@@ -263,10 +308,21 @@ private fun GroceryListScreen(
                 )
         ) {
             GroceryListCollapsingToolbar(
-                listName = screenState.listName,
+                listName = groceryListName,
                 toolbarHeightRange = toolbarHeightRange,
                 toolbarState = toolbarState,
                 toolbarIsHidden = toolbarIsHidden,
+                onUpdateGroceryListName = {
+                    onIntent(GroceryListScreenIntent.UpdateGroceryListName(it))
+                },
+                editModeIsEnabled = screenState.groceryListEditModeIsEnabled,
+                onNavigationIconClicked = navigateBack,
+                onDeleteGroceryList = {
+                    deleteGroceryListDialogIsShown = true
+                },
+                onEditGroceryListToggle = {
+                    onIntent(GroceryListScreenIntent.OnEditGroceryListToggle(it))
+                },
             )
 
             GroceryGrid(
@@ -296,10 +352,15 @@ private fun GroceryListScreen(
 @Composable
 private fun GroceryListCollapsingToolbar(
     modifier: Modifier = Modifier,
-    listName: String,
+    listName: TextFieldValue,
+    editModeIsEnabled: Boolean,
     toolbarIsHidden: Boolean,
     toolbarHeightRange: IntRange,
     toolbarState: ToolbarState,
+    onUpdateGroceryListName: (TextFieldValue) -> Unit,
+    onNavigationIconClicked: () -> Unit = {},
+    onDeleteGroceryList: () -> Unit = {},
+    onEditGroceryListToggle: (Boolean) -> Unit = {},
 ) {
     Column(modifier = modifier) {
         val toolbarEnterTransition = remember {
@@ -329,6 +390,13 @@ private fun GroceryListCollapsingToolbar(
             )
         }
 
+        val listNameFieldFocusRequester = remember(editModeIsEnabled) {
+            if (editModeIsEnabled) FocusRequester() else null
+        }
+        LaunchedEffect(editModeIsEnabled) {
+            listNameFieldFocusRequester?.requestFocus()
+        }
+
         AnimatedVisibility(
             visible = !toolbarIsHidden,
             enter = toolbarEnterTransition,
@@ -340,19 +408,94 @@ private fun GroceryListCollapsingToolbar(
                     translationY = toolbarState.offset
                 },
                 titleExpanded = {
-                    Text(
-                        text = listName,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = expandedTitleStyle.copy(
-                            textMotion = TextMotion.Animated
-                        ),
+                    GroceryListTitleField(
+                        listName = listName,
+                        listNameFieldFocusRequester = listNameFieldFocusRequester,
+                        listNameFieldIsEditable = editModeIsEnabled,
+                        textStyle = expandedTitleStyle,
+                        onUpdateGroceryListName = onUpdateGroceryListName,
                     )
                 },
                 expandedTitleFontSize = expandedTitleStyle.fontSize,
                 titleBottomPadding = 24.dp,
                 toolbarState = toolbarState,
                 toolbarHeightRange = toolbarHeightRange,
+                navigationIcon = {
+                    IconButton(onClick = onNavigationIconClicked) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = stringResource(R.string.back)
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onDeleteGroceryList) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.delete)
+                        )
+                    }
+                    IconButton(onClick = { onEditGroceryListToggle(!editModeIsEnabled) }) {
+                        if (editModeIsEnabled) {
+                            Icon(
+                                imageVector = Icons.Default.Done,
+                                contentDescription = stringResource(R.string.done)
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = stringResource(R.string.edit)
+                            )
+                        }
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun GroceryListTitleField(
+    modifier: Modifier = Modifier,
+    listName: TextFieldValue,
+    listNameFieldFocusRequester: FocusRequester?,
+    listNameFieldIsEditable: Boolean,
+    textStyle: TextStyle,
+    onUpdateGroceryListName: (TextFieldValue) -> Unit,
+) {
+    Box(modifier = modifier.padding(end = 16.dp)) {
+        val textColor = MaterialTheme.colorScheme.onSurface
+        if (listNameFieldIsEditable) {
+            BasicTextField(
+                modifier = Modifier.focusRequester(listNameFieldFocusRequester!!),
+                value = listName,
+                onValueChange = onUpdateGroceryListName,
+                singleLine = true,
+                textStyle = textStyle.copy(
+                    textMotion = TextMotion.Animated,
+                    color = textColor,
+                ),
+                cursorBrush = SolidColor(textColor),
+            )
+        } else {
+            Text(
+                text = listName.text,
+                style = textStyle.copy(
+                    textMotion = TextMotion.Animated,
+                    color = textColor,
+                ),
+                maxLines = 1,
+                color = textColor,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        if (listName.text.isEmpty()) {
+            Text(
+                text = stringResource(R.string.grocery_list_name_text_field_placeholder),
+                style = textStyle.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
+                maxLines = 1,
             )
         }
     }
@@ -442,7 +585,7 @@ fun GroceryListScreenPreview() {
                 searchQuery = "",
                 toolbarState = toolbarState,
                 toolbarHeightRange = toolbarHeightRange,
-                screenState = GroceryListScreenState(listName = "My Grocery List"),
+                screenState = GroceryListScreenState(),
             )
         }
     }

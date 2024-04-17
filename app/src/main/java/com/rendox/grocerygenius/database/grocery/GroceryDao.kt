@@ -77,4 +77,7 @@ abstract class GroceryDao {
 
     @Query("DELETE FROM GroceryEntity WHERE productId = :productId AND groceryListId = :listId")
     abstract suspend fun deleteGrocery(productId: String, listId: String)
+
+    @Query("SELECT COUNT(productId) FROM GroceryEntity WHERE groceryListId = :listId")
+    abstract fun getNumOfGroceriesInList(listId: String): Flow<Int>
 }

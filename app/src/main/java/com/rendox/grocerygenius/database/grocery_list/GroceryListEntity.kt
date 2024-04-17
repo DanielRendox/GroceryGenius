@@ -7,4 +7,5 @@ import androidx.room.PrimaryKey
 data class GroceryListEntity(
     @PrimaryKey val id: String,
     val name: String,
+    val sortingPriority: Long,
 )
