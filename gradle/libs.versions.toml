@@ -1,6 +1,6 @@
 [versions]
 activityCompose = "1.8.2"
-agp = "8.2.1"
+agp = "8.3.0"
 andoridxHilt = "1.2.0"
 androidLifecycle = "2.7.0"
 androidxTestRunner = "1.5.2"
