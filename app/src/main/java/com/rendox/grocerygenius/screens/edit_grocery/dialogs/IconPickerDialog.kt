@@ -46,13 +46,13 @@ fun IconPickerDialog(
         title = stringResource(R.string.select_icon_dialog_title),
         onDismissRequest = onDismissRequest,
     ) {
-        Box(modifier = modifier.weight(1F)) {
+        Box(modifier = modifier.weight(1F).padding(vertical = 16.dp)) {
             val lazyGridState = rememberLazyGridState()
             val scrollbarState = lazyGridState.scrollbarState(
                 itemsAvailable = numOfIcons,
             )
             LazyVerticalGrid(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
                 columns = GridCells.Adaptive(88.dp),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -90,7 +90,7 @@ fun IconPickerDialog(
             lazyGridState.DraggableScrollbar(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(horizontal = 2.dp)
+                    .padding(horizontal = 4.dp)
                     .align(Alignment.CenterEnd),
                 state = scrollbarState,
                 orientation = Orientation.Vertical,

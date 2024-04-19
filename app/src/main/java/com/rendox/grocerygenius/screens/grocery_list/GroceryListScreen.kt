@@ -174,7 +174,8 @@ fun GroceryListRoute(
         lazyGridState = lazyGridState,
         scrimIsShown = addGroceryBottomSheetState.sheetIsExpanding ||
                 editBottomSheetState.targetValue == SheetValue.Expanded,
-        toolbarIsHidden = addGroceryBottomSheetState.sheetIsExpanding,
+        toolbarIsHidden = addGroceryBottomSheetState.sheetIsExpanding ||
+                editBottomSheetState.targetValue == SheetValue.Expanded,
         groceryListName = groceryListViewModel.groceryListName,
         navigateBack = navigateBack,
     )

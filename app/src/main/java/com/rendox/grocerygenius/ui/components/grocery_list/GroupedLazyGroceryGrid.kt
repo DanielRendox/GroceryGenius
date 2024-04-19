@@ -106,7 +106,7 @@ fun GroupedLazyGroceryGrid(
         lazyGridState.DraggableScrollbar(
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(horizontal = 2.dp)
+                .padding(horizontal = 4.dp)
                 .align(Alignment.CenterEnd),
             state = scrollbarState,
             orientation = Orientation.Vertical,
