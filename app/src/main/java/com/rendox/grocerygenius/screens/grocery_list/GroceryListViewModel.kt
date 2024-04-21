@@ -16,10 +16,13 @@ import com.rendox.grocerygenius.data.product.ProductRepository
 import com.rendox.grocerygenius.data.user_preferences.UserPreferencesRepository
 import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.model.Grocery
+import com.rendox.grocerygenius.network.di.Dispatcher
+import com.rendox.grocerygenius.network.di.GroceryGeniusDispatchers
 import com.rendox.grocerygenius.screens.grocery_list.add_grocery_bottom_sheet.BottomSheetContentType
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
 import com.rendox.grocerygenius.ui.helpers.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,6 +37,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.UUID
 import javax.inject.Inject
 
@@ -45,6 +49,7 @@ class GroceryListViewModel @Inject constructor(
     private val groceryListRepository: GroceryListRepository,
     private val productRepository: ProductRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
+    @Dispatcher(GroceryGeniusDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     val groceryListId: String = checkNotNull(savedStateHandle[GROCERY_LIST_ID_ARG])
 
@@ -61,21 +66,23 @@ class GroceryListViewModel @Inject constructor(
 
     val groceryGroupsFlow = groceryRepository.getGroceriesFromList(groceryListId)
         .map { groceries ->
-            groceries
-                .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name })
-                .groupBy { it.purchased }
-                .toSortedMap()
-                .map { group ->
-                    val purchased = group.key
-                    val titleId =
-                        if (purchased) R.string.purchased_groceries_group_title else null
-                    val sortedGroceries = if (purchased) {
-                        group.value.sortedByDescending { it.purchasedLastModified }
-                    } else {
-                        group.value.sortedBy { it.category?.sortingPriority ?: Int.MAX_VALUE }
+            withContext(defaultDispatcher) {
+                groceries
+                    .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name })
+                    .groupBy { it.purchased }
+                    .toSortedMap()
+                    .map { group ->
+                        val purchased = group.key
+                        val titleId =
+                            if (purchased) R.string.purchased_groceries_group_title else null
+                        val sortedGroceries = if (purchased) {
+                            group.value.sortedByDescending { it.purchasedLastModified }
+                        } else {
+                            group.value.sortedBy { it.category?.sortingPriority ?: Int.MAX_VALUE }
+                        }
+                        GroceryGroup(titleId, sortedGroceries)
                     }
-                    GroceryGroup(titleId, sortedGroceries)
-                }
+            }
         }
         .stateIn(
             viewModelScope,
@@ -143,7 +150,7 @@ class GroceryListViewModel @Inject constructor(
                 }
         }
         viewModelScope.launch {
-            userPreferencesRepository.updateDefaultListId(groceryListId)
+            userPreferencesRepository.updateLastOpenedListId(groceryListId)
         }
     }
 

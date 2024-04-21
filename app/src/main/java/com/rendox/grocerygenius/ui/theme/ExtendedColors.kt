@@ -14,13 +14,13 @@ data class ExtendedColors(
 )
 
 val LightExtendedColors = ExtendedColors(
-    redAccent = md_theme_light_red_accent,
-    onRedAccent = md_theme_light_onRedAccent,
+    redAccent = Color(0xFFDD5B4B),
+    onRedAccent = Color(0xFFFFFFFF),
 )
 
 val DarkExtendedColors = ExtendedColors(
-    redAccent = md_theme_dark_red_accent,
-    onRedAccent = md_theme_dark_onRedAccent,
+    redAccent = Color(0xFFFF988D),
+    onRedAccent = Color(0xFF490003),
 )
 
 val LocalExtendedColors = compositionLocalOf { LightExtendedColors }

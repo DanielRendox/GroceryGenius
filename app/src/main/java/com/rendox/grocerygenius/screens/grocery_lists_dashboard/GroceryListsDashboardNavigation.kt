@@ -19,6 +19,7 @@ fun NavController.navigateToGroceryListsDashboard(
 
 fun NavGraphBuilder.groceryListsDashboardScreen(
     navigateToGroceryListScreen: (String) -> Unit,
+    navigateToSettingsScreen: () -> Unit,
 ) {
     composable(
         route = GROCERY_LISTS_DASHBOARD_ROUTE,
@@ -27,7 +28,8 @@ fun NavGraphBuilder.groceryListsDashboardScreen(
         },
     ) {
         GroceryListsDashboardRoute(
-            navigateToGroceryListScreen = navigateToGroceryListScreen
+            navigateToGroceryListScreen = navigateToGroceryListScreen,
+            navigateToSettingsScreen = navigateToSettingsScreen,
         )
     }
 }

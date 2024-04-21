@@ -48,7 +48,6 @@ class GroceryListRepositoryImpl @Inject constructor(
     }
 
     override suspend fun syncWith(synchronizer: Synchronizer) = suspendRunCatching {
-        println("syncing grocery list repository")
         val existingGroceryLists = groceryListDao.getAllGroceryLists().first()
         if (existingGroceryLists.isEmpty()) {
             val groceryLists = groceryListNetworkDataSource.getAllGroceryLists()
@@ -62,7 +61,6 @@ class GroceryListRepositoryImpl @Inject constructor(
                     purchasedLastModified = System.currentTimeMillis(),
                 )
             }
-            println("inserting sample groceries: $groceries")
             groceryDao.insertGroceries(groceries)
         }
     }.isSuccess

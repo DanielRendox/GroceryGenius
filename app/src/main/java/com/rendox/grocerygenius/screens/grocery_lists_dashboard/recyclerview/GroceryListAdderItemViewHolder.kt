@@ -1,5 +1,6 @@
 package com.rendox.grocerygenius.screens.grocery_lists_dashboard.recyclerview
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,6 +55,7 @@ private fun AdderItem(
     OutlinedCard(
         modifier = modifier,
         onClick = onClick,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Box(
             modifier = Modifier
