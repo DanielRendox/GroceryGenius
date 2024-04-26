@@ -79,6 +79,7 @@ class GroceryRepositoryImpl @Inject constructor(
         purchased: Boolean,
         purchasedLastModified: Long,
     ) {
+        println("GroceryRepositoryImpl updating purchased productId = $productId; listId = $listId; purchased = $purchased; purchasedLastModified = $purchasedLastModified")
         groceryDao.updatePurchased(
             productId,
             listId,

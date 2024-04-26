@@ -7,6 +7,7 @@ import com.rendox.grocerygenius.model.GroceryGeniusColorScheme
 import com.rendox.grocerygenius.model.UserPreferences
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -51,5 +52,12 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun updateSelectedTheme(selectedTheme: GroceryGeniusColorScheme) {
         userPreferencesDataSource.updateSelectedTheme(selectedTheme)
+    }
+
+    override suspend fun getGroceryListIdToOpenOnStartup(): String? {
+        val userPreferences = userPreferencesFlow.first()
+        val lastOpenedListId =
+            if (userPreferences.openLastViewedList) userPreferences.lastOpenedListId else null
+        return lastOpenedListId ?: userPreferences.defaultListId
     }
 }

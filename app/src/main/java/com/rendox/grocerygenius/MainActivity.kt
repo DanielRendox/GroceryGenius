@@ -87,8 +87,6 @@ class MainActivity : ComponentActivity() {
                     ) {
                         GroceryGeniusNavHost(
                             startDestination = uiState.startDestinationRoute,
-                            updateStartDestination = viewModel::updateStartDestination,
-                            defaultListId = uiState.defaultListId,
                         )
                     }
                 }

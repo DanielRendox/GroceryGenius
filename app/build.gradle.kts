@@ -101,6 +101,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.io.coil.compose)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.compose.ui.viewbinding)
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)

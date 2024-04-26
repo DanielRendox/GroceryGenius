@@ -3,13 +3,11 @@ package com.rendox.grocerygenius
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rendox.grocerygenius.data.user_preferences.UserPreferencesRepository
-import com.rendox.grocerygenius.screens.grocery_list.GROCERY_LIST_ID_ARG
-import com.rendox.grocerygenius.screens.grocery_list.GROCERY_LIST_ROUTE
-import com.rendox.grocerygenius.screens.grocery_lists_dashboard.GROCERY_LISTS_DASHBOARD_ROUTE
+import com.rendox.grocerygenius.feature.grocery_list.dashboard_screen.GROCERY_LISTS_DASHBOARD_ROUTE
+import com.rendox.grocerygenius.feature.grocery_list.grocery_list_scren.GROCERY_LIST_ROUTE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,23 +24,14 @@ class MainActivityViewModel @Inject constructor(
             val userPreferencesFlow = userPreferencesRepository.userPreferencesFlow
             // using only the first value because the nav host start destination
             // should be the same throughout the whole app session (until the app is closed)
-            val initialUserPreferences = userPreferencesFlow.first()
-            val lastOpenedListId = if (initialUserPreferences.openLastViewedList) {
-                initialUserPreferences.lastOpenedListId
-            } else null
-            val defaultListId = lastOpenedListId ?: initialUserPreferences.defaultListId
+            val defaultListId = userPreferencesRepository.getGroceryListIdToOpenOnStartup()
+            val startDestinationRoute =
+                if (defaultListId != null) GROCERY_LIST_ROUTE else GROCERY_LISTS_DASHBOARD_ROUTE
             uiStateFlow.update {
-                MainActivityUiState(
-                    startDestinationRoute = if (defaultListId != null) {
-                        "$GROCERY_LIST_ROUTE/{$GROCERY_LIST_ID_ARG}"
-                    } else {
-                        GROCERY_LISTS_DASHBOARD_ROUTE
-                    },
-                    defaultListId = defaultListId,
-                    darkThemeConfig = initialUserPreferences.darkThemeConfig,
-                    useSystemAccentColor = initialUserPreferences.useSystemAccentColor,
-                    selectedTheme = initialUserPreferences.selectedTheme,
-                )
+                 MainActivityUiState(
+                     startDestinationRoute = startDestinationRoute,
+                     defaultListId = defaultListId,
+                 )
             }
             userPreferencesFlow.collectLatest { userPreferences ->
                 uiStateFlow.update { uiState ->
@@ -53,12 +42,6 @@ class MainActivityViewModel @Inject constructor(
                     )
                 }
             }
-        }
-    }
-
-    fun updateStartDestination(route: String) {
-        viewModelScope.launch {
-            uiStateFlow.update { it?.copy(startDestinationRoute = route) }
         }
     }
 }

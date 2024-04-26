@@ -819,9 +819,9 @@
     "isDefault": true
   },
   {
-    "id": "default-product-spounge",
-    "name": "Spounge",
-    "iconId": "default-grocery-icons-spounge",
+    "id": "default-product-sponge",
+    "name": "Sponge",
+    "iconId": "default-grocery-icons-sponge",
     "categoryId": "default-category-household",
     "isDefault": true
   },

@@ -44,6 +44,7 @@ fun GroupedLazyGroceryGrid(
     val itemsAvailable = remember(groceryGroups) {
         val numOfGroceries = groceryGroups.sumOf { it.groceries.size }
         val numOfTitles = groceryGroups.sumOf {
+            @Suppress("USELESS_CAST") // otherwise the compiler can not derive the type
             if (it.titleId != null) 1 else 0 as Int
         }
         val numOfDummies = 1

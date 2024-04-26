@@ -8,6 +8,7 @@ androidxWork = "2.9.0"
 coilCompose = "2.6.0"
 composeBom = "2024.04.00"
 composeNavigation = "2.7.7"
+composeViewBinding = "1.6.6"
 coreKtx = "1.12.0"
 coreSplashscreen = "1.0.1"
 datastore = "1.0.0"
@@ -32,6 +33,7 @@ androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
+androidx-compose-ui-viewbinding = { group = "androidx.compose.ui", name = "ui-viewbinding", version.ref = "composeViewBinding" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }

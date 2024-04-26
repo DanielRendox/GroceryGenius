@@ -4,6 +4,7 @@ import android.app.Application
 import com.rendox.grocerygenius.sync.work.initializers.Sync
 import dagger.hilt.android.HiltAndroidApp
 
+
 @HiltAndroidApp
 class GroceryGeniusApp : Application() {
     override fun onCreate() {

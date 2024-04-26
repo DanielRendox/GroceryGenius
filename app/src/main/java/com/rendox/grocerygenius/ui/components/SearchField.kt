@@ -11,9 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
@@ -25,8 +27,35 @@ import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 @Composable
 fun SearchField(
     modifier: Modifier = Modifier,
-    searchInput: TextFieldValue,
-    onSearchInputChanged: (TextFieldValue) -> Unit,
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+    placeholder: @Composable () -> Unit,
+    clearSearchInputButtonIsShown: Boolean,
+    onClearSearchInputClicked: () -> Unit,
+    onKeyboardDone: () -> Unit,
+) {
+    val searchQueryTextFieldValue = remember(searchQuery) {
+        TextFieldValue(
+            text = searchQuery,
+            selection = TextRange(searchQuery.length),
+        )
+    }
+    SearchField(
+        modifier = modifier,
+        searchQuery = searchQueryTextFieldValue,
+        onSearchQueryChanged = { onSearchQueryChanged(it.text) },
+        placeholder = placeholder,
+        clearSearchInputButtonIsShown = clearSearchInputButtonIsShown,
+        onClearSearchInputClicked = onClearSearchInputClicked,
+        onKeyboardDone = onKeyboardDone,
+    )
+}
+
+@Composable
+fun SearchField(
+    modifier: Modifier = Modifier,
+    searchQuery: TextFieldValue,
+    onSearchQueryChanged: (TextFieldValue) -> Unit,
     placeholder: @Composable () -> Unit,
     clearSearchInputButtonIsShown: Boolean,
     onClearSearchInputClicked: () -> Unit,
@@ -34,8 +63,8 @@ fun SearchField(
 ) {
     TextField(
         modifier = modifier,
-        value = searchInput,
-        onValueChange = onSearchInputChanged,
+        value = searchQuery,
+        onValueChange = onSearchQueryChanged,
         placeholder = placeholder,
         shape = CornerRoundingDefault,
         colors = TextFieldDefaults.colors().copy(
@@ -72,8 +101,8 @@ private fun SearchFieldPreview() {
     GroceryGeniusTheme {
         Surface {
             SearchField(
-                searchInput = TextFieldValue(""),
-                onSearchInputChanged = {},
+                searchQuery = TextFieldValue(""),
+                onSearchQueryChanged = {},
                 clearSearchInputButtonIsShown = true,
                 onClearSearchInputClicked = {},
                 onKeyboardDone = {},
