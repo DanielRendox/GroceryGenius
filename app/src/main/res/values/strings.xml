@@ -29,13 +29,29 @@
     </plurals>
     <string name="add_grocery_list_button_description">Add new grocery list</string>
 
+    <!-- SettingsScreen -->
+    <string name="settings_dark_theme_config_system_default">System</string>
+    <string name="settings_dark_theme_config_light">Light</string>
+    <string name="settings_dark_theme_config_dark">Dark</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_mode">Theme Mode</string>
+    <string name="settings_use_system_accent_color">Use System Accent Color</string>
+    <string name="settings_preferences">Preferences</string>
+    <string name="settings_open_last_viewed_list">Open Last Viewed List</string>
+    <string name="settings_default_list">Default List</string>
+    <string name="settings_default_list_unspecified">None</string>
+    <string name="settings_selected_color_scheme_indicator_description">None</string>
+
     <!-- General -->
     <string name="done">Done</string>
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
     <string name="back">Back</string>
+    <string name="settings">Settings</string>
 
+    <!-- Components -->
     <string name="custom_category_title">Custom</string>
+    <string name="toggle_dropdown_menu_visibility">Toggle dropdown menu visibility\n</string>
 
     <string name="sync_work_notification_channel_name">Sync</string>
     <string name="sync_work_notification_channel_description">Background tasks for Grocery Genius</string>

@@ -12,31 +12,39 @@ import com.rendox.grocerygenius.screens.grocery_list.navigateToGroceryList
 import com.rendox.grocerygenius.screens.grocery_lists_dashboard.GROCERY_LISTS_DASHBOARD_ROUTE
 import com.rendox.grocerygenius.screens.grocery_lists_dashboard.groceryListsDashboardScreen
 import com.rendox.grocerygenius.screens.grocery_lists_dashboard.navigateToGroceryListsDashboard
+import com.rendox.grocerygenius.screens.settings.navigateToSettings
+import com.rendox.grocerygenius.screens.settings.settingsScreen
 
 @Composable
 fun GroceryGeniusNavHost(
-    defaultListId: String? = null,
+    startDestination: String,
+    updateStartDestination: (String) -> Unit,
+    defaultListId: String?,
 ) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = if (defaultListId != null) {
-            "$GROCERY_LIST_ROUTE/{$GROCERY_LIST_ID_ARG}"
-        } else {
-            GROCERY_LISTS_DASHBOARD_ROUTE
-        },
+        startDestination = startDestination,
         modifier = Modifier.fillMaxSize(),
     ) {
         groceryListsDashboardScreen(
             navigateToGroceryListScreen = {
-                navController.navigateToGroceryList(listId = it)
-            }
+                navController.navigateToGroceryList(listId = it) {
+                    popUpTo(route = GROCERY_LISTS_DASHBOARD_ROUTE) {
+                        saveState = true
+                    }
+                }
+            },
+            navigateToSettingsScreen = {
+                navController.navigateToSettings()
+            },
         )
         groceryListScreen(
             navigateBack = {
                 if (navController.previousBackStackEntry != null) {
                     navController.popBackStack()
                 } else {
+                    updateStartDestination(GROCERY_LISTS_DASHBOARD_ROUTE)
                     navController.navigateToGroceryListsDashboard {
                         popUpTo(route = "$GROCERY_LIST_ROUTE/{$GROCERY_LIST_ID_ARG}") {
                             inclusive = true
@@ -45,6 +53,11 @@ fun GroceryGeniusNavHost(
                 }
             },
             defaultListId = defaultListId,
+        )
+        settingsScreen(
+            navigateBack = {
+                navController.popBackStack()
+            }
         )
     }
 }

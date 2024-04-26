@@ -4,10 +4,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
@@ -25,6 +29,7 @@ import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.ToolbarState
+import com.rendox.grocerygenius.ui.theme.TopAppBarActionsEndPadding
 import kotlin.math.roundToInt
 
 private val collapsedTitleFontSize = 22.sp
@@ -58,7 +63,7 @@ fun CollapsingToolbar(
             .drawBehind {
                 drawRect(color = toolbarColor)
             }
-            .systemBarsPadding()
+            .windowInsetsPadding(WindowInsets.statusBars.only(WindowInsetsSides.Top))
             .height(dynamicToolbarHeight)
     ) {
         MaterialTheme.typography.headlineMedium
@@ -136,7 +141,7 @@ fun CollapsingToolbar(
                     contentAlignment = Alignment.CenterEnd,
                 ) {
                     Row(
-                        modifier = Modifier.padding(end = 12.dp),
+                        modifier = Modifier.padding(end = TopAppBarActionsEndPadding),
                         content = actions
                     )
                 }

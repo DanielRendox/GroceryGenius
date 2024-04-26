@@ -81,6 +81,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Grocery
+import com.rendox.grocerygenius.model.GroceryGeniusColorScheme
 import com.rendox.grocerygenius.screens.edit_grocery.EditGroceryScreen
 import com.rendox.grocerygenius.screens.edit_grocery.EditGroceryScreenIntent
 import com.rendox.grocerygenius.screens.edit_grocery.EditGroceryViewModel
@@ -101,6 +102,8 @@ import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
 import com.rendox.grocerygenius.ui.components.grocery_list.groceryListItemColors
 import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
+import com.rendox.grocerygenius.ui.theme.TopAppBarMediumHeight
+import com.rendox.grocerygenius.ui.theme.TopAppBarSmallHeight
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -118,10 +121,8 @@ fun GroceryListRoute(
         navigateBack()
     }
 
-    val collapsedToolbarHeight = 64.dp
-    val expandedToolbarHeight = 112.dp
     val toolbarHeightRange = with(LocalDensity.current) {
-        collapsedToolbarHeight.roundToPx()..expandedToolbarHeight.roundToPx()
+        TopAppBarSmallHeight.roundToPx()..TopAppBarMediumHeight.roundToPx()
     }
     val toolbarState = rememberExitUntilCollapsedToolbarState(toolbarHeightRange)
     val lazyGridState = rememberLazyGridState()
@@ -514,6 +515,7 @@ private fun GroceryGrid(
     onGroceryLongClick: (Grocery) -> Unit,
 ) {
     val context = LocalContext.current
+
     GroupedLazyGroceryGrid(
         modifier = modifier,
         groceryGroups = groceryGroups,
@@ -575,7 +577,7 @@ val sampleGroceryGroups = listOf(
 @Preview
 @Composable
 fun GroceryListScreenPreview() {
-    GroceryGeniusTheme {
+    GroceryGeniusTheme(requestedColorScheme = GroceryGeniusColorScheme.YellowColorScheme) {
         Surface(modifier = Modifier.fillMaxSize()) {
             val collapsedToolbarHeight = 64.dp
             val expandedToolbarHeight = 112.dp
