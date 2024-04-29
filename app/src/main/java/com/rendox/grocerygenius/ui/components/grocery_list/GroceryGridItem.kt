@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
@@ -24,6 +26,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rendox.grocerygenius.ui.components.GroceryIcon
+import com.rendox.grocerygenius.ui.theme.GroceryItemRounding
 import java.io.File
 
 @Composable
@@ -100,6 +103,34 @@ fun LazyGroceryGridItem(
         }
     }
 }
+
+fun Modifier.groceryGridItemCornerRounding(
+    itemIndex: Int,
+    numOfColumns: Int,
+    lastIndex: Int,
+) = this.clip(
+    shape = RoundedCornerShape(
+        topStart = when (itemIndex) {
+            0 -> GroceryItemRounding
+            else -> 0.dp
+        },
+        topEnd = when {
+            itemIndex == (numOfColumns - 1) -> GroceryItemRounding
+            (lastIndex + 1) < numOfColumns && itemIndex == lastIndex -> GroceryItemRounding
+            else -> 0.dp
+        },
+        bottomStart = when (itemIndex) {
+            lastIndex - (lastIndex % numOfColumns) -> GroceryItemRounding
+            else -> 0.dp
+        },
+        bottomEnd = when  {
+            itemIndex == lastIndex -> GroceryItemRounding
+            itemIndex == lastIndex - (lastIndex % numOfColumns) - 1 &&
+                    (lastIndex + 1) % numOfColumns != 0 -> GroceryItemRounding
+            else -> 0.dp
+        },
+    )
+)
 
 class GridItemPreviewParameterProvider : PreviewParameterProvider<Pair<String, String?>> {
     override val values: Sequence<Pair<String, String?>>

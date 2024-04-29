@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface CategoryRepository : Syncable {
     fun getAllCategories(): Flow<List<Category>>
+    fun getCategoryById(id: String): Flow<Category?>
 }

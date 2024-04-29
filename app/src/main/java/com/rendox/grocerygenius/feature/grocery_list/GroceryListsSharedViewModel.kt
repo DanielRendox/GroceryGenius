@@ -9,6 +9,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rendox.grocerygenius.R
+import com.rendox.grocerygenius.data.category.CategoryRepository
 import com.rendox.grocerygenius.data.grocery.GroceryRepository
 import com.rendox.grocerygenius.data.grocery_list.GroceryListRepository
 import com.rendox.grocerygenius.data.user_preferences.UserPreferencesRepository
@@ -24,6 +25,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -33,6 +35,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -44,10 +47,12 @@ class GroceryListsSharedViewModel @Inject constructor(
     private val groceryRepository: GroceryRepository,
     private val groceryListRepository: GroceryListRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
+    private val categoryRepository: CategoryRepository,
     @Dispatcher(GroceryGeniusDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
-    val openedGroceryListIdFlow = MutableStateFlow<String?>(null)
+    private val _openedGroceryListIdFlow = MutableStateFlow<String?>(null)
+    val openedGroceryListIdFlow = _openedGroceryListIdFlow.asStateFlow()
 
     private val _groceryListsFlow = MutableStateFlow(emptyList<GroceryList>())
     val groceryListsFlow = _groceryListsFlow.asStateFlow()
@@ -70,6 +75,13 @@ class GroceryListsSharedViewModel @Inject constructor(
 
     private var fetchUpdateListJob: Job? = null
 
+    val categoriesFlow = categoryRepository.getAllCategories()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList(),
+        )
+
     init {
         println("GroceryListsSharedViewModelDebug init")
         viewModelScope.launch {
@@ -88,7 +100,7 @@ class GroceryListsSharedViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            openedGroceryListIdFlow
+            _openedGroceryListIdFlow
                 .filterNotNull()
                 .flatMapLatest { groceryListId ->
                     groceryRepository.getGroceriesFromList(groceryListId)
@@ -159,7 +171,7 @@ class GroceryListsSharedViewModel @Inject constructor(
 
     private fun toggleItemPurchased(item: Grocery) {
         viewModelScope.launch {
-            openedGroceryListIdFlow.value?.let {
+            _openedGroceryListIdFlow.value?.let {
                 groceryRepository.updatePurchased(
                     productId = item.productId,
                     listId = it,
@@ -178,7 +190,7 @@ class GroceryListsSharedViewModel @Inject constructor(
 
     private fun deleteGroceryList() {
         viewModelScope.launch {
-            openedGroceryListIdFlow.value?.let { groceryListId ->
+            _openedGroceryListIdFlow.value?.let { groceryListId ->
                 groceryListRepository.deleteGroceryListById(groceryListId)
                 _closeGroceryListScreenEvent.update {
                     object : UiEvent<Unit> {
@@ -237,7 +249,7 @@ class GroceryListsSharedViewModel @Inject constructor(
         navigateToGroceryList: Boolean,
     ) {
         fetchUpdateListJob?.cancel()
-        openedGroceryListIdFlow.update { groceryListId }
+        _openedGroceryListIdFlow.update { groceryListId }
         fetchUpdateListJob = viewModelScope.launch {
             userPreferencesRepository.updateLastOpenedListId(groceryListId)
             val openedGroceryList = groceryListRepository.getGroceryListById(groceryListId).first()
@@ -261,7 +273,7 @@ class GroceryListsSharedViewModel @Inject constructor(
 
             openedGroceryListNameFlow
                 .debounce(800)
-                .combine(openedGroceryListIdFlow) { listName, groceryListId ->
+                .combine(_openedGroceryListIdFlow) { listName, groceryListId ->
                     listName to groceryListId
                 }
                 .collect { (listName, groceryListId) ->

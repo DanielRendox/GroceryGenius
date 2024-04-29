@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.ScrollableState
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -31,11 +33,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
@@ -59,7 +64,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
@@ -90,6 +97,7 @@ import com.rendox.grocerygenius.feature.edit_grocery.EditGroceryUiIntent
 import com.rendox.grocerygenius.feature.edit_grocery.EditGroceryViewModel
 import com.rendox.grocerygenius.feature.grocery_list.GroceryListsSharedViewModel
 import com.rendox.grocerygenius.feature.grocery_list.GroceryListsUiIntent
+import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.model.GroceryGeniusColorScheme
 import com.rendox.grocerygenius.ui.components.BottomSheetDragHandle
@@ -106,6 +114,7 @@ import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
 import com.rendox.grocerygenius.ui.components.grocery_list.groceryListItemColors
 import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
+import com.rendox.grocerygenius.ui.theme.GroceryItemRounding
 import com.rendox.grocerygenius.ui.theme.TopAppBarMediumHeight
 import com.rendox.grocerygenius.ui.theme.TopAppBarSmallHeight
 import kotlinx.coroutines.launch
@@ -117,12 +126,14 @@ fun GroceryListRoute(
     groceryListViewModel: GroceryListsSharedViewModel = hiltViewModel(),
     addGroceryViewModel: AddGroceryViewModel = hiltViewModel(),
     navigateBack: () -> Unit,
+    navigateToCategoryScreen: (String, String) -> Unit,
 ) {
     val groceryGroups by groceryListViewModel.groceryGroupsFlow.collectAsStateWithLifecycle()
     val closeGroceryListScreenEvent by groceryListViewModel.closeGroceryListScreenEvent.collectAsStateWithLifecycle()
     val addGroceryUiState by addGroceryViewModel.uiStateFlow.collectAsStateWithLifecycle()
     val openedGroceryListId by groceryListViewModel.openedGroceryListIdFlow.collectAsStateWithLifecycle()
     val groceryListEditModeIsEnabled by groceryListViewModel.groceryListEditModeIsEnabledFlow.collectAsStateWithLifecycle()
+    val categories by groceryListViewModel.categoriesFlow.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
 
     ObserveUiEvent(closeGroceryListScreenEvent) {
@@ -172,6 +183,12 @@ fun GroceryListRoute(
         onAddGroceryUiIntent = addGroceryViewModel::onIntent,
         addGroceryUiState = addGroceryUiState,
         groceryListEditModeIsEnabled = groceryListEditModeIsEnabled,
+        categories = categories,
+        navigateToCategoryScreen = { categoryId ->
+            openedGroceryListId?.let {
+                navigateToCategoryScreen(categoryId, it)
+            }
+        },
     )
 
     val editGroceryId = editGroceryIdState.value
@@ -223,10 +240,12 @@ private fun GroceryListScreen(
     groceryListEditModeIsEnabled: Boolean = false,
     scrimIsShown: Boolean = false,
     toolbarIsHidden: Boolean = false,
+    categories: List<Category> = emptyList(),
     navigateBack: () -> Unit = {},
     onGroceryListUiIntent: (GroceryListsUiIntent) -> Unit = {},
     onAddGroceryUiIntent: (AddGroceryUiIntent) -> Unit = {},
     showEditGroceryBottomSheet: (String) -> Unit = {},
+    navigateToCategoryScreen: (String) -> Unit = {},
 ) {
     val toolbarHeightRange = with(LocalDensity.current) {
         TopAppBarSmallHeight.roundToPx()..TopAppBarMediumHeight.roundToPx()
@@ -353,10 +372,12 @@ private fun GroceryListScreen(
                 modifier = Modifier.fillMaxSize(),
                 groceryGroups = groceryGroups,
                 onGroceryClick = { onGroceryListUiIntent(GroceryListsUiIntent.OnGroceryItemClick(it)) },
+                categories = categories,
                 onGroceryLongClick = {
                     showEditGroceryBottomSheet(it.productId)
                 },
                 lazyGridState = lazyGridState,
+                onCategoryItemClick = navigateToCategoryScreen,
             )
         }
 
@@ -531,8 +552,10 @@ private fun GroceryGrid(
     modifier: Modifier = Modifier,
     groceryGroups: List<GroceryGroup>,
     lazyGridState: LazyGridState,
+    categories: List<Category>,
     onGroceryClick: (Grocery) -> Unit,
     onGroceryLongClick: (Grocery) -> Unit,
+    onCategoryItemClick: (String) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -567,6 +590,38 @@ private fun GroceryGrid(
             bottom = 16.dp,
         ),
         lazyGridState = lazyGridState,
+        numOfAdditionalItems = categories.size + 1,
+        additionalItems = {
+            val categoryContentType = "Category"
+            val spacerContentType = "SpacerBetweenListAndCategories"
+            item(
+                key = spacerContentType,
+                contentType = spacerContentType,
+                span = { GridItemSpan(maxLineSpan) },
+            ) {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            items(
+                count = categories.size,
+                key = { index -> categories[index].id },
+                contentType = { categoryContentType },
+                span = { GridItemSpan(maxLineSpan) },
+            ) { index ->
+                CategoryItem(
+                    modifier = Modifier
+                        .clip(
+                            shape = RoundedCornerShape(
+                                topStart = if (index == 0) GroceryItemRounding else 0.dp,
+                                topEnd = if (index == 0) GroceryItemRounding else 0.dp,
+                                bottomStart = if (index == categories.lastIndex) GroceryItemRounding else 0.dp,
+                                bottomEnd = if (index == categories.lastIndex) GroceryItemRounding else 0.dp,
+                            )
+                        )
+                        .clickable { onCategoryItemClick(categories[index].id) },
+                    name = categories[index].name,
+                )
+            }
+        }
     )
 }
 
@@ -592,6 +647,31 @@ val sampleGroceryGroups = listOf(
         }
     ),
 )
+
+@Composable
+private fun CategoryItem(
+    modifier: Modifier = Modifier,
+    name: String,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colorScheme.secondaryContainer),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(16.dp)
+                .weight(1F),
+            text = name,
+        )
+        Icon(
+            modifier = Modifier.padding(end = 16.dp),
+            imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
+            contentDescription = stringResource(R.string.forward),
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview

@@ -10,6 +10,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.rendox.grocerygenius.feature.category.categoryScreen
+import com.rendox.grocerygenius.feature.category.navigateToCategory
 import com.rendox.grocerygenius.feature.grocery_list.GroceryListsSharedViewModel
 import com.rendox.grocerygenius.feature.grocery_list.dashboard_screen.GROCERY_LISTS_DASHBOARD_ROUTE
 import com.rendox.grocerygenius.feature.grocery_list.dashboard_screen.groceryListsDashboardScreen
@@ -46,6 +48,11 @@ fun GroceryGeniusNavHost(startDestination: String) {
                         }
                     }
                 },
+                navigateToCategoryScreen = { categoryId, groceryListId ->
+                    navController.navigateToCategory(
+                        categoryId, groceryListId
+                    )
+                },
                 findViewModel = { backStackEntry ->
                     backStackEntry.groceryListsSharedViewModel(navController)
                 },
@@ -67,6 +74,11 @@ fun GroceryGeniusNavHost(startDestination: String) {
             )
         }
         settingsScreen(
+            navigateBack = {
+                navController.popBackStack()
+            }
+        )
+        categoryScreen(
             navigateBack = {
                 navController.popBackStack()
             }

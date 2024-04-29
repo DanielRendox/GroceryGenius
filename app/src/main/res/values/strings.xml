@@ -45,6 +45,7 @@
     <string name="edit">Edit</string>
     <string name="back">Back</string>
     <string name="settings">Settings</string>
+    <string name="forward">Forward</string>
 
     <!-- Components -->
     <string name="custom_category_title">Custom</string>

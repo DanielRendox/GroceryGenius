@@ -66,7 +66,6 @@ fun IconPickerDialog(
                     Surface(
                         onClick = { onIconSelected(index) },
                         modifier = Modifier.aspectRatio(1F),
-                        shape = CornerRoundingDefault,
                     ) {
                         Column(
                             modifier = Modifier.padding(4.dp),

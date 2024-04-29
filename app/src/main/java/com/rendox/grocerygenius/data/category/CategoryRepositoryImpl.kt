@@ -25,6 +25,12 @@ class CategoryRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getCategoryById(id: String): Flow<Category?> {
+        return categoryDao.getCategoryById(id).map { categoryEntity ->
+            categoryEntity?.asExternalModel()
+        }
+    }
+
     override suspend fun syncWith(synchronizer: Synchronizer) = synchronizer.changeListSync(
         checkIfExistingDataIsEmpty = {
             categoryDao.getAllCategories().first().isEmpty()

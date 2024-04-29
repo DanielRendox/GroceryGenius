@@ -22,6 +22,10 @@ moshi = "1.15.1"
 recyclerview = "1.3.2"
 room = "2.6.1"
 truth = "1.4.2"
+uiautomator = "2.3.0"
+benchmarkMacroJunit4 = "1.2.4"
+baselineprofile = "1.2.2"
+profileinstaller = "1.3.1"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
@@ -66,9 +70,14 @@ org-junit-bom = { module = "org.junit:junit-bom", version.ref = "junitBom" }
 org-junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api" }
 org-junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine" }
 org-junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params" }
+androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
+androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
+androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 hiltPlugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 jetbrainsKotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 roomPlugin = { id = "androidx.room", version.ref = "room" }
+androidTest = { id = "com.android.test", version.ref = "agp" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
