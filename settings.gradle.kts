@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Grocery Genius"
 include(":app")
- 
+include(":baselineprofile")

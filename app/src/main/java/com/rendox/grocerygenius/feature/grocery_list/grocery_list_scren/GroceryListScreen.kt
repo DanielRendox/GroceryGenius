@@ -95,7 +95,7 @@ import com.rendox.grocerygenius.feature.add_grocery.rememberAddGroceryBottomShee
 import com.rendox.grocerygenius.feature.edit_grocery.EditGroceryBottomSheet
 import com.rendox.grocerygenius.feature.edit_grocery.EditGroceryUiIntent
 import com.rendox.grocerygenius.feature.edit_grocery.EditGroceryViewModel
-import com.rendox.grocerygenius.feature.grocery_list.GroceryListsSharedViewModel
+import com.rendox.grocerygenius.feature.grocery_list.GroceryListViewModel
 import com.rendox.grocerygenius.feature.grocery_list.GroceryListsUiIntent
 import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.Grocery
@@ -123,7 +123,7 @@ import java.io.File
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroceryListRoute(
-    groceryListViewModel: GroceryListsSharedViewModel = hiltViewModel(),
+    groceryListViewModel: GroceryListViewModel = hiltViewModel(),
     addGroceryViewModel: AddGroceryViewModel = hiltViewModel(),
     navigateBack: () -> Unit,
     navigateToCategoryScreen: (String, String) -> Unit,
@@ -131,7 +131,7 @@ fun GroceryListRoute(
     val groceryGroups by groceryListViewModel.groceryGroupsFlow.collectAsStateWithLifecycle()
     val closeGroceryListScreenEvent by groceryListViewModel.closeGroceryListScreenEvent.collectAsStateWithLifecycle()
     val addGroceryUiState by addGroceryViewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val openedGroceryListId by groceryListViewModel.openedGroceryListIdFlow.collectAsStateWithLifecycle()
+    val openedGroceryListId = groceryListViewModel.openedGroceryListId
     val groceryListEditModeIsEnabled by groceryListViewModel.groceryListEditModeIsEnabledFlow.collectAsStateWithLifecycle()
     val categories by groceryListViewModel.categoriesFlow.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
@@ -150,12 +150,10 @@ fun GroceryListRoute(
         }
     }
     LaunchedEffect(addGroceryBottomSheetState.sheetIsFullyExpanded, openedGroceryListId) {
-        openedGroceryListId?.let {
-            if (addGroceryBottomSheetState.sheetIsFullyExpanded) {
-                addGroceryViewModel.onIntent(
-                    AddGroceryUiIntent.OnAddGroceryBottomSheetExpanded(it)
-                )
-            }
+        if (addGroceryBottomSheetState.sheetIsFullyExpanded) {
+            addGroceryViewModel.onIntent(
+                AddGroceryUiIntent.OnAddGroceryBottomSheetExpanded(openedGroceryListId)
+            )
         }
     }
 
@@ -185,9 +183,7 @@ fun GroceryListRoute(
         groceryListEditModeIsEnabled = groceryListEditModeIsEnabled,
         categories = categories,
         navigateToCategoryScreen = { categoryId ->
-            openedGroceryListId?.let {
-                navigateToCategoryScreen(categoryId, it)
-            }
+            navigateToCategoryScreen(categoryId, openedGroceryListId)
         },
     )
 
@@ -198,14 +194,12 @@ fun GroceryListRoute(
 
         LaunchedEffect(editGroceryIdState, openedGroceryListId) {
             println("GroceryListScreen openedGroceryListId = $openedGroceryListId; editGroceryId = $editGroceryId")
-            openedGroceryListId?.let { listId ->
-                editGroceryViewModel.onIntent(
-                    EditGroceryUiIntent.OnEditOtherGrocery(
-                        productId = editGroceryId,
-                        groceryListId = listId,
-                    )
+            editGroceryViewModel.onIntent(
+                EditGroceryUiIntent.OnEditOtherGrocery(
+                    productId = editGroceryId,
+                    groceryListId = openedGroceryListId,
                 )
-            }
+            )
         }
 
         EditGroceryBottomSheet(

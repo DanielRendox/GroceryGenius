@@ -32,8 +32,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.databinding.ListRecyclerviewBinding
-import com.rendox.grocerygenius.feature.grocery_list.GroceryListsSharedViewModel
-import com.rendox.grocerygenius.feature.grocery_list.GroceryListsUiIntent
 import com.rendox.grocerygenius.feature.grocery_list.dashboard_screen.recyclerview.DashboardRecyclerViewAdapter
 import com.rendox.grocerygenius.model.GroceryList
 import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
@@ -43,29 +41,31 @@ import com.rendox.grocerygenius.ui.theme.TopAppBarSmallHeight
 
 @Composable
 fun GroceryListsDashboardRoute(
-    viewModel: GroceryListsSharedViewModel = hiltViewModel(),
-    navigateToGroceryListScreen: () -> Unit,
+    viewModel: GroceryListsDashboardViewModel  = hiltViewModel(),
+    navigateToGroceryListScreen: (String) -> Unit,
     navigateToSettingsScreen: () -> Unit,
 ) {
     val screenState by viewModel.groceryListsFlow.collectAsStateWithLifecycle()
     val navigateToGroceryListEvent by viewModel.navigateToGroceryListEvent.collectAsStateWithLifecycle()
-    ObserveUiEvent(navigateToGroceryListEvent) {
+    ObserveUiEvent(navigateToGroceryListEvent) { groceryListId ->
         println("GroceryListNavigationDebug navigateToGroceryListEvent: $navigateToGroceryListEvent")
-        navigateToGroceryListScreen()
+        navigateToGroceryListScreen(groceryListId)
     }
 
     GroceryListsDashboardScreen(
         groceryLists = screenState,
         onIntent = viewModel::onIntent,
         navigateToSettingsScreen = navigateToSettingsScreen,
+        navigateToGroceryListScreen = navigateToGroceryListScreen,
     )
 }
 
 @Composable
 fun GroceryListsDashboardScreen(
     groceryLists: List<GroceryList>,
-    onIntent: (GroceryListsUiIntent) -> Unit = {},
+    onIntent: (GroceryListsDashboardUiIntent) -> Unit = {},
     navigateToSettingsScreen: () -> Unit = {},
+    navigateToGroceryListScreen: (String) -> Unit = {},
 ) {
     var scrollState by rememberSaveable { mutableIntStateOf(0) }
 
@@ -114,13 +114,11 @@ fun GroceryListsDashboardScreen(
                     recyclerView = binding.listRecyclerview,
                     groceryLists = groceryLists,
                     updateLists = { newValue ->
-                        onIntent(GroceryListsUiIntent.OnUpdateGroceryLists(newValue))
+                        onIntent(GroceryListsDashboardUiIntent.OnUpdateGroceryLists(newValue))
                     },
-                    onItemClicked = {
-                        onIntent(GroceryListsUiIntent.OnOpenGroceryList(it))
-                    },
+                    onItemClicked =navigateToGroceryListScreen,
                     onAdderItemClicked = {
-                        onIntent(GroceryListsUiIntent.OnCreateNewGroceryList)
+                        onIntent(GroceryListsDashboardUiIntent.OnAdderItemClick)
                     },
                 )
                 binding

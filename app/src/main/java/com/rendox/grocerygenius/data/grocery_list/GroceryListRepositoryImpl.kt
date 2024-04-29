@@ -48,11 +48,12 @@ class GroceryListRepositoryImpl @Inject constructor(
     }
 
     override suspend fun syncWith(synchronizer: Synchronizer) = suspendRunCatching {
+        println("syncing GroceryListRepository")
         val existingGroceryLists = groceryListDao.getAllGroceryLists().first()
         if (existingGroceryLists.isEmpty()) {
             val groceryLists = groceryListNetworkDataSource.getAllGroceryLists()
             groceryListDao.upsertGroceryLists(groceryLists.map { it.asEntity() })
-            val groceries = productDao.getAllProducts().map {
+            val groceries = productDao.getAllProducts().take(35).map {
                 GroceryEntity(
                     productId = it.id,
                     groceryListId = groceryLists.first().id,

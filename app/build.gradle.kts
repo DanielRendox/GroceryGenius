@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.hiltPlugin)
     alias(libs.plugins.roomPlugin)
     kotlin("kapt")
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -32,6 +33,11 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("debug")
+        }
+        create("benchmark") {
+            initWith(buildTypes.getByName("release"))
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
         }
     }
     compileOptions {
@@ -79,6 +85,8 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
 
     implementation(libs.com.google.dagger.hilt.android)
+    implementation(libs.androidx.profileinstaller)
+    "baselineProfile"(project(":baselineprofile"))
     kapt(libs.com.google.dagger.hilt.android.compiler)
     kapt(libs.androidx.hilt.compiler)
     implementation(libs.com.google.dagger.hilt.android.testing)
