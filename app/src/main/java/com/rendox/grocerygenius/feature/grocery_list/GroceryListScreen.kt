@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.feature.grocery_list.grocery_list_scren
+package com.rendox.grocerygenius.feature.grocery_list
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -95,8 +95,6 @@ import com.rendox.grocerygenius.feature.add_grocery.rememberAddGroceryBottomShee
 import com.rendox.grocerygenius.feature.edit_grocery.EditGroceryBottomSheet
 import com.rendox.grocerygenius.feature.edit_grocery.EditGroceryUiIntent
 import com.rendox.grocerygenius.feature.edit_grocery.EditGroceryViewModel
-import com.rendox.grocerygenius.feature.grocery_list.GroceryListViewModel
-import com.rendox.grocerygenius.feature.grocery_list.GroceryListsUiIntent
 import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.model.GroceryGeniusColorScheme
@@ -126,7 +124,7 @@ fun GroceryListRoute(
     groceryListViewModel: GroceryListViewModel = hiltViewModel(),
     addGroceryViewModel: AddGroceryViewModel = hiltViewModel(),
     navigateBack: () -> Unit,
-    navigateToCategoryScreen: (String, String) -> Unit,
+    navigateToCategoryScreen: () -> Unit,
 ) {
     val groceryGroups by groceryListViewModel.groceryGroupsFlow.collectAsStateWithLifecycle()
     val closeGroceryListScreenEvent by groceryListViewModel.closeGroceryListScreenEvent.collectAsStateWithLifecycle()
@@ -134,10 +132,14 @@ fun GroceryListRoute(
     val openedGroceryListId = groceryListViewModel.openedGroceryListId
     val groceryListEditModeIsEnabled by groceryListViewModel.groceryListEditModeIsEnabledFlow.collectAsStateWithLifecycle()
     val categories by groceryListViewModel.categoriesFlow.collectAsStateWithLifecycle()
+    val navigateToCategoryScreenEvent by groceryListViewModel.navigateToCategoryScreenEvent.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
 
     ObserveUiEvent(closeGroceryListScreenEvent) {
         navigateBack()
+    }
+    ObserveUiEvent(navigateToCategoryScreenEvent) {
+        navigateToCategoryScreen()
     }
 
     val addBottomSheetState = rememberStandardBottomSheetState()
@@ -183,7 +185,9 @@ fun GroceryListRoute(
         groceryListEditModeIsEnabled = groceryListEditModeIsEnabled,
         categories = categories,
         navigateToCategoryScreen = { categoryId ->
-            navigateToCategoryScreen(categoryId, openedGroceryListId)
+            groceryListViewModel.onIntent(
+                GroceryListsUiIntent.OnNavigateToCategoryScreen(categoryId)
+            )
         },
     )
 
@@ -193,7 +197,6 @@ fun GroceryListRoute(
         val editGroceryScreenState by editGroceryViewModel.uiStateFlow.collectAsStateWithLifecycle()
 
         LaunchedEffect(editGroceryIdState, openedGroceryListId) {
-            println("GroceryListScreen openedGroceryListId = $openedGroceryListId; editGroceryId = $editGroceryId")
             editGroceryViewModel.onIntent(
                 EditGroceryUiIntent.OnEditOtherGrocery(
                     productId = editGroceryId,
@@ -315,7 +318,6 @@ private fun GroceryListScreen(
                 onFabClicked = addGroceryBottomSheetState::onFabClicked,
                 onSearchFieldFocusChanged = addGroceryBottomSheetState::onSearchFieldFocusChanged,
                 onSearchQueryChanged = {
-                    println("GroceryListScreen searchQuery changed to $it")
                     onAddGroceryUiIntent(AddGroceryUiIntent.OnUpdateSearchQuery(it))
                 },
                 onClearSearchQuery = {

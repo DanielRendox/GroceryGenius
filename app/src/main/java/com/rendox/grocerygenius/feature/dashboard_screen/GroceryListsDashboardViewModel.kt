@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.feature.grocery_list.dashboard_screen
+package com.rendox.grocerygenius.feature.dashboard_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

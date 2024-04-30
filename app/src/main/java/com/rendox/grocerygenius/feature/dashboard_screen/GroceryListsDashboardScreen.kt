@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.feature.grocery_list.dashboard_screen
+package com.rendox.grocerygenius.feature.dashboard_screen
 
 
 import androidx.compose.foundation.layout.Box
@@ -32,7 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.databinding.ListRecyclerviewBinding
-import com.rendox.grocerygenius.feature.grocery_list.dashboard_screen.recyclerview.DashboardRecyclerViewAdapter
+import com.rendox.grocerygenius.feature.dashboard_screen.recyclerview.DashboardRecyclerViewAdapter
 import com.rendox.grocerygenius.model.GroceryList
 import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
@@ -41,14 +41,13 @@ import com.rendox.grocerygenius.ui.theme.TopAppBarSmallHeight
 
 @Composable
 fun GroceryListsDashboardRoute(
-    viewModel: GroceryListsDashboardViewModel  = hiltViewModel(),
+    viewModel: GroceryListsDashboardViewModel = hiltViewModel(),
     navigateToGroceryListScreen: (String) -> Unit,
     navigateToSettingsScreen: () -> Unit,
 ) {
     val screenState by viewModel.groceryListsFlow.collectAsStateWithLifecycle()
     val navigateToGroceryListEvent by viewModel.navigateToGroceryListEvent.collectAsStateWithLifecycle()
     ObserveUiEvent(navigateToGroceryListEvent) { groceryListId ->
-        println("GroceryListNavigationDebug navigateToGroceryListEvent: $navigateToGroceryListEvent")
         navigateToGroceryListScreen(groceryListId)
     }
 

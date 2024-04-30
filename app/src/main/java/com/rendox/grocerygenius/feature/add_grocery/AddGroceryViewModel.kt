@@ -152,11 +152,9 @@ class AddGroceryViewModel @Inject constructor(
     }
 
     private fun addOrUpdateGrocery(grocery: Grocery) {
-        println("AddGroceryViewModel addOrUpdateGrocery groceryListIdFlow.value: ${groceryListIdFlow.value}")
         val groceryListId = groceryListIdFlow.value ?: return
         viewModelScope.launch {
             val groceries = getGroceries()
-            println("AddGroceryViewModel addOrUpdateGrocery groceries: $groceries")
             val groceryIsAlreadyInList = groceries.any { it.productId == grocery.productId }
             if (groceryIsAlreadyInList) {
                 groceryRepository.updatePurchased(
@@ -221,7 +219,6 @@ class AddGroceryViewModel @Inject constructor(
     }
 
     private fun updateSearchQuery(query: String) {
-        println("AddGroceryViewModel updateSearchQuery query: $query")
         this.searchQuery = query
         if (query.isEmpty()) {
             _uiStateFlow.update {
@@ -242,10 +239,8 @@ class AddGroceryViewModel @Inject constructor(
     }
 
     private fun resetAddGroceryBottomSheet(groceryListId: String?) {
-        println("AddGroceryViewModel resetAddGroceryBottomSheet groceryListId: $groceryListId")
         groceryListIdFlow.update { groceryListId }
         searchQuery = ""
-        println("AddGroceryViewModel resetAddGroceryBottomSheet searchQuery: $searchQuery")
         _uiStateFlow.update {
             it.copy(bottomSheetContentType = AddGroceryBottomSheetContentType.Suggestions)
         }

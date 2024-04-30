@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.feature.category
+package com.rendox.grocerygenius.feature.grocery_list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.ScrollableState
@@ -42,15 +42,15 @@ import java.io.File
 
 @Composable
 fun CategoryRoute(
-    viewModel: CategoryViewModel = hiltViewModel(),
+    viewModel: GroceryListViewModel = hiltViewModel(),
     navigateBack: () -> Unit,
 ) {
-    val categoryName by viewModel.categoryNameFlow.collectAsStateWithLifecycle()
-    val groceries by viewModel.groceriesFlow.collectAsStateWithLifecycle()
+    val category by viewModel.openedCategoryFlow.collectAsStateWithLifecycle()
+    val groceries by viewModel.openedCategoryGroceriesFlow.collectAsStateWithLifecycle()
     CategoryScreen(
-        categoryName = categoryName,
+        categoryName = category?.name ?: "",
         groceries = groceries,
-        onGroceryClick = viewModel::onGroceryClick,
+        onGroceryClick = viewModel::onCategoryScreenGroceryClick,
         navigateBack = navigateBack,
     )
 }

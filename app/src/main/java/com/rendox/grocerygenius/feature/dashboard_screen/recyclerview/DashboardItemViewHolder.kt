@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.feature.grocery_list.dashboard_screen.recyclerview
+package com.rendox.grocerygenius.feature.dashboard_screen.recyclerview
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation

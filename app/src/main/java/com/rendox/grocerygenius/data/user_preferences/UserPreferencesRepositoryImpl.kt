@@ -58,6 +58,10 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         val userPreferences = userPreferencesFlow.first()
         val lastOpenedListId =
             if (userPreferences.openLastViewedList) userPreferences.lastOpenedListId else null
-        return lastOpenedListId ?: userPreferences.defaultListId
+        val resultingListId = lastOpenedListId ?: userPreferences.defaultListId
+        return resultingListId?.let { listId ->
+            // to ensure that the list with this id exists
+            groceryListRepository.getGroceryListById(listId).first()?.id
+        }
     }
 }

@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,16 +64,6 @@ fun GroupedLazyGroceryGrid(
         val gridWidthPx = with(density) { gridWidth.roundToPx() }
         val horizontalArrangement = Arrangement.spacedBy(4.dp)
         val spacing = with(density) { horizontalArrangement.spacing.roundToPx() }
-
-        LaunchedEffect(gridWidth) {
-            println("GroupedLazyGroceryGrid: availableWidth = $gridWidthPx")
-        }
-        LaunchedEffect(spacing) {
-            println("GroupedLazyGroceryGrid: spacing = $spacing")
-        }
-        LaunchedEffect(groceryGroups.firstOrNull()?.groceries) {
-            println("GroupedLazyGroceryGrid: last grocery index = ${groceryGroups.firstOrNull()?.groceries?.lastIndex}")
-        }
 
         LazyVerticalGrid(
             modifier = Modifier.testTag("grouped_lazy_grocery_grid"),
@@ -133,8 +122,6 @@ fun GroupedLazyGroceryGrid(
                                 lastIndex = group.groceries.lastIndex,
                             )
                         ) {
-                            println("GroupedLazyGroceryGrid: cell width = $cellWidthPx")
-                            println("GroupedLazyGroceryGrid: numOfColumns = $numOfColumns")
                             groceryItem(group.groceries[index])
                         }
                     }

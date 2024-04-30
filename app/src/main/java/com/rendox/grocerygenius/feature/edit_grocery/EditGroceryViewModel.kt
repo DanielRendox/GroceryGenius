@@ -144,7 +144,6 @@ class EditGroceryViewModel @Inject constructor(
     }
 
     private fun onEditOtherGrocery(productId: String, groceryListId: String) {
-        println("EditGroceryViewModel onEditOtherGrocery productId = $productId; groceryListId = $groceryListId")
         compoundGroceryIdFlow.update {
             CompoundGroceryId(
                 productId = productId,

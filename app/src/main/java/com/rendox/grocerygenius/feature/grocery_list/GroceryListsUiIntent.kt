@@ -9,4 +9,5 @@ sealed interface GroceryListsUiIntent {
     data object OnKeyboardHidden : GroceryListsUiIntent
     data object OnDeleteGroceryList : GroceryListsUiIntent
     data class OnEditGroceryListToggle(val editModeIsEnabled: Boolean) : GroceryListsUiIntent
+    data class OnNavigateToCategoryScreen(val categoryId: String) : GroceryListsUiIntent
 }

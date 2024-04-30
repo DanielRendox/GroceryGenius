@@ -1,6 +1,6 @@
 package com.rendox.grocerygenius
 
-import com.rendox.grocerygenius.feature.grocery_list.dashboard_screen.GROCERY_LISTS_DASHBOARD_ROUTE
+import com.rendox.grocerygenius.feature.dashboard_screen.GROCERY_LISTS_DASHBOARD_ROUTE
 import com.rendox.grocerygenius.model.DEFAULT_USER_PREFERENCES
 import com.rendox.grocerygenius.model.DarkThemeConfig
 import com.rendox.grocerygenius.model.GroceryGeniusColorScheme

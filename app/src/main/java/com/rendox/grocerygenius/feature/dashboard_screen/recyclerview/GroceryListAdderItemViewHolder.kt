@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.feature.grocery_list.dashboard_screen.recyclerview
+package com.rendox.grocerygenius.feature.dashboard_screen.recyclerview
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
