@@ -48,7 +48,6 @@ suspend fun <T> suspendRunCatching(block: suspend () -> T): Result<T> = try {
  * implementation must guarantee this.
  */
 suspend fun Synchronizer.changeListSync(
-    checkIfExistingDataIsEmpty: suspend () -> Boolean,
     prepopulateWithInitialData: suspend () -> Unit,
     versionReader: (ChangeListVersions) -> Int,
     changeListFetcher: suspend (Int) -> List<NetworkChangeList>,
@@ -60,7 +59,7 @@ suspend fun Synchronizer.changeListSync(
     val networkChangeList = changeListFetcher(localVersion)
     val latestVersion = networkChangeList.lastOrNull()?.changeListVersion
 
-    if (checkIfExistingDataIsEmpty()) {
+    if (localVersion < 0) {
         prepopulateWithInitialData()
         updateChangeListVersions {
             versionUpdater(latestVersion ?: 0)

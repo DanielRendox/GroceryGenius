@@ -11,8 +11,8 @@ import com.rendox.grocerygenius.database.grocery_icon.IconEntity
     foreignKeys = [
         ForeignKey(
             entity = IconEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["iconId"],
+            parentColumns = ["uniqueFileName"],
+            childColumns = ["iconFileName"],
             onDelete = ForeignKey.SET_NULL,
             onUpdate = ForeignKey.CASCADE,
         ),
@@ -25,7 +25,7 @@ import com.rendox.grocerygenius.database.grocery_icon.IconEntity
         ),
     ],
     indices = [
-        Index(value = ["iconId"]),
+        Index(value = ["iconFileName"]),
         Index(value = ["categoryId"]),
     ]
 )
@@ -33,6 +33,6 @@ data class ProductEntity(
     @PrimaryKey val id: String,
     val name: String,
     val isDefault: Boolean,
-    val iconId: String?,
+    val iconFileName: String?,
     val categoryId: String?,
 )

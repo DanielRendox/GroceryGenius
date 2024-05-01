@@ -11,7 +11,7 @@ fun Product.asEntity() = ProductEntity(
     id = id,
     name = name,
     categoryId = category?.id,
-    iconId = icon?.id,
+    iconFileName = icon?.uniqueFileName,
     isDefault = isDefault,
 )
 
@@ -26,7 +26,7 @@ fun CombinedProduct.asExternalModel() = Product(
 val CombinedProduct.icon
     get() = when {
         iconId != null && iconFilePath != null -> IconReference(
-            id = iconId,
+            uniqueFileName = iconId,
             filePath = iconFilePath,
         )
 
@@ -50,6 +50,6 @@ fun ProductNetwork.asEntity() = ProductEntity(
     id = id,
     name = name,
     categoryId = categoryId,
-    iconId = iconId,
+    iconFileName = iconId,
     isDefault = isDefault,
 )

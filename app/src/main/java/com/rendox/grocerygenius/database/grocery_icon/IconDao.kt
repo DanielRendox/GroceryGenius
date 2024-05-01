@@ -15,21 +15,23 @@ interface IconDao {
     @Upsert
     suspend fun upsertGroceryIcons(groceryIconEntities: List<IconEntity>)
 
-    @Query("""
+    @Query(
+        """
         SELECT 
-        i.id,
+        i.uniqueFileName,
         i.filePath,
         p.name
         FROM IconEntity i
-        LEFT JOIN ProductEntity p ON i.id = p.iconId
-        GROUP BY i.id
-    """)
+        LEFT JOIN ProductEntity p ON i.uniqueFileName = p.iconFileName
+        GROUP BY i.uniqueFileName
+    """
+    )
     fun getAllGroceryIcons(): Flow<List<IconReference>>
 
     @Query(
         """
             DELETE FROM IconEntity
-            WHERE id in (:ids)
+            WHERE uniqueFileName in (:ids)
         """,
     )
     suspend fun deleteIcons(ids: List<String>)

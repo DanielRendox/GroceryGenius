@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "56f9f8a6cc8cbf5ed31ac94a2bcb47de",
+    "identityHash": "1b70e8318de21c76c8119ad5db46bb74",
     "entities": [
       {
         "tableName": "CategoryEntity",
@@ -157,7 +157,7 @@
       },
       {
         "tableName": "ProductEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `isDefault` INTEGER NOT NULL, `iconId` TEXT, `categoryId` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`iconId`) REFERENCES `IconEntity`(`id`) ON UPDATE CASCADE ON DELETE SET NULL , FOREIGN KEY(`categoryId`) REFERENCES `CategoryEntity`(`id`) ON UPDATE CASCADE ON DELETE SET NULL )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `isDefault` INTEGER NOT NULL, `iconFileName` TEXT, `categoryId` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`iconFileName`) REFERENCES `IconEntity`(`uniqueFileName`) ON UPDATE CASCADE ON DELETE SET NULL , FOREIGN KEY(`categoryId`) REFERENCES `CategoryEntity`(`id`) ON UPDATE CASCADE ON DELETE SET NULL )",
         "fields": [
           {
             "fieldPath": "id",
@@ -178,8 +178,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "iconId",
-            "columnName": "iconId",
+            "fieldPath": "iconFileName",
+            "columnName": "iconFileName",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -198,13 +198,13 @@
         },
         "indices": [
           {
-            "name": "index_ProductEntity_iconId",
+            "name": "index_ProductEntity_iconFileName",
             "unique": false,
             "columnNames": [
-              "iconId"
+              "iconFileName"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_ProductEntity_iconId` ON `${TABLE_NAME}` (`iconId`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ProductEntity_iconFileName` ON `${TABLE_NAME}` (`iconFileName`)"
           },
           {
             "name": "index_ProductEntity_categoryId",
@@ -222,10 +222,10 @@
             "onDelete": "SET NULL",
             "onUpdate": "CASCADE",
             "columns": [
-              "iconId"
+              "iconFileName"
             ],
             "referencedColumns": [
-              "id"
+              "uniqueFileName"
             ]
           },
           {
@@ -243,11 +243,11 @@
       },
       {
         "tableName": "IconEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `filePath` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uniqueFileName` TEXT NOT NULL, `filePath` TEXT NOT NULL, PRIMARY KEY(`uniqueFileName`))",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
+            "fieldPath": "uniqueFileName",
+            "columnName": "uniqueFileName",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -261,7 +261,7 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "id"
+            "uniqueFileName"
           ]
         },
         "indices": [
@@ -281,7 +281,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '56f9f8a6cc8cbf5ed31ac94a2bcb47de')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1b70e8318de21c76c8119ad5db46bb74')"
     ]
   }
 }

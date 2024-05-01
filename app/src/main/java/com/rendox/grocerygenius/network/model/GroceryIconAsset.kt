@@ -4,6 +4,6 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class GroceryIconAsset(
-    val id: String,
+    val fileName: String,
     val assetFilePath: String,
 )

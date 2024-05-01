@@ -137,7 +137,7 @@ fun EditGroceryBottomSheet(
                 },
                 title = { screenState.icons[it].name ?: "" },
                 onIconSelected = {
-                    onIntent(EditGroceryUiIntent.OnIconSelected(screenState.icons[it].id))
+                    onIntent(EditGroceryUiIntent.OnIconSelected(screenState.icons[it].uniqueFileName))
                     pickerDialog = PickerDialogType.None
                 },
                 onDismissRequest = { pickerDialog = PickerDialogType.None },

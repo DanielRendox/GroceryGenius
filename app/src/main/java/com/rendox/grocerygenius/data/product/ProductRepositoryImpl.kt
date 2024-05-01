@@ -42,9 +42,6 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
     override suspend fun syncWith(synchronizer: Synchronizer) = synchronizer.changeListSync(
-        checkIfExistingDataIsEmpty = {
-            productDao.getAllProducts().isEmpty()
-        },
         prepopulateWithInitialData = {
             val products = productNetworkDataSource.getAllProducts()
             productDao.insertProducts(products.map { it.asEntity() })

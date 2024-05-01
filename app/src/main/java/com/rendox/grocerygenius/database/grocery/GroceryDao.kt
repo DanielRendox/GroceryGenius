@@ -20,7 +20,7 @@ abstract class GroceryDao {
             product.name,
             grocery.purchased,
             grocery.description,
-            icon.id as iconId,
+            icon.uniqueFileName as iconId,
             icon.filePath as iconFilePath,
             category.id as categoryId,
             category.name as categoryName,
@@ -30,7 +30,7 @@ abstract class GroceryDao {
         FROM GroceryEntity grocery
         INNER JOIN ProductEntity product ON grocery.productId = product.id
         LEFT JOIN CategoryEntity category ON product.categoryId = category.id
-        LEFT JOIN IconEntity icon ON product.iconId = icon.id
+        LEFT JOIN IconEntity icon ON product.iconFileName = icon.uniqueFileName
         WHERE grocery.groceryListId = :listId
     """
     )
@@ -43,7 +43,7 @@ abstract class GroceryDao {
             product.name,
             grocery.purchased,
             grocery.description,
-            icon.id as iconId,
+            icon.uniqueFileName as iconId,
             icon.filePath as iconFilePath,
             category.id as categoryId,
             category.name as categoryName,
@@ -53,7 +53,7 @@ abstract class GroceryDao {
         FROM GroceryEntity grocery
         INNER JOIN ProductEntity product ON grocery.productId = product.id
         LEFT JOIN CategoryEntity category ON product.categoryId = category.id
-        LEFT JOIN IconEntity icon ON product.iconId = icon.id
+        LEFT JOIN IconEntity icon ON product.iconFileName = icon.uniqueFileName
         WHERE grocery.productId = :productId AND grocery.groceryListId = :listId
     """
     )

@@ -8,7 +8,6 @@ import com.rendox.grocerygenius.database.category.CategoryDao
 import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.network.category.CategoryNetworkDataSource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -32,9 +31,6 @@ class CategoryRepositoryImpl @Inject constructor(
     }
 
     override suspend fun syncWith(synchronizer: Synchronizer) = synchronizer.changeListSync(
-        checkIfExistingDataIsEmpty = {
-            categoryDao.getAllCategories().first().isEmpty()
-        },
         prepopulateWithInitialData = {
             val categories = categoryNetworkDataSource.getAllCategories()
             categoryDao.insertCategories(categories.map { it.asEntity() })

@@ -19,7 +19,7 @@ fun CombinedGrocery.asExternalModel() = Grocery(
 val CombinedGrocery.icon
     get() = when {
         iconId != null && iconFilePath != null -> IconReference(
-            id = iconId,
+            uniqueFileName = iconId,
             filePath = iconFilePath,
         )
 

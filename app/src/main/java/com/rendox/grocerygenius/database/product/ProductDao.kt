@@ -21,7 +21,7 @@ interface ProductDao {
         SELECT 
             product.id,
             product.name,
-            icon.id as iconId,
+            icon.uniqueFileName as iconId,
             icon.filePath as iconFilePath,
             category.id as categoryId,
             category.name as categoryName,
@@ -29,7 +29,7 @@ interface ProductDao {
             product.isDefault
         FROM ProductEntity product
         LEFT JOIN CategoryEntity category ON product.categoryId = category.id
-        LEFT JOIN IconEntity icon ON product.iconId = icon.id
+        LEFT JOIN IconEntity icon ON product.iconFileName = icon.uniqueFileName
         WHERE product.categoryId = :categoryId
     """
     )
@@ -40,7 +40,7 @@ interface ProductDao {
         SELECT 
             product.id,
             product.name,
-            icon.id as iconId,
+            icon.uniqueFileName as iconId,
             icon.filePath as iconFilePath,
             category.id as categoryId,
             category.name as categoryName,
@@ -48,7 +48,7 @@ interface ProductDao {
             product.isDefault
         FROM ProductEntity product
         LEFT JOIN CategoryEntity category ON product.categoryId = category.id
-        LEFT JOIN IconEntity icon ON product.iconId = icon.id
+        LEFT JOIN IconEntity icon ON product.iconFileName = icon.uniqueFileName
         WHERE LOWER(product.name) LIKE LOWER(:name)
     """
     )
@@ -60,7 +60,7 @@ interface ProductDao {
     @Query("UPDATE ProductEntity SET categoryId = :categoryId WHERE id = :productId")
     suspend fun updateProductCategory(productId: String, categoryId: String?)
 
-    @Query("UPDATE ProductEntity SET iconId = :iconId WHERE id = :productId")
+    @Query("UPDATE ProductEntity SET iconFileName = :iconId WHERE id = :productId")
     suspend fun updateProductIcon(productId: String, iconId: String)
 
     @Query("DELETE FROM ProductEntity WHERE id = :productId")

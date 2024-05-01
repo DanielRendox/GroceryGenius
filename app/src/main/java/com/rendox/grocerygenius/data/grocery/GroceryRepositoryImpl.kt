@@ -47,7 +47,7 @@ class GroceryRepositoryImpl @Inject constructor(
             id = productId,
             name = name,
             categoryId = categoryId,
-            iconId = iconId,
+            iconFileName = iconId,
             isDefault = isDefault,
         )
         val grocery = GroceryEntity(
