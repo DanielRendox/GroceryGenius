@@ -226,7 +226,11 @@ private fun SearchResults(
                     groceryName = product.name,
                     groceryDescription = product.description,
                     color = MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor,
-                    iconFile = null,
+                    iconFile = remember(product.iconReference?.filePath) {
+                        product.iconReference?.filePath?.let { filePath ->
+                            File(context.filesDir, filePath)
+                        }
+                    }
                 )
             }
         }

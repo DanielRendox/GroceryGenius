@@ -7,6 +7,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rendox.grocerygenius.data.grocery.GroceryRepository
+import com.rendox.grocerygenius.data.icons.IconRepository
 import com.rendox.grocerygenius.data.product.ProductRepository
 import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.model.Grocery
@@ -29,6 +30,7 @@ import javax.inject.Inject
 class AddGroceryViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val groceryRepository: GroceryRepository,
+    private val iconRepository: IconRepository,
 ) : ViewModel() {
     private val _uiStateFlow = MutableStateFlow(AddGroceryUiState())
     val uiStateFlow = _uiStateFlow.asStateFlow()
@@ -45,9 +47,9 @@ class AddGroceryViewModel @Inject constructor(
                 _uiStateFlow.update {
                     it.copy(clearSearchQueryButtonIsShown = searchQuery.isNotEmpty())
                 }
-                val trimmedSearchInput = searchQuery.trim()
-                if (trimmedSearchInput.isNotEmpty()) {
-                    updateSearchResults(trimmedSearchInput)
+                val trimmedSearchQuery = searchQuery.trim()
+                if (trimmedSearchQuery.isNotEmpty()) {
+                    updateSearchResults(trimmedSearchQuery)
                     _uiStateFlow.update {
                         it.copy(
                             bottomSheetContentType = AddGroceryBottomSheetContentType.SearchResults
@@ -112,18 +114,18 @@ class AddGroceryViewModel @Inject constructor(
             _uiStateFlow.value.customProduct?.let { addCustomProduct(it) }
     }
 
-    private fun updateSearchResults(searchInput: String) {
+    private fun updateSearchResults(searchQuery: String) {
         viewModelScope.launch {
-            val searchResults = productRepository.getProductsByName("%$searchInput%")
+            val searchResults = productRepository.getProductsByName("%$searchQuery%")
                 .sortedWith(
                     compareBy(
-                        { !it.name.startsWith(searchInput, ignoreCase = true) },
+                        { !it.name.startsWith(searchQuery, ignoreCase = true) },
                         { it.name }
                     )
                 )
 
             val isPerfectMatch =
-                searchResults.firstOrNull()?.name.equals(searchInput, ignoreCase = true)
+                searchResults.firstOrNull()?.name.equals(searchQuery, ignoreCase = true)
 
             val groceries = getGroceries()
             val newResults = searchResults.map { product ->
@@ -140,11 +142,15 @@ class AddGroceryViewModel @Inject constructor(
                 )
             }
 
+            val customProduct = if (!isPerfectMatch) CustomProduct(
+                name = searchQuery,
+                iconReference = iconRepository.getGroceryIconsBySearchQuery(
+                    keywords = searchQuery.split(" ")
+                ).first().firstOrNull(), // assuming that the best matching result is first
+            ) else null
             _uiStateFlow.update {
                 it.copy(
-                    customProduct = if (!isPerfectMatch) CustomProduct(
-                        name = searchInput
-                    ) else null,
+                    customProduct = customProduct,
                     grocerySearchResults = newResults,
                 )
             }

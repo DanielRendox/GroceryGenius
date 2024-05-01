@@ -6,12 +6,12 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class GroceryDao {
+interface GroceryDao {
     @Insert
-    abstract suspend fun insertGroceries(groceries: List<GroceryEntity>)
+    suspend fun insertGroceries(groceries: List<GroceryEntity>)
 
     @Insert
-    abstract suspend fun insertGrocery(grocery: GroceryEntity)
+    suspend fun insertGrocery(grocery: GroceryEntity)
 
     @Query(
         """
@@ -34,7 +34,7 @@ abstract class GroceryDao {
         WHERE grocery.groceryListId = :listId
     """
     )
-    abstract fun getGroceriesFromList(listId: String): Flow<List<CombinedGrocery>>
+    fun getGroceriesFromList(listId: String): Flow<List<CombinedGrocery>>
 
     @Query(
         """
@@ -57,14 +57,14 @@ abstract class GroceryDao {
         WHERE grocery.productId = :productId AND grocery.groceryListId = :listId
     """
     )
-    abstract fun getGrocery(productId: String, listId: String): Flow<CombinedGrocery?>
+    fun getGrocery(productId: String, listId: String): Flow<CombinedGrocery?>
 
     @Query("""
         UPDATE GroceryEntity
         SET purchased = :purchased, purchasedLastModified = :purchasedLastModified
         WHERE productId = :productId AND groceryListId = :listId
     """)
-    abstract suspend fun updatePurchased(
+    suspend fun updatePurchased(
         productId: String,
         listId: String,
         purchased: Boolean,
@@ -76,11 +76,11 @@ abstract class GroceryDao {
         SET description = :description
         WHERE productId = :productId AND groceryListId = :listId
     """)
-    abstract suspend fun updateDescription(productId: String, listId: String, description: String?)
+    suspend fun updateDescription(productId: String, listId: String, description: String?)
 
     @Query("DELETE FROM GroceryEntity WHERE productId = :productId AND groceryListId = :listId")
-    abstract suspend fun deleteGrocery(productId: String, listId: String)
+    suspend fun deleteGrocery(productId: String, listId: String)
 
     @Query("SELECT COUNT(productId) FROM GroceryEntity WHERE groceryListId = :listId")
-    abstract fun getNumOfGroceriesInList(listId: String): Flow<Int>
+    fun getNumOfGroceriesInList(listId: String): Flow<Int>
 }

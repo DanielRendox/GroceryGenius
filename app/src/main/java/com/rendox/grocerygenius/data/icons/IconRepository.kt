@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface IconRepository : Syncable {
     fun getAllGroceryIcons(): Flow<List<IconReference>>
+    fun getGroceryIconsBySearchQuery(keywords: List<String>): Flow<List<IconReference>>
 }
