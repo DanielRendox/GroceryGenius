@@ -1,22 +1,28 @@
 package com.rendox.grocerygenius.ui.components.grocery_list
 
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.rendox.grocerygenius.model.Grocery
+import com.rendox.grocerygenius.ui.components.scrollbar.DecorativeScrollbar
+import com.rendox.grocerygenius.ui.components.scrollbar.scrollbarState
 import kotlin.math.roundToInt
 
 @Composable
@@ -25,9 +31,11 @@ fun LazyGroceryGrid(
     lazyGridState: LazyGridState = rememberLazyGridState(),
     contentPadding: PaddingValues = PaddingValues(0.dp),
     groceries: List<Grocery>,
+    showScrollbar: Boolean = true,
     groceryItem: @Composable (Grocery) -> Unit,
     customProduct: (@Composable () -> Unit)? = null,
 ) {
+    val scrollbarState = lazyGridState.scrollbarState(itemsAvailable = groceries.size)
     BoxWithConstraints(modifier = modifier) {
         val density = LocalDensity.current
         val gridWidth = this.maxWidth
@@ -94,6 +102,16 @@ fun LazyGroceryGrid(
                     }
                 }
             }
+        }
+        if (showScrollbar) {
+            lazyGridState.DecorativeScrollbar(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(horizontal = 2.dp)
+                    .align(Alignment.CenterEnd),
+                state = scrollbarState,
+                orientation = Orientation.Vertical,
+            )
         }
     }
 }

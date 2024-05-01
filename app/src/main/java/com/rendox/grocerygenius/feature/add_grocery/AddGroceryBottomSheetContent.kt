@@ -233,7 +233,8 @@ private fun SearchResults(
                     }
                 )
             }
-        }
+        },
+        showScrollbar = false,
     )
 }
 
