@@ -364,9 +364,9 @@
     "isDefault": true
   },
   {
-    "id": "default-product-ground-meat",
-    "name": "Ground Meat",
-    "iconId": "ground_meat_v1.png",
+    "id": "default-product-minced-meat",
+    "name": "Minced meat",
+    "iconId": "minced_meat_v1.png",
     "categoryId": "default-category-meat-and-fish",
     "isDefault": true
   },
@@ -569,7 +569,7 @@
   {
     "id": "default-product-paprika",
     "name": "Paprika",
-    "iconId": "jar_of_spices_v1.png",
+    "iconId": "jar_spices_v1.png",
     "categoryId": "default-category-fruits-and-vegetables",
     "isDefault": true
   },
@@ -611,7 +611,7 @@
   {
     "id": "default-product-peppercorns",
     "name": "Peppercorns",
-    "iconId": "jar_of_spices_v1.png",
+    "iconId": "jar_spices_v1.png",
     "categoryId": "default-category-sauces-and-spices",
     "isDefault": true
   },

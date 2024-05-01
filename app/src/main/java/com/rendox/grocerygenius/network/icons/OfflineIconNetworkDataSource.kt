@@ -26,21 +26,24 @@ class OfflineIconNetworkDataSource @Inject constructor(
 
     override suspend fun downloadIcons(): List<IconReference> = withContext(ioDispatcher) {
         val iconsArchive =
-            assetToFileSaver.copyAssetToInternalStorage("grocery/icons/all_icons.zip")
-        if (iconsArchive == null || !iconsArchive.exists()) return@withContext emptyList()
+            assetToFileSaver.copyAssetToInternalStorage("grocery/icons/all_icons_v1.zip")
+        if (iconsArchive == null) {
+            throw IllegalStateException(
+                "Failed to copy icons archive to internal storage because iconsArchive is null"
+            )
+        } else if (!iconsArchive.exists()) {
+            throw IllegalStateException(
+                "Failed to copy icons archive to internal storage because iconsArchive does not exist"
+            )
+        }
         val extractedFiles = UnzipUtils.unzip(
             iconsArchive, appContext.filesDir.absolutePath + "/grocery/icons"
-        )
-            .onEach {
-                println("OfflineNetworkDataSource extracted file: $it")
-                println("OfflineNetworkDataSource extracted file parent: ${it.parentFile}")
-            }
-            .map { file ->
-                IconReference(
-                    uniqueFileName = file.name,
-                    filePath = file.toRelativeString(appContext.filesDir),
-                )
-            }
+        ).map { file ->
+            IconReference(
+                uniqueFileName = file.name,
+                filePath = file.toRelativeString(appContext.filesDir),
+            )
+        }
         try {
             iconsArchive.delete()
         } catch (e: Exception) {
