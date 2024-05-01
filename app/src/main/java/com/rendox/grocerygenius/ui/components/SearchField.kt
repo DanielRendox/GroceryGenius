@@ -11,7 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -34,16 +38,37 @@ fun SearchField(
     onClearSearchInputClicked: () -> Unit,
     onKeyboardDone: () -> Unit,
 ) {
-    val searchQueryTextFieldValue = remember(searchQuery) {
-        TextFieldValue(
-            text = searchQuery,
-            selection = TextRange(searchQuery.length),
+    var searchQueryTextFieldValue by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = searchQuery, selection = when {
+                    searchQuery.isEmpty() -> TextRange.Zero
+                    else -> TextRange(searchQuery.length, searchQuery.length)
+                }
+            )
         )
     }
+    val textFieldValue = searchQueryTextFieldValue.copy(text = searchQuery)
+    SideEffect {
+        if (textFieldValue.selection != searchQueryTextFieldValue.selection ||
+            textFieldValue.composition != searchQueryTextFieldValue.composition
+        ) {
+            searchQueryTextFieldValue = textFieldValue
+        }
+    }
+
+    var lastTextValue by remember(searchQuery) { mutableStateOf(searchQuery) }
     SearchField(
         modifier = modifier,
-        searchQuery = searchQueryTextFieldValue,
-        onSearchQueryChanged = { onSearchQueryChanged(it.text) },
+        searchQuery = textFieldValue,
+        onSearchQueryChanged = { newSearchQueryTextFieldValue ->
+            searchQueryTextFieldValue = newSearchQueryTextFieldValue
+            val stringChangedSinceLastInvocation = lastTextValue != newSearchQueryTextFieldValue.text
+            lastTextValue = newSearchQueryTextFieldValue.text
+            if (stringChangedSinceLastInvocation) {
+                onSearchQueryChanged(newSearchQueryTextFieldValue.text)
+            }
+        },
         placeholder = placeholder,
         clearSearchInputButtonIsShown = clearSearchInputButtonIsShown,
         onClearSearchInputClicked = onClearSearchInputClicked,
