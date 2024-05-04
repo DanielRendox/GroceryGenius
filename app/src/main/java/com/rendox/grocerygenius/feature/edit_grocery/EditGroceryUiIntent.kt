@@ -8,7 +8,6 @@ sealed interface EditGroceryUiIntent {
     data object OnClearDescription : EditGroceryUiIntent
     data class OnCategorySelected(val category: Category) : EditGroceryUiIntent
     data object OnCustomCategorySelected : EditGroceryUiIntent
-    data class OnIconSelected(val iconId: String) : EditGroceryUiIntent
     data object OnRemoveGroceryFromList : EditGroceryUiIntent
     data object OnDeleteProduct : EditGroceryUiIntent
 

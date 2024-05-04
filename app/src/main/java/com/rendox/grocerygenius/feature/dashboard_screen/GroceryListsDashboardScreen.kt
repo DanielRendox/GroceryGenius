@@ -36,7 +36,7 @@ import com.rendox.grocerygenius.feature.dashboard_screen.recyclerview.DashboardR
 import com.rendox.grocerygenius.model.GroceryList
 import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
-import com.rendox.grocerygenius.ui.theme.TopAppBarActionsEndPadding
+import com.rendox.grocerygenius.ui.theme.TopAppBarActionsHorizontalPadding
 import com.rendox.grocerygenius.ui.theme.TopAppBarSmallHeight
 
 @Composable
@@ -85,7 +85,7 @@ fun GroceryListsDashboardScreen(
             )
             IconButton(
                 modifier = Modifier
-                    .padding(end = TopAppBarActionsEndPadding)
+                    .padding(end = TopAppBarActionsHorizontalPadding)
                     .align(Alignment.CenterEnd),
                 onClick = navigateToSettingsScreen,
             ) {

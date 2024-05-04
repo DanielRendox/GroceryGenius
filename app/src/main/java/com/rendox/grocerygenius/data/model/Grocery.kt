@@ -21,6 +21,7 @@ val CombinedGrocery.icon
         iconId != null && iconFilePath != null -> IconReference(
             uniqueFileName = iconId,
             filePath = iconFilePath,
+            name = this.name,
         )
 
         else -> null

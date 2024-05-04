@@ -39,6 +39,10 @@
     <string name="settings_default_list">Default List</string>
     <string name="settings_default_list_unspecified">None</string>
 
+    <!-- IconPickerScreen -->
+    <string name="icon_picker_screen_title">Choose icon</string>
+    <string name="icon_picker_search_field_placeholder">Search an icon</string>
+
     <!-- General -->
     <string name="done">Done</string>
     <string name="delete">Delete</string>
@@ -46,6 +50,7 @@
     <string name="back">Back</string>
     <string name="settings">Settings</string>
     <string name="forward">Forward</string>
+    <string name="close">Close</string>
 
     <!-- Components -->
     <string name="custom_category_title">Custom</string>

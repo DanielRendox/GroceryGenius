@@ -8,4 +8,4 @@ val GroceryItemRounding = 8.dp
 
 val TopAppBarSmallHeight = 56.dp
 val TopAppBarMediumHeight = 112.dp
-val TopAppBarActionsEndPadding = 12.dp
+val TopAppBarActionsHorizontalPadding = 12.dp

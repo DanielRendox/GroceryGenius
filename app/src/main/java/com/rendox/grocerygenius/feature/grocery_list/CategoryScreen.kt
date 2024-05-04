@@ -34,7 +34,7 @@ import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolb
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.CollapsingToolbarNestedScrollConnection
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.rememberExitUntilCollapsedToolbarState
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGrid
-import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
+import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGridItem
 import com.rendox.grocerygenius.ui.components.grocery_list.groceryListItemColors
 import com.rendox.grocerygenius.ui.theme.TopAppBarMediumHeight
 import com.rendox.grocerygenius.ui.theme.TopAppBarSmallHeight
@@ -121,7 +121,7 @@ fun CategoryScreen(
             groceries = groceries,
             lazyGridState = lazyGridState,
             groceryItem = { grocery ->
-                LazyGroceryGridItem(
+                GroceryGridItem(
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable { onGroceryClick(grocery) },

@@ -2,9 +2,6 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="AssetToFileSaverTest">
-        <State />
-      </entry>
       <entry key="Generate Baseline Profile for app">
         <State>
           <targetSelectedWithDropDown>
@@ -21,11 +18,14 @@
           <timeTargetWasSelectedWithDropDown value="2024-04-29T18:10:55.565944300Z" />
         </State>
       </entry>
+      <entry key="IconPickerScreenPreview">
+        <State />
+      </entry>
       <entry key="app">
         <State>
-          <targetSelectedWithDropDown>
+          <runningDeviceTargetSelectedWithDropDown>
             <Target>
-              <type value="QUICK_BOOT_TARGET" />
+              <type value="RUNNING_DEVICE_TARGET" />
               <deviceKey>
                 <Key>
                   <type value="VIRTUAL_DEVICE_PATH" />
@@ -33,8 +33,8 @@
                 </Key>
               </deviceKey>
             </Target>
-          </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-04-30T07:31:43.877119700Z" />
+          </runningDeviceTargetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-05-04T14:40:15.573849200Z" />
         </State>
       </entry>
       <entry key="criticalUserJourney()">

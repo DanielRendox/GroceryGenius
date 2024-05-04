@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rendox.grocerygenius.data.category.CategoryRepository
 import com.rendox.grocerygenius.data.grocery.GroceryRepository
-import com.rendox.grocerygenius.data.icons.IconRepository
 import com.rendox.grocerygenius.data.product.ProductRepository
 import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.CompoundGroceryId
@@ -32,7 +31,6 @@ class EditGroceryViewModel @Inject constructor(
     categoryRepository: CategoryRepository,
     private val groceryRepository: GroceryRepository,
     private val productRepository: ProductRepository,
-    private val iconRepository: IconRepository,
 ) : ViewModel() {
     private val compoundGroceryIdFlow = MutableStateFlow<CompoundGroceryId?>(null)
 
@@ -62,13 +60,6 @@ class EditGroceryViewModel @Inject constructor(
                 }
             }
         }
-        viewModelScope.launch {
-            iconRepository.getAllGroceryIcons().collectLatest { icons ->
-                _uiStateFlow.update { screenState ->
-                    screenState.copy(icons = icons.sortedBy { it.name })
-                }
-            }
-        }
     }
 
     fun onIntent(intent: EditGroceryUiIntent) = when (intent) {
@@ -83,9 +74,6 @@ class EditGroceryViewModel @Inject constructor(
 
         is EditGroceryUiIntent.OnCustomCategorySelected ->
             onCategorySelected(null)
-
-        is EditGroceryUiIntent.OnIconSelected ->
-            onIconSelected(intent.iconId)
 
         is EditGroceryUiIntent.OnRemoveGroceryFromList ->
             onRemoveGroceryFromList()
@@ -108,17 +96,6 @@ class EditGroceryViewModel @Inject constructor(
             _uiStateFlow.update { uiState ->
                 uiState.copy(
                     editGrocery = uiState.editGrocery?.copy(category = category)
-                )
-            }
-        }
-    }
-
-    private fun onIconSelected(iconId: String) {
-        viewModelScope.launch {
-            compoundGroceryIdFlow.value?.productId?.let {
-                productRepository.updateProductIcon(
-                    productId = it,
-                    iconId = iconId,
                 )
             }
         }

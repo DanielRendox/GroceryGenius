@@ -108,14 +108,13 @@ import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.rememberExitUntilCollapsedToolbarState
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
 import com.rendox.grocerygenius.ui.components.grocery_list.GroupedLazyGroceryGrid
-import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
+import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGridItem
 import com.rendox.grocerygenius.ui.components.grocery_list.groceryListItemColors
 import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import com.rendox.grocerygenius.ui.theme.GroceryItemRounding
 import com.rendox.grocerygenius.ui.theme.TopAppBarMediumHeight
 import com.rendox.grocerygenius.ui.theme.TopAppBarSmallHeight
-import kotlinx.coroutines.launch
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -125,6 +124,7 @@ fun GroceryListRoute(
     addGroceryViewModel: AddGroceryViewModel = hiltViewModel(),
     navigateBack: () -> Unit,
     navigateToCategoryScreen: () -> Unit,
+    navigateToIconPicker: (String) -> Unit,
 ) {
     val groceryGroups by groceryListViewModel.groceryGroupsFlow.collectAsStateWithLifecycle()
     val closeGroceryListScreenEvent by groceryListViewModel.closeGroceryListScreenEvent.collectAsStateWithLifecycle()
@@ -133,7 +133,6 @@ fun GroceryListRoute(
     val groceryListEditModeIsEnabled by groceryListViewModel.groceryListEditModeIsEnabledFlow.collectAsStateWithLifecycle()
     val categories by groceryListViewModel.categoriesFlow.collectAsStateWithLifecycle()
     val navigateToCategoryScreenEvent by groceryListViewModel.navigateToCategoryScreenEvent.collectAsStateWithLifecycle()
-    val coroutineScope = rememberCoroutineScope()
 
     ObserveUiEvent(closeGroceryListScreenEvent) {
         navigateBack()
@@ -210,16 +209,11 @@ fun GroceryListRoute(
             screenState = editGroceryScreenState,
             editGroceryDescription = editGroceryViewModel.editGroceryDescription,
             editBottomSheetState = editBottomSheetState,
-            hideBottomSheet = {
-                coroutineScope
-                    .launch { editBottomSheetState.hide() }
-                    .invokeOnCompletion {
-                        if (!editBottomSheetState.isVisible) {
-                            editGroceryScreenIsVisible = false
-                        }
-                    }
+            hideBottomSheetOnCompletion = {
+                editGroceryScreenIsVisible = false
             },
             onIntent = editGroceryViewModel::onIntent,
+            navigateToIconPicker = navigateToIconPicker,
         )
     }
 }
@@ -559,7 +553,7 @@ private fun GroceryGrid(
         modifier = modifier,
         groceryGroups = groceryGroups,
         groceryItem = { grocery ->
-            LazyGroceryGridItem(
+            GroceryGridItem(
                 modifier = Modifier
                     .fillMaxSize()
                     .combinedClickable(

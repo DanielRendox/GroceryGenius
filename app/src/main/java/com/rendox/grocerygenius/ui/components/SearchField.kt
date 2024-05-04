@@ -34,9 +34,10 @@ fun SearchField(
     searchQuery: String,
     onSearchQueryChanged: (String) -> Unit,
     placeholder: @Composable () -> Unit,
+    leadingIcon: @Composable (() -> Unit)? = null,
     clearSearchInputButtonIsShown: Boolean,
     onClearSearchInputClicked: () -> Unit,
-    onKeyboardDone: () -> Unit,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
     var searchQueryTextFieldValue by remember {
         mutableStateOf(
@@ -63,7 +64,8 @@ fun SearchField(
         searchQuery = textFieldValue,
         onSearchQueryChanged = { newSearchQueryTextFieldValue ->
             searchQueryTextFieldValue = newSearchQueryTextFieldValue
-            val stringChangedSinceLastInvocation = lastTextValue != newSearchQueryTextFieldValue.text
+            val stringChangedSinceLastInvocation =
+                lastTextValue != newSearchQueryTextFieldValue.text
             lastTextValue = newSearchQueryTextFieldValue.text
             if (stringChangedSinceLastInvocation) {
                 onSearchQueryChanged(newSearchQueryTextFieldValue.text)
@@ -72,7 +74,8 @@ fun SearchField(
         placeholder = placeholder,
         clearSearchInputButtonIsShown = clearSearchInputButtonIsShown,
         onClearSearchInputClicked = onClearSearchInputClicked,
-        onKeyboardDone = onKeyboardDone,
+        keyboardActions = keyboardActions,
+        leadingIcon = leadingIcon,
     )
 }
 
@@ -82,9 +85,10 @@ fun SearchField(
     searchQuery: TextFieldValue,
     onSearchQueryChanged: (TextFieldValue) -> Unit,
     placeholder: @Composable () -> Unit,
+    leadingIcon: @Composable (() -> Unit)? = null,
     clearSearchInputButtonIsShown: Boolean,
     onClearSearchInputClicked: () -> Unit,
-    onKeyboardDone: () -> Unit,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
     TextField(
         modifier = modifier,
@@ -102,9 +106,7 @@ fun SearchField(
             capitalization = KeyboardCapitalization.Sentences,
             imeAction = ImeAction.Done,
         ),
-        keyboardActions = KeyboardActions(
-            onDone = { onKeyboardDone() }
-        ),
+        keyboardActions = keyboardActions,
         trailingIcon = {
             val contentDescription =
                 stringResource(R.string.add_grocery_search_field_trailing_icon_description)
@@ -116,7 +118,8 @@ fun SearchField(
                     )
                 }
             }
-        }
+        },
+        leadingIcon = leadingIcon,
     )
 }
 
@@ -130,7 +133,6 @@ private fun SearchFieldPreview() {
                 onSearchQueryChanged = {},
                 clearSearchInputButtonIsShown = true,
                 onClearSearchInputClicked = {},
-                onKeyboardDone = {},
                 placeholder = { Text("Search") },
             )
         }

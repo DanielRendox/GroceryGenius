@@ -11,6 +11,8 @@ import com.rendox.grocerygenius.feature.dashboard_screen.navigateToGroceryListsD
 import com.rendox.grocerygenius.feature.grocery_list.GROCERY_LIST_CATEGORY_NESTED_NAV_ROUTE_WITH_ARGS
 import com.rendox.grocerygenius.feature.grocery_list.groceryListNestedNavigation
 import com.rendox.grocerygenius.feature.grocery_list.navigateToGroceryList
+import com.rendox.grocerygenius.feature.icon_picker_screen.iconPickerScreen
+import com.rendox.grocerygenius.feature.icon_picker_screen.navigateToIconPicker
 import com.rendox.grocerygenius.feature.settings.navigateToSettings
 import com.rendox.grocerygenius.feature.settings.settingsScreen
 
@@ -48,8 +50,14 @@ fun GroceryGeniusNavHost(
                     }
                 }
             },
+            navigateToIconPicker = {
+                navController.navigateToIconPicker(it)
+            },
         )
         settingsScreen(
+            navigateBack = { navController.popBackStack() },
+        )
+        iconPickerScreen(
             navigateBack = { navController.popBackStack() },
         )
     }

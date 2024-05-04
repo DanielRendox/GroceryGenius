@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ButtonDefaults
@@ -78,9 +79,11 @@ fun EditGroceryBottomSheetContent(
             placeholder = {
                 Text(text = stringResource(R.string.edit_grocery_item_description_placeholder))
             },
+            keyboardActions = KeyboardActions(
+                onDone = { onKeyboardDone() }
+            ),
             clearSearchInputButtonIsShown = clearGroceryDescriptionButtonIsShown,
             onClearSearchInputClicked = onClearGroceryDescription,
-            onKeyboardDone = onKeyboardDone,
         )
 
         if (productCanBeModified) {

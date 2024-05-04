@@ -30,7 +30,7 @@ import com.rendox.grocerygenius.ui.theme.GroceryItemRounding
 import java.io.File
 
 @Composable
-fun LazyGroceryGridItem(
+fun GroceryGridItem(
     modifier: Modifier = Modifier,
     groceryName: String,
     groceryDescription: String?,
@@ -146,7 +146,7 @@ class GridItemPreviewParameterProvider : PreviewParameterProvider<Pair<String, S
 private fun LazyGroceryGridItemPreview(
     @PreviewParameter(GridItemPreviewParameterProvider::class) titleAndDescription: Pair<String, String>,
 ) {
-    LazyGroceryGridItem(
+    GroceryGridItem(
         modifier = Modifier.size(104.dp),
         groceryName = titleAndDescription.first,
         groceryDescription = titleAndDescription.second,

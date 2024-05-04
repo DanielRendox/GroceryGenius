@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Upsert
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProductDao {
@@ -15,6 +16,25 @@ interface ProductDao {
 
     @Upsert
     suspend fun upsertProducts(products: List<ProductEntity>)
+
+    @Query(
+        """
+        SELECT
+        product.id,
+        product.name,
+        icon.uniqueFileName as iconId,
+        icon.filePath as iconFilePath,
+        category.id as categoryId,
+        category.name as categoryName,
+        category.sortingPriority as categorySortingPriority,
+        product.isDefault
+        FROM ProductEntity product
+        LEFT JOIN CategoryEntity category ON product.categoryId = category.id
+        LEFT JOIN IconEntity icon ON product.iconFileName = icon.uniqueFileName
+        WHERE product.id = :productId
+        """
+    )
+    fun getProductById(productId: String): Flow<CombinedProduct?>
 
     @Query(
         """
@@ -61,7 +81,7 @@ interface ProductDao {
     suspend fun updateProductCategory(productId: String, categoryId: String?)
 
     @Query("UPDATE ProductEntity SET iconFileName = :iconId WHERE id = :productId")
-    suspend fun updateProductIcon(productId: String, iconId: String)
+    suspend fun updateProductIcon(productId: String, iconId: String?)
 
     @Query("DELETE FROM ProductEntity WHERE id = :productId")
     suspend fun deleteProductById(productId: String)

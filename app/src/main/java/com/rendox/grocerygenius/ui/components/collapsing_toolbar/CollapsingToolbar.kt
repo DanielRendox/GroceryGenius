@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.ToolbarState
-import com.rendox.grocerygenius.ui.theme.TopAppBarActionsEndPadding
+import com.rendox.grocerygenius.ui.theme.TopAppBarActionsHorizontalPadding
 import kotlin.math.roundToInt
 
 private val collapsedTitleFontSize = 22.sp
@@ -141,7 +141,7 @@ fun CollapsingToolbar(
                     contentAlignment = Alignment.CenterEnd,
                 ) {
                     Row(
-                        modifier = Modifier.padding(end = TopAppBarActionsEndPadding),
+                        modifier = Modifier.padding(end = TopAppBarActionsHorizontalPadding),
                         content = actions
                     )
                 }

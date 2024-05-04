@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
@@ -41,7 +42,7 @@ import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.model.Grocery
 import com.rendox.grocerygenius.ui.components.SearchField
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGrid
-import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGridItem
+import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGridItem
 import com.rendox.grocerygenius.ui.components.grocery_list.groceryListItemColors
 import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
 import com.rendox.grocerygenius.ui.helpers.UiEvent
@@ -175,7 +176,9 @@ private fun BottomSheetHeader(
             },
             clearSearchInputButtonIsShown = clearSearchInputButtonIsShown,
             onClearSearchInputClicked = clearSearchQuery,
-            onKeyboardDone = onKeyboardDone,
+            keyboardActions = KeyboardActions(
+                onDone = { onKeyboardDone() }
+            ),
             onSearchQueryChanged = onSearchQueryChanged,
         )
         Fab(
@@ -199,7 +202,7 @@ private fun SearchResults(
         modifier = modifier,
         groceries = grocerySearchResults,
         groceryItem = { grocery ->
-            LazyGroceryGridItem(
+            GroceryGridItem(
                 modifier = Modifier
                     .fillMaxSize()
                     .clickable { onGrocerySearchResultClick(grocery) },
@@ -219,7 +222,7 @@ private fun SearchResults(
         },
         customProduct = customProduct?.let { product ->
             {
-                LazyGroceryGridItem(
+                GroceryGridItem(
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable { onCustomProductClick(product) },

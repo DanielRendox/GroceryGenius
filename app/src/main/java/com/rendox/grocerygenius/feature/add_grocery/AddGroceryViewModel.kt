@@ -144,9 +144,9 @@ class AddGroceryViewModel @Inject constructor(
 
             val customProduct = if (!isPerfectMatch) CustomProduct(
                 name = searchQuery,
-                iconReference = iconRepository.getGroceryIconsBySearchQuery(
+                iconReference = iconRepository.getGroceryIconsByKeywords(
                     keywords = searchQuery.split(" ")
-                ).first().firstOrNull(), // assuming that the best matching result is first
+                ).firstOrNull(), // assuming that the best matching result is first
             ) else null
             _uiStateFlow.update {
                 it.copy(

@@ -7,6 +7,7 @@ import androidx.room.RawQuery
 import androidx.room.Upsert
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.rendox.grocerygenius.database.product.ProductEntity
+import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.IconReference
 import kotlinx.coroutines.flow.Flow
 
@@ -21,35 +22,51 @@ abstract class IconDao {
     @Query(
         """
         SELECT 
+        c.id,
+        c.name,
+        c.sortingPriority,
         i.uniqueFileName,
         i.filePath,
         p.name
         FROM IconEntity i
         LEFT JOIN ProductEntity p ON i.uniqueFileName = p.iconFileName
+        LEFT JOIN CategoryEntity c ON p.categoryId = c.id
         GROUP BY i.uniqueFileName
     """
     )
-    abstract fun getAllGroceryIcons(): Flow<List<IconReference>>
+    abstract fun getIconsGroupedByCategory(): Flow<Map<Category, List<IconReference>>>
+
+    @Query(
+        """
+        SELECT 
+        i.uniqueFileName,
+        i.filePath,
+        p.name
+        FROM IconEntity i
+        LEFT JOIN ProductEntity p ON i.uniqueFileName = p.iconFileName
+        WHERE LOWER(p.name) LIKE LOWER(:name)
+        GROUP BY i.uniqueFileName
+        """
+    )
+    abstract suspend fun getGroceryIconsByName(name: String): List<IconReference>
 
 
     /**
-     * This function returns only those icons, which have a file name or an associated product name
+     * This function returns only those icons, which have an associated product name
      * that contains one or more given keywords. The search is designed to match whole words
      * so, for example, searching for "apple" will not match "pineapple" or "applesauce". This is
      * useful when you don't want irrelevant results to be displayed. The results are sorted in the
      * order from the most relevant to the least relevant.
      */
-    fun getGroceryIconsByKeywords(keywords: List<String>): Flow<List<IconReference>> {
+     suspend fun getGroceryIconsByKeywords(keywords: List<String>): List<IconReference> {
         val searchCondition = keywords.joinToString(" OR ") { keyword ->
             """
-            ('_' || LOWER(i.uniqueFileName) || '_') LIKE LOWER('%\_$keyword\_%') ESCAPE '\' OR
             (' ' || LOWER(p.name) || ' ') LIKE LOWER('% $keyword %')
         """.trimIndent()
         }
         val orderCondition = keywords.joinToString(" + ") { keyword ->
             """
             CASE
-                WHEN ('_' || LOWER(i.uniqueFileName) || '_') LIKE LOWER('%\_$keyword\_%') ESCAPE '\' THEN 1
                 WHEN (' ' || LOWER(p.name) || ' ') LIKE LOWER('% $keyword %') THEN 1
                 ELSE 0
             END
@@ -70,7 +87,9 @@ abstract class IconDao {
     }
 
     @RawQuery(observedEntities = [IconEntity::class, ProductEntity::class])
-    protected abstract fun getGroceryIconsByRawQuery(query: SimpleSQLiteQuery): Flow<List<IconReference>>
+    protected abstract suspend fun getGroceryIconsByRawQuery(
+        query: SimpleSQLiteQuery
+    ): List<IconReference>
 
     @Query(
         """
