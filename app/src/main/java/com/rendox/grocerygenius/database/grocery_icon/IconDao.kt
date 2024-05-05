@@ -30,8 +30,8 @@ abstract class IconDao {
         i.filePath,
         p.name
         FROM IconEntity i
-        LEFT JOIN ProductEntity p ON i.uniqueFileName = p.iconFileName
-        LEFT JOIN CategoryEntity c ON p.categoryId = c.id
+        INNER JOIN ProductEntity p ON i.uniqueFileName = p.iconFileName
+        INNER JOIN CategoryEntity c ON p.categoryId = c.id
         GROUP BY i.uniqueFileName
     """
     )
