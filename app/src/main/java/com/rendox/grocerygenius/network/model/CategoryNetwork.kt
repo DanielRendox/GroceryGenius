@@ -6,5 +6,5 @@ import com.squareup.moshi.JsonClass
 data class CategoryNetwork(
     val id: String,
     val name: String,
-    val sortingPriority: Int = 1,
+    val sortingPriority: Long,
 )

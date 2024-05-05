@@ -68,6 +68,7 @@ class GroceryListViewModel @AssistedInject constructor(
     val groceryListEditModeIsEnabledFlow = _groceryListEditModeIsEnabledFlow.asStateFlow()
 
     val categoriesFlow = categoryRepository.getAllCategories()
+        .map { categories -> categories.sortedBy { it.sortingPriority } }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -111,7 +112,6 @@ class GroceryListViewModel @AssistedInject constructor(
                             productIsDefault = product.isDefault,
                         )
                     }
-
                 }.collectLatest { groceries ->
                     _openedCategoryGroceriesFlow.update { groceries }
                 }
@@ -151,7 +151,7 @@ class GroceryListViewModel @AssistedInject constructor(
                                 group.value.sortedByDescending { it.purchasedLastModified }
                             } else {
                                 group.value.sortedBy {
-                                    it.category?.sortingPriority ?: Int.MAX_VALUE
+                                    it.category?.sortingPriority
                                 }
                             }
                             GroceryGroup(titleId, sortedGroceries)

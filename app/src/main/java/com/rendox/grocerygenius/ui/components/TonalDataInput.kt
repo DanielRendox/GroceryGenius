@@ -1,5 +1,7 @@
 package com.rendox.grocerygenius.ui.components
 
+import androidx.compose.foundation.Indication
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -15,6 +17,7 @@ import androidx.compose.ui.draw.clip
 fun TonalDataInput(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    indication: Indication? = LocalIndication.current,
     dropDownMenu: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
@@ -24,8 +27,8 @@ fun TonalDataInput(
             .background(MaterialTheme.colorScheme.secondaryContainer)
             .clickable(
                 onClick = onClick,
+                indication = indication,
                 interactionSource = remember { MutableInteractionSource() },
-                indication = null,
             ),
     ) {
         content()

@@ -9,7 +9,7 @@ data class CombinedGrocery(
     val iconFilePath: String?,
     val categoryId: String?,
     val categoryName: String?,
-    val categorySortingPriority: Int?,
+    val categorySortingPriority: Long?,
     val purchasedLastModified: Long,
     val productIsDefault: Boolean,
 )

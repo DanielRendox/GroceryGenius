@@ -7,6 +7,6 @@ data class CombinedProduct(
     val iconFilePath: String?,
     val categoryId: String?,
     val categoryName: String?,
-    val categorySortingPriority: Int?,
+    val categorySortingPriority: Long?,
     val isDefault: Boolean,
 )

@@ -58,14 +58,9 @@ class GroceryListsDashboardViewModel @Inject constructor(
     private fun updateGroceryLists(dashboardItems: List<GroceryList>) {
         viewModelScope.launch {
             val groceryLists = dashboardItems.mapIndexed { index, dashboardItem ->
-                GroceryList(
-                    id = dashboardItem.id,
-                    name = dashboardItem.name,
-                    sortingPriority = index.toLong(),
-                    numOfGroceries = dashboardItem.numOfGroceries,
-                )
+                dashboardItem.copy(sortingPriority = index.toLong())
             }
-            groceryListRepository.upsertGroceryLists(groceryLists)
+            groceryListRepository.updateGroceryLists(groceryLists)
         }
     }
 }

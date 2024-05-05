@@ -291,7 +291,7 @@ private fun SearchResultsPreview() {
                 category = Category(
                     id = index.toString(),
                     name = "Category$index",
-                    sortingPriority = index,
+                    sortingPriority = index.toLong(),
                 ),
             )
         }

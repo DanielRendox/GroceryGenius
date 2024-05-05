@@ -1,5 +1,6 @@
 package com.rendox.grocerygenius.feature.settings
 
+import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,13 +28,16 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,13 +58,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.rendox.grocerygenius.R
+import com.rendox.grocerygenius.feature.settings.categories.recyclerview.CategoriesRecyclerViewAdapter
+import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.DarkThemeConfig
 import com.rendox.grocerygenius.model.GroceryGeniusColorScheme
 import com.rendox.grocerygenius.model.GroceryList
 import com.rendox.grocerygenius.model.UserPreferences
+import com.rendox.grocerygenius.ui.components.BottomSheetDragHandle
 import com.rendox.grocerygenius.ui.components.CustomIconSetting
 import com.rendox.grocerygenius.ui.components.DropDownMenuToggleIcon
 import com.rendox.grocerygenius.ui.components.LazyDropdownMenu
@@ -72,16 +83,17 @@ import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import com.rendox.grocerygenius.ui.theme.TopAppBarMediumHeight
 import com.rendox.grocerygenius.ui.theme.TopAppBarSmallHeight
 import com.rendox.grocerygenius.ui.theme.deriveColorScheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsRoute(
     viewModel: SettingsScreenViewModel = hiltViewModel(),
     navigateBack: () -> Unit = {},
 ) {
-    val screenState by viewModel.screenStateFlow.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     SettingsScreen(
         modifier = Modifier.fillMaxSize(),
-        screenState = screenState,
+        uiState = uiState,
         onIntent = viewModel::onIntent,
         navigateBack = navigateBack,
     )
@@ -90,7 +102,7 @@ fun SettingsRoute(
 @Composable
 private fun SettingsScreen(
     modifier: Modifier = Modifier,
-    screenState: SettingsScreenState,
+    uiState: SettingsScreenState,
     onIntent: (SettingsScreenIntent) -> Unit,
     navigateBack: () -> Unit,
 ) {
@@ -155,7 +167,7 @@ private fun SettingsScreen(
                 },
             )
 
-            if (!screenState.isLoading) {
+            if (!uiState.isLoading) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     state = lazyListState,
@@ -168,7 +180,7 @@ private fun SettingsScreen(
                     }
                     item {
                         DarkThemeConfigSetting(
-                            darkThemeConfig = screenState.userPreferences.darkThemeConfig,
+                            darkThemeConfig = uiState.userPreferences.darkThemeConfig,
                             isThemeDropdownExpanded = isThemeDropdownExpanded,
                             onChangeDarkThemeConfig = {
                                 onIntent(SettingsScreenIntent.ChangeDarkThemeConfig(it))
@@ -178,14 +190,14 @@ private fun SettingsScreen(
                     }
                     item {
                         SystemAccentColorSetting(
-                            useSystemAccentColor = screenState.userPreferences.useSystemAccentColor,
+                            useSystemAccentColor = uiState.userPreferences.useSystemAccentColor,
                             onUseSystemAccentColorChanged = {
                                 onIntent(SettingsScreenIntent.ChangeUseSystemAccentColor(it))
                             }
                         )
                     }
                     item {
-                        AnimatedVisibility(visible = !screenState.userPreferences.useSystemAccentColor) {
+                        AnimatedVisibility(visible = !uiState.userPreferences.useSystemAccentColor) {
                             ColorSchemePicker(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -195,12 +207,12 @@ private fun SettingsScreen(
                                         top = 8.dp,
                                         bottom = 8.dp,
                                     ),
-                                useDarkTheme = when (screenState.userPreferences.darkThemeConfig) {
+                                useDarkTheme = when (uiState.userPreferences.darkThemeConfig) {
                                     DarkThemeConfig.FOLLOW_SYSTEM -> isSystemInDarkTheme()
                                     DarkThemeConfig.LIGHT -> false
                                     DarkThemeConfig.DARK -> true
                                 },
-                                selectedTheme = screenState.userPreferences.selectedTheme,
+                                selectedTheme = uiState.userPreferences.selectedTheme,
                                 onSchemeSelected = {
                                     onIntent(SettingsScreenIntent.ChangeColorScheme(it))
                                 },
@@ -215,17 +227,17 @@ private fun SettingsScreen(
                     }
                     item {
                         OpenLastViewedListSetting(
-                            openLastViewedList = screenState.userPreferences.openLastViewedList,
+                            openLastViewedList = uiState.userPreferences.openLastViewedList,
                             onChangeOpenLastViewedListConfig = {
                                 onIntent(SettingsScreenIntent.ChangeOpenLastViewedListConfig(it))
                             }
                         )
                     }
                     item {
-                        AnimatedVisibility(visible = !screenState.userPreferences.openLastViewedList) {
+                        AnimatedVisibility(visible = !uiState.userPreferences.openLastViewedList) {
                             DefaultListSetting(
-                                groceryLists = screenState.groceryLists,
-                                defaultListId = screenState.userPreferences.defaultListId,
+                                groceryLists = uiState.groceryLists,
+                                defaultListId = uiState.userPreferences.defaultListId,
                                 isDefaultListDropdownExpanded = isDefaultListDropdownExpanded,
                                 onChangeDefaultList = {
                                     onIntent(SettingsScreenIntent.OnChangeDefaultList(it))
@@ -235,6 +247,18 @@ private fun SettingsScreen(
                                 }
                             )
                         }
+                    }
+                    item {
+                        CategoriesOrderSetting(
+                            categories = uiState.categories,
+                            updateCategories = { categories ->
+                                onIntent(SettingsScreenIntent.OnUpdateCategories(categories))
+                            },
+                            onResetCategoriesOrder = {
+                                println("onResetCategoriesOrder")
+                                onIntent(SettingsScreenIntent.OnResetCategoriesOrder)
+                            }
+                        )
                     }
                 }
             }
@@ -277,6 +301,7 @@ fun DarkThemeConfigSetting(
             }
             TonalDataInput(
                 onClick = { onThemeDropdownExpandedChanged(!isThemeDropdownExpanded) },
+                indication = null,
                 dropDownMenu = {
                     DropdownMenu(
                         expanded = isThemeDropdownExpanded,
@@ -297,7 +322,7 @@ fun DarkThemeConfigSetting(
                 }
             ) {
                 Row(
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+                    modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
@@ -420,7 +445,10 @@ fun DefaultListSetting(
             val unspecifiedListTitle = stringResource(R.string.settings_default_list_unspecified)
             val options = listOf(unspecifiedListTitle) + groceryLists.map { it.name }
             TonalDataInput(
-                onClick = { onDefaultListDropdownExpandedChanged(!isDefaultListDropdownExpanded) },
+                onClick = {
+                    onDefaultListDropdownExpandedChanged(!isDefaultListDropdownExpanded)
+                },
+                indication = null,
                 dropDownMenu = {
                     when {
                         options.isEmpty() -> {}
@@ -462,7 +490,7 @@ fun DefaultListSetting(
                 }
             ) {
                 Row(
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+                    modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
@@ -484,13 +512,92 @@ fun DefaultListSetting(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CategoriesOrderSetting(
+    categories: List<Category>,
+    updateCategories: (List<Category>) -> Unit,
+    onResetCategoriesOrder: () -> Unit,
+) {
+    var bottomSheetIsVisible by remember { mutableStateOf(false) }
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val coroutineScope = rememberCoroutineScope()
+    val hideBottomSheet = {
+        coroutineScope
+            .launch { bottomSheetState.hide() }
+            .invokeOnCompletion { bottomSheetIsVisible = false }
+    }
+
+    CustomIconSetting(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { bottomSheetIsVisible = true },
+        title = stringResource(R.string.settings_reorder_categories_title),
+        icon = {
+            Icon(
+                painterResource(id = R.drawable.baseline_swap_vert_24),
+                contentDescription = null,
+            )
+        },
+        trailingComponent = {
+            TonalDataInput(onClick = onResetCategoriesOrder) {
+                Text(
+                    modifier = Modifier
+                        .widthIn(min = 114.dp)
+                        .padding(10.dp),
+                    text = stringResource(R.string.reset),
+                    style = MaterialTheme.typography.labelMedium,
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
+    )
+
+    if (bottomSheetIsVisible) {
+        ModalBottomSheet(
+            onDismissRequest = { hideBottomSheet() },
+            sheetState = bottomSheetState,
+            dragHandle = { BottomSheetDragHandle() },
+            windowInsets = WindowInsets(left = 0, top = 0, right = 0, bottom = 0),
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    text = stringResource(R.string.settings_reorder_categories_description),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+                AndroidView(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .padding(bottom = 16.dp),
+                    factory = { context ->
+                        println("initializeRecyclerview")
+                        RecyclerView(context).apply {
+                            layoutParams = ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                            )
+                            layoutManager = LinearLayoutManager(context)
+                            this.adapter = CategoriesRecyclerViewAdapter(
+                                recyclerView = this,
+                                categories = categories,
+                                updateLists = updateCategories,
+                            )
+                        }
+                    }
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewSettingsScreen() {
     GroceryGeniusTheme {
         Surface {
             SettingsScreen(
-                screenState = remember {
+                uiState = remember {
                     SettingsScreenState(
                         userPreferences = UserPreferences(
                             useSystemAccentColor = false,

@@ -25,6 +25,7 @@ abstract class IconDao {
         c.id,
         c.name,
         c.sortingPriority,
+        c.defaultSortingPriority,
         i.uniqueFileName,
         i.filePath,
         p.name

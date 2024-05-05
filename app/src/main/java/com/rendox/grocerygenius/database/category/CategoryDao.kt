@@ -3,6 +3,7 @@ package com.rendox.grocerygenius.database.category
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
@@ -19,6 +20,9 @@ interface CategoryDao {
 
     @Query("SELECT * FROM CategoryEntity WHERE id = :id")
     fun getCategoryById(id: String): Flow<CategoryEntity?>
+
+    @Update
+    suspend fun updateCategories(categories: List<CategoryEntity>)
 
     @Query(
         """
