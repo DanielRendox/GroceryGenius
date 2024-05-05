@@ -106,16 +106,7 @@ fun AddGroceryBottomSheetContent(
                     .padding(16.dp)
             ) {
                 when (contentType) {
-                    AddGroceryBottomSheetContentType.Suggestions -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Text(text = "Suggestions here")
-                        }
-                    }
+                    AddGroceryBottomSheetContentType.Suggestions -> {}
 
                     AddGroceryBottomSheetContentType.SearchResults -> {
                         SearchResults(
