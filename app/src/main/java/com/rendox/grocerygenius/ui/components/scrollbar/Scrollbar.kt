@@ -46,7 +46,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -307,7 +306,6 @@ fun Scrollbar(
                 }
             },
     ) {
-        val thumbSizeDp = with(LocalDensity.current) { (state.thumbSizePercent * track.size).toDp() }
         // scrollbar thumb container
         Layout(content = { thumb() }) { measurables, constraints ->
             val measurable = measurables.first()
@@ -316,8 +314,6 @@ fun Scrollbar(
                 a = state.thumbSizePercent * track.size,
                 b = minThumbSize.toPx(),
             )
-            println("thumbSizePx: $thumbSizePx")
-            println("thumbSizeDp: $thumbSizeDp")
 
             val trackSizePx = when (state.thumbTrackSizePercent) {
                 0f -> track.size

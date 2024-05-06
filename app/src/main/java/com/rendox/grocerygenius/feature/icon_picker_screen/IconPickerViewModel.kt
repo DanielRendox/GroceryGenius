@@ -104,13 +104,11 @@ class IconPickerViewModel @Inject constructor(
     }
 
     private suspend fun onPickIcon(iconId: String?) {
-        println("IconPickerViewModel onPickIcon")
         val editProductId = editProductIdFlow.value ?: return
         val grocery = groceryRepository.getGroceryById(
             productId = editProductId,
             listId = groceryListId,
         ).first() ?: return
-        println("IconPickerViewModel onPickIcon grocery: $grocery")
 
         if (grocery.productIsDefault) {
             // Default products should not be changed so we create a new custom one

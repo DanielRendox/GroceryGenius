@@ -29,12 +29,12 @@
               <deviceKey>
                 <Key>
                   <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\danie\.android\avd\Pixel_5_API_33.avd" />
+                  <value value="C:\Users\danie\.android\avd\7.6_Fold-in_with_outer_display_API_33.avd" />
                 </Key>
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-05-06T08:57:39.938608700Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-05-06T19:02:53.836268400Z" />
         </State>
       </entry>
       <entry key="criticalUserJourney()">

@@ -255,7 +255,6 @@ private fun SettingsScreen(
                                 onIntent(SettingsScreenIntent.OnUpdateCategories(categories))
                             },
                             onResetCategoriesOrder = {
-                                println("onResetCategoriesOrder")
                                 onIntent(SettingsScreenIntent.OnResetCategoriesOrder)
                             }
                         )
@@ -571,7 +570,6 @@ private fun CategoriesOrderSetting(
                         .navigationBarsPadding()
                         .padding(bottom = 16.dp),
                     factory = { context ->
-                        println("initializeRecyclerview")
                         RecyclerView(context).apply {
                             layoutParams = ViewGroup.LayoutParams(
                                 ViewGroup.LayoutParams.MATCH_PARENT,

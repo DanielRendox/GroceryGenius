@@ -133,6 +133,7 @@ fun GroceryListRoute(
     val groceryListEditModeIsEnabled by groceryListViewModel.groceryListEditModeIsEnabledFlow.collectAsStateWithLifecycle()
     val categories by groceryListViewModel.categoriesFlow.collectAsStateWithLifecycle()
     val navigateToCategoryScreenEvent by groceryListViewModel.navigateToCategoryScreenEvent.collectAsStateWithLifecycle()
+    val groceryListPurchaseState by groceryListViewModel.groceryListPurchaseStateFlow.collectAsStateWithLifecycle()
 
     ObserveUiEvent(closeGroceryListScreenEvent) {
         navigateBack()
@@ -188,6 +189,7 @@ fun GroceryListRoute(
                 GroceryListsUiIntent.OnNavigateToCategoryScreen(categoryId)
             )
         },
+        groceryListPurchaseState = groceryListPurchaseState,
     )
 
     val editGroceryId = editGroceryIdState.value
@@ -224,16 +226,17 @@ fun GroceryListRoute(
 @Composable
 private fun GroceryListScreen(
     modifier: Modifier = Modifier,
-    groceryGroups: List<GroceryGroup>,
+    groceryGroups: List<GroceryGroup>?,
     searchQuery: String,
     addGroceryUiState: AddGroceryUiState,
-    groceryListName: TextFieldValue = TextFieldValue(""),
+    groceryListName: TextFieldValue? = TextFieldValue(""),
     scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
     addGroceryBottomSheetState: AddGroceryBottomSheetState = rememberAddGroceryBottomSheetState(),
     groceryListEditModeIsEnabled: Boolean = false,
     scrimIsShown: Boolean = false,
     toolbarIsHidden: Boolean = false,
-    categories: List<Category> = emptyList(),
+    categories: List<Category>? = emptyList(),
+    groceryListPurchaseState: GroceryListPurchaseState,
     navigateBack: () -> Unit = {},
     onGroceryListUiIntent: (GroceryListsUiIntent) -> Unit = {},
     onAddGroceryUiIntent: (AddGroceryUiIntent) -> Unit = {},
@@ -360,17 +363,24 @@ private fun GroceryListScreen(
                 },
             )
 
-            GroceryGrid(
-                modifier = Modifier.fillMaxSize(),
-                groceryGroups = groceryGroups,
-                onGroceryClick = { onGroceryListUiIntent(GroceryListsUiIntent.OnGroceryItemClick(it)) },
-                categories = categories,
-                onGroceryLongClick = {
-                    showEditGroceryBottomSheet(it.productId)
-                },
-                lazyGridState = lazyGridState,
-                onCategoryItemClick = navigateToCategoryScreen,
-            )
+            if (groceryGroups != null && categories != null) {
+                GroceryGrid(
+                    modifier = Modifier.fillMaxSize(),
+                    groceryGroups = groceryGroups,
+                    onGroceryClick = {
+                        onGroceryListUiIntent(
+                            GroceryListsUiIntent.OnGroceryItemClick(it)
+                        )
+                    },
+                    categories = categories,
+                    onGroceryLongClick = {
+                        showEditGroceryBottomSheet(it.productId)
+                    },
+                    lazyGridState = lazyGridState,
+                    onCategoryItemClick = navigateToCategoryScreen,
+                    groceryListPurchaseState = groceryListPurchaseState,
+                )
+            }
         }
 
         val interactionSource = remember { MutableInteractionSource() }
@@ -389,7 +399,7 @@ private fun GroceryListScreen(
 @Composable
 private fun GroceryListCollapsingToolbar(
     modifier: Modifier = Modifier,
-    listName: TextFieldValue,
+    listName: TextFieldValue?,
     editModeIsEnabled: Boolean,
     toolbarIsHidden: Boolean,
     toolbarHeightRange: IntRange,
@@ -445,13 +455,15 @@ private fun GroceryListCollapsingToolbar(
                     translationY = toolbarState.offset
                 },
                 titleExpanded = {
-                    GroceryListTitleField(
-                        listName = listName,
-                        listNameFieldFocusRequester = listNameFieldFocusRequester,
-                        listNameFieldIsEditable = editModeIsEnabled,
-                        textStyle = expandedTitleStyle,
-                        onUpdateGroceryListName = onUpdateGroceryListName,
-                    )
+                    if (listName != null) {
+                        GroceryListTitleField(
+                            listName = listName,
+                            listNameFieldFocusRequester = listNameFieldFocusRequester,
+                            listNameFieldIsEditable = editModeIsEnabled,
+                            textStyle = expandedTitleStyle,
+                            onUpdateGroceryListName = onUpdateGroceryListName,
+                        )
+                    }
                 },
                 expandedTitleFontSize = expandedTitleStyle.fontSize,
                 titleBottomPadding = 24.dp,
@@ -545,6 +557,7 @@ private fun GroceryGrid(
     groceryGroups: List<GroceryGroup>,
     lazyGridState: LazyGridState,
     categories: List<Category>,
+    groceryListPurchaseState: GroceryListPurchaseState,
     onGroceryClick: (Grocery) -> Unit,
     onGroceryLongClick: (Grocery) -> Unit,
     onCategoryItemClick: (String?) -> Unit,
@@ -583,6 +596,7 @@ private fun GroceryGrid(
         ),
         lazyGridState = lazyGridState,
         numOfAdditionalItems = categories.size + 1,
+        groceryListPurchaseState = groceryListPurchaseState,
         additionalItems = {
             val categoryContentType = "Category"
             val spacerContentType = "SpacerBetweenListAndCategories"
@@ -690,6 +704,7 @@ fun GroceryListScreenPreview() {
                 groceryGroups = sampleGroceryGroups,
                 searchQuery = "",
                 addGroceryUiState = AddGroceryUiState(),
+                groceryListPurchaseState = GroceryListPurchaseState.LIST_IS_FULL,
             )
         }
     }

@@ -37,6 +37,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -53,11 +55,13 @@ class GroceryListViewModel @AssistedInject constructor(
     @Dispatcher(GroceryGeniusDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
-    var openedGroceryListName by mutableStateOf(TextFieldValue(""))
+    var openedGroceryListName by mutableStateOf<TextFieldValue?>(null)
         private set
-    private val openedGroceryListNameFlow = snapshotFlow { openedGroceryListName.text }
 
-    private val _groceryGroupsFlow = MutableStateFlow(emptyList<GroceryGroup>())
+    private val openedGroceryListNameFlow =
+        snapshotFlow { openedGroceryListName?.text }.mapNotNull { it }
+
+    private val _groceryGroupsFlow = MutableStateFlow<List<GroceryGroup>?>(null)
     val groceryGroupsFlow = _groceryGroupsFlow.asStateFlow()
 
     private val _closeGroceryListScreenEvent = MutableStateFlow<UiEvent<Unit>?>(null)
@@ -71,7 +75,7 @@ class GroceryListViewModel @AssistedInject constructor(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList(),
+            initialValue = null,
         )
 
     private val openedCategoryIdFlow = MutableStateFlow<String?>(null)
@@ -95,6 +99,9 @@ class GroceryListViewModel @AssistedInject constructor(
 
     private val _navigateToCategoryScreenEvent = MutableStateFlow<UiEvent<Unit>?>(null)
     val navigateToCategoryScreenEvent = _navigateToCategoryScreenEvent.asStateFlow()
+
+    private val _groceryListPurchaseStateFlow = MutableStateFlow(GroceryListPurchaseState.LIST_IS_FULL)
+    val groceryListPurchaseStateFlow = _groceryListPurchaseStateFlow.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -142,19 +149,30 @@ class GroceryListViewModel @AssistedInject constructor(
                         .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name })
                         .groupBy { it.purchased }
                         .toSortedMap()
-                        .map { group ->
-                            val purchased = group.key
-                            val titleId =
-                                if (purchased) R.string.purchased_groceries_group_title else null
-                            val sortedGroceries = if (purchased) {
-                                group.value.sortedByDescending { it.purchasedLastModified }
-                            } else {
-                                group.value.sortedWith(
-                                    compareBy(nullsLast()) { it.category?.sortingPriority }
-                                )
-                            }
-                            GroceryGroup(titleId, sortedGroceries)
+                }
+                .onEach { groups ->
+                    _groceryListPurchaseStateFlow.update {
+                        when {
+                            groups.isEmpty() -> GroceryListPurchaseState.LIST_IS_EMPTY
+                            groups.size == 1 && groups.firstKey() -> GroceryListPurchaseState.SHOPPING_DONE
+                            else -> GroceryListPurchaseState.LIST_IS_FULL
                         }
+                    }
+                }
+                .map { groups ->
+                    groups.map { group ->
+                        val purchased = group.key
+                        val titleId =
+                            if (purchased) R.string.purchased_groceries_group_title else null
+                        val sortedGroceries = if (purchased) {
+                            group.value.sortedByDescending { it.purchasedLastModified }
+                        } else {
+                            group.value.sortedWith(
+                                compareBy(nullsLast()) { it.category?.sortingPriority }
+                            )
+                        }
+                        GroceryGroup(titleId, sortedGroceries)
+                    }
                 }
                 .flowOn(defaultDispatcher)
                 .collectLatest { groceryGroups ->
@@ -215,8 +233,9 @@ class GroceryListViewModel @AssistedInject constructor(
     }
 
     private fun onKeyboardHidden() {
-        if (openedGroceryListName.text.isNotEmpty()) {
-            openedGroceryListName = TextFieldValue(openedGroceryListName.text.trim())
+        val name = openedGroceryListName?.text
+        if (name?.isNotEmpty() == true) {
+            openedGroceryListName = TextFieldValue(name.trim())
             _groceryListEditModeIsEnabledFlow.update { false }
         }
     }
@@ -236,9 +255,10 @@ class GroceryListViewModel @AssistedInject constructor(
     }
 
     private fun onEditGroceryListToggle(editModeIsEnabled: Boolean) {
-        if (editModeIsEnabled) {
-            val nameLength = openedGroceryListName.text.length
-            openedGroceryListName = openedGroceryListName.copy(
+        val listName = openedGroceryListName
+        if (editModeIsEnabled && listName != null) {
+            val nameLength = listName.text.length
+            openedGroceryListName = listName.copy(
                 selection = TextRange(nameLength, nameLength),
             )
         }
