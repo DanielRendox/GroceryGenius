@@ -179,7 +179,7 @@ class EditGroceryViewModel @Inject constructor(
                         groceryRepository.updateDescription(
                             productId = productId,
                             listId = groceryListId,
-                            description = description,
+                            description = description.ifEmpty { null },
                         )
                     }
                 }
