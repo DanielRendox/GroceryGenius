@@ -23,9 +23,9 @@ class ProductRepositoryImpl @Inject constructor(
         return productDao.getProductById(productId).map { it?.asExternalModel() }
     }
 
-    override suspend fun getProductsByCategory(categoryId: String): List<Product> {
-        return productDao.getProductsByCategory(categoryId).map { combinedProduct ->
-            combinedProduct.asExternalModel()
+    override fun getProductsByCategory(categoryId: String?): Flow<List<Product>> {
+        return productDao.getProductsByCategory(categoryId).map { products ->
+            products.map { it.asExternalModel() }
         }
     }
 

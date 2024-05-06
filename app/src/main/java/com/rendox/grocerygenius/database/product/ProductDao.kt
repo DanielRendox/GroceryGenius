@@ -7,15 +7,15 @@ import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface ProductDao {
+abstract class ProductDao {
     @Insert
-    suspend fun insertProduct(product: ProductEntity)
+    abstract suspend fun insertProduct(product: ProductEntity)
 
     @Insert
-    suspend fun insertProducts(products: List<ProductEntity>)
+    abstract suspend fun insertProducts(products: List<ProductEntity>)
 
     @Upsert
-    suspend fun upsertProducts(products: List<ProductEntity>)
+    abstract suspend fun upsertProducts(products: List<ProductEntity>)
 
     @Query(
         """
@@ -34,7 +34,7 @@ interface ProductDao {
         WHERE product.id = :productId
         """
     )
-    fun getProductById(productId: String): Flow<CombinedProduct?>
+    abstract fun getProductById(productId: String): Flow<CombinedProduct?>
 
     @Query(
         """
@@ -53,7 +53,34 @@ interface ProductDao {
         WHERE product.categoryId = :categoryId
     """
     )
-    suspend fun getProductsByCategory(categoryId: String): List<CombinedProduct>
+    protected abstract fun getProductsByCategoryId(categoryId: String): Flow<List<CombinedProduct>>
+
+    @Query(
+        """
+        SELECT 
+            product.id,
+            product.name,
+            icon.uniqueFileName as iconId,
+            icon.filePath as iconFilePath,
+            category.id as categoryId,
+            category.name as categoryName,
+            category.sortingPriority as categorySortingPriority,
+            product.isDefault
+        FROM ProductEntity product
+        LEFT JOIN CategoryEntity category ON product.categoryId = category.id
+        LEFT JOIN IconEntity icon ON product.iconFileName = icon.uniqueFileName
+        WHERE product.categoryId IS NULL
+    """
+    )
+    protected abstract fun getProductsWithoutCategory(): Flow<List<CombinedProduct>>
+
+    fun getProductsByCategory(categoryId: String?): Flow<List<CombinedProduct>> {
+        return if (categoryId == null) {
+            getProductsWithoutCategory()
+        } else {
+            getProductsByCategoryId(categoryId)
+        }
+    }
 
     @Query(
         """
@@ -72,19 +99,19 @@ interface ProductDao {
         WHERE LOWER(product.name) LIKE LOWER(:name)
     """
     )
-    suspend fun getProductsByName(name: String): List<CombinedProduct>
+    abstract suspend fun getProductsByName(name: String): List<CombinedProduct>
 
     @Query("SELECT * FROM ProductEntity")
-    suspend fun getAllProducts(): List<ProductEntity>
+    abstract suspend fun getAllProducts(): List<ProductEntity>
 
     @Query("UPDATE ProductEntity SET categoryId = :categoryId WHERE id = :productId")
-    suspend fun updateProductCategory(productId: String, categoryId: String?)
+    abstract suspend fun updateProductCategory(productId: String, categoryId: String?)
 
     @Query("UPDATE ProductEntity SET iconFileName = :iconId WHERE id = :productId")
-    suspend fun updateProductIcon(productId: String, iconId: String?)
+    abstract suspend fun updateProductIcon(productId: String, iconId: String?)
 
     @Query("DELETE FROM ProductEntity WHERE id = :productId")
-    suspend fun deleteProductById(productId: String)
+    abstract suspend fun deleteProductById(productId: String)
 
     @Query(
         """
@@ -92,5 +119,5 @@ interface ProductDao {
             WHERE id in (:ids)
         """,
     )
-    suspend fun deleteProductsByIds(ids: List<String>)
+    abstract suspend fun deleteProductsByIds(ids: List<String>)
 }

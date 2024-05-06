@@ -48,7 +48,7 @@ fun CategoryRoute(
     val category by viewModel.openedCategoryFlow.collectAsStateWithLifecycle()
     val groceries by viewModel.openedCategoryGroceriesFlow.collectAsStateWithLifecycle()
     CategoryScreen(
-        categoryName = category?.name ?: "",
+        categoryName = category?.name ?: stringResource(R.string.custom_category_title),
         groceries = groceries,
         onGroceryClick = viewModel::onCategoryScreenGroceryClick,
         navigateBack = navigateBack,

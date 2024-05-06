@@ -15,7 +15,6 @@ import com.rendox.grocerygenius.data.grocery_list.GroceryListRepository
 import com.rendox.grocerygenius.data.product.ProductRepository
 import com.rendox.grocerygenius.data.user_preferences.UserPreferencesRepository
 import com.rendox.grocerygenius.model.Grocery
-import com.rendox.grocerygenius.model.Product
 import com.rendox.grocerygenius.network.di.Dispatcher
 import com.rendox.grocerygenius.network.di.GroceryGeniusDispatchers
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGroup
@@ -35,14 +34,14 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-@OptIn(FlowPreview::class)
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel(assistedFactory = GroceryListViewModel.Factory::class)
 class GroceryListViewModel @AssistedInject constructor(
     @Assisted val openedGroceryListId: String,
@@ -76,11 +75,9 @@ class GroceryListViewModel @AssistedInject constructor(
         )
 
     private val openedCategoryIdFlow = MutableStateFlow<String?>(null)
-    @OptIn(ExperimentalCoroutinesApi::class)
     val openedCategoryFlow = openedCategoryIdFlow
-        .mapNotNull { it }
         .flatMapLatest { categoryId ->
-            categoryRepository.getCategoryById(categoryId)
+            categoryId?.let { categoryRepository.getCategoryById(it) } ?: flowOf(null)
         }
         .stateIn(
             scope = viewModelScope,
@@ -92,7 +89,9 @@ class GroceryListViewModel @AssistedInject constructor(
     val openedCategoryGroceriesFlow = _openedCategoryGroceriesFlow.asStateFlow()
 
     private val groceriesInList = groceryRepository.getGroceriesFromList(openedGroceryListId)
-    private val categoryProductsFlow = MutableStateFlow(emptyList<Product>())
+    private val categoryProductsFlow = openedCategoryIdFlow.flatMapLatest { categoryId ->
+        productRepository.getProductsByCategory(categoryId)
+    }
 
     private val _navigateToCategoryScreenEvent = MutableStateFlow<UiEvent<Unit>?>(null)
     val navigateToCategoryScreenEvent = _navigateToCategoryScreenEvent.asStateFlow()
@@ -150,9 +149,9 @@ class GroceryListViewModel @AssistedInject constructor(
                             val sortedGroceries = if (purchased) {
                                 group.value.sortedByDescending { it.purchasedLastModified }
                             } else {
-                                group.value.sortedBy {
-                                    it.category?.sortingPriority
-                                }
+                                group.value.sortedWith(
+                                    compareBy(nullsLast()) { it.category?.sortingPriority }
+                                )
                             }
                             GroceryGroup(titleId, sortedGroceries)
                         }
@@ -246,10 +245,9 @@ class GroceryListViewModel @AssistedInject constructor(
         _groceryListEditModeIsEnabledFlow.update { editModeIsEnabled }
     }
 
-    private fun onNavigateToCategoryScreen(categoryId: String) {
+    private fun onNavigateToCategoryScreen(categoryId: String?) {
         viewModelScope.launch {
             openedCategoryIdFlow.update { categoryId }
-            categoryProductsFlow.update { productRepository.getProductsByCategory(categoryId) }
             _navigateToCategoryScreenEvent.update {
                 object : UiEvent<Unit> {
                     override val data = Unit

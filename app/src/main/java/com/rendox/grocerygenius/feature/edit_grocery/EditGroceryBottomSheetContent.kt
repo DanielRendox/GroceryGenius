@@ -86,13 +86,11 @@ fun EditGroceryBottomSheetContent(
             onClearSearchInputClicked = onClearGroceryDescription,
         )
 
-        if (productCanBeModified) {
-            GrocerySettings(
-                modifier = Modifier.padding(top = 32.dp),
-                onChangeCategoryClick = onChangeCategoryClick,
-                onChangeIconClick = onChangeIconClick,
-            )
-        }
+        GrocerySettings(
+            modifier = Modifier.padding(top = 32.dp),
+            onChangeCategoryClick = onChangeCategoryClick,
+            onChangeIconClick = onChangeIconClick,
+        )
 
         FilledTonalButton(
             modifier = Modifier
@@ -136,7 +134,7 @@ private fun GrocerySettings(
 ) {
     Column(modifier = modifier) {
         Text(
-            text = stringResource(R.string.edit_grocery_settings_title),
+            text = stringResource(R.string.settings),
             style = MaterialTheme.typography.titleMedium,
         )
         Row(

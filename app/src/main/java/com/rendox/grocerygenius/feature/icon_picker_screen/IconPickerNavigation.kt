@@ -8,14 +8,16 @@ import com.rendox.grocerygenius.ui.GroceryGeniusTransition
 
 const val ICON_PICKER_ROUTE = "icon_picker_route"
 const val PRODUCT_ID_ARG = "edit_grocery_id_arg"
-const val ICON_PICKER_ROUTE_WITH_ARGS = "$ICON_PICKER_ROUTE/{$PRODUCT_ID_ARG}"
+const val ICON_PICKER_GROCERY_LIST_ID_ARG = "grocery_list_id_arg"
+const val ICON_PICKER_ROUTE_WITH_ARGS = "$ICON_PICKER_ROUTE/{$PRODUCT_ID_ARG}/{$ICON_PICKER_GROCERY_LIST_ID_ARG}"
 
 fun NavController.navigateToIconPicker(
-    editGroceryId: String,
+    editProductId: String,
+    groceryListId: String,
     navOptions: (NavOptionsBuilder.() -> Unit) = {},
 ) {
     this.navigate(
-        route = "$ICON_PICKER_ROUTE/$editGroceryId",
+        route = "$ICON_PICKER_ROUTE/$editProductId/$groceryListId",
         builder = navOptions,
     )
 }

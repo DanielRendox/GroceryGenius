@@ -21,8 +21,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
@@ -54,11 +56,13 @@ class EditGroceryViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            categoryRepository.getAllCategories().collectLatest { categories ->
-                _uiStateFlow.update {
-                    it.copy(groceryCategories = categories)
+            categoryRepository.getAllCategories()
+                .map { categories -> categories.sortedBy { it.sortingPriority } }
+                .collectLatest { categories ->
+                    _uiStateFlow.update {
+                        it.copy(groceryCategories = categories)
+                    }
                 }
-            }
         }
     }
 
@@ -87,11 +91,40 @@ class EditGroceryViewModel @Inject constructor(
 
     private fun onCategorySelected(category: Category?) {
         viewModelScope.launch {
-            compoundGroceryIdFlow.value?.productId?.let {
-                productRepository.updateProductCategory(
-                    productId = it,
-                    categoryId = category?.id,
-                )
+            compoundGroceryIdFlow.value?.let { compoundGroceryId ->
+                val grocery = groceryRepository.getGroceryById(
+                    productId = compoundGroceryId.productId,
+                    listId = compoundGroceryId.groceryListId,
+                ).first() ?: return@launch
+
+                if (grocery.productIsDefault) {
+                    // Default products should not be changed so we create a new custom one
+                    val newProductId = UUID.randomUUID().toString()
+                    groceryRepository.insertProductAndGrocery(
+                        name = grocery.name,
+                        iconId = grocery.icon?.uniqueFileName,
+                        productId = newProductId,
+                        categoryId = category?.id,
+                        groceryListId = compoundGroceryId.groceryListId,
+                        description = grocery.description,
+                        purchased = grocery.purchased,
+                        purchasedLastModified = grocery.purchasedLastModified,
+                        isDefault = false,
+                    )
+                    groceryRepository.removeGroceryFromList(
+                        productId = compoundGroceryId.productId,
+                        listId = compoundGroceryId.groceryListId,
+                    )
+                    onEditOtherGrocery(
+                        productId = newProductId,
+                        groceryListId = compoundGroceryId.groceryListId,
+                    )
+                } else {
+                    productRepository.updateProductCategory(
+                        productId = compoundGroceryId.productId,
+                        categoryId = category?.id,
+                    )
+                }
             }
             _uiStateFlow.update { uiState ->
                 uiState.copy(

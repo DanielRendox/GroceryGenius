@@ -90,7 +90,16 @@ fun EditGroceryBottomSheet(
                 categoryPickerIsVisible = true
             },
             onChangeIconClick = {
-                screenState.editGrocery?.productId?.let { navigateToIconPicker(it) }
+                screenState.editGrocery?.productId?.let {
+                    coroutineScope
+                        .launch {
+                            editBottomSheetState.hide()
+                            navigateToIconPicker(it)
+                        }
+                        .invokeOnCompletion {
+                            hideBottomSheetOnCompletion()
+                        }
+                }
             },
             productCanBeModified = screenState.editGrocery?.productIsDefault == false,
             onRemoveGrocery = {

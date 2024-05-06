@@ -50,8 +50,11 @@ fun GroceryGeniusNavHost(
                     }
                 }
             },
-            navigateToIconPicker = {
-                navController.navigateToIconPicker(it)
+            navigateToIconPicker = { editProductId, groceryListId ->
+                navController.navigateToIconPicker(
+                    editProductId = editProductId,
+                    groceryListId = groceryListId,
+                )
             },
         )
         settingsScreen(

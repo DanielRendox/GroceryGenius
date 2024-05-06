@@ -37,7 +37,7 @@ fun NavGraphBuilder.groceryListNestedNavigation(
     navController: NavController,
     defaultGroceryListId: String?,
     navigateBack: () -> Unit,
-    navigateToIconPicker: (String) -> Unit,
+    navigateToIconPicker: (String, String) -> Unit,
 ) = navigation(
     startDestination = GROCERY_LIST_ROUTE,
     route = GROCERY_LIST_CATEGORY_NESTED_NAV_ROUTE_WITH_ARGS,

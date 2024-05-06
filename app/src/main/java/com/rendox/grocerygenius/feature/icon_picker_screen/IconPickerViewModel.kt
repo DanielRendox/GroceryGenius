@@ -7,24 +7,39 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rendox.grocerygenius.data.grocery.GroceryRepository
 import com.rendox.grocerygenius.data.icons.IconRepository
 import com.rendox.grocerygenius.data.product.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class IconPickerViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     iconRepository: IconRepository,
     private val productRepository: ProductRepository,
+    private val groceryRepository: GroceryRepository,
 ) : ViewModel() {
 
-    private val editProductId: String = checkNotNull(savedStateHandle[PRODUCT_ID_ARG])
+    private val editProductIdFlow: StateFlow<String?> = savedStateHandle.getStateFlow(
+        key = PRODUCT_ID_ARG,
+        initialValue = null,
+    )
+    private val groceryListId: String =
+        checkNotNull(savedStateHandle[ICON_PICKER_GROCERY_LIST_ID_ARG])
+
     var searchQuery by mutableStateOf("")
         private set
     private val searchQueryFlow = snapshotFlow { searchQuery }
@@ -64,35 +79,63 @@ class IconPickerViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            productRepository.getProductById(editProductId).collectLatest { product ->
-                _uiStateFlow.update { it.copy(product = product) }
-            }
+            editProductIdFlow
+                .mapNotNull { it }
+                .flatMapLatest { productId ->
+                    productRepository.getProductById(productId)
+                }
+                .collectLatest { product ->
+                    _uiStateFlow.update { it.copy(product = product) }
+                }
         }
     }
 
     fun onIntent(intent: IconPickerIntent) = viewModelScope.launch {
         when (intent) {
-            is IconPickerIntent.OnPickIcon -> {
-                productRepository.updateProductIcon(
-                    productId = editProductId,
-                    iconId = intent.iconReference.uniqueFileName,
-                )
-            }
+            is IconPickerIntent.OnPickIcon ->
+                onPickIcon(intent.iconReference.uniqueFileName)
 
-            is IconPickerIntent.OnUpdateSearchQuery -> {
+            is IconPickerIntent.OnUpdateSearchQuery ->
                 searchQuery = intent.query
-            }
 
-            is IconPickerIntent.OnClearSearchQuery -> {
-                searchQuery = ""
-            }
+            is IconPickerIntent.OnClearSearchQuery -> searchQuery = ""
+            is IconPickerIntent.OnRemoveIcon -> onPickIcon(null)
+        }
+    }
 
-            is IconPickerIntent.OnRemoveIcon -> {
-                productRepository.updateProductIcon(
-                    productId = editProductId,
-                    iconId = null,
-                )
-            }
+    private suspend fun onPickIcon(iconId: String?) {
+        println("IconPickerViewModel onPickIcon")
+        val editProductId = editProductIdFlow.value ?: return
+        val grocery = groceryRepository.getGroceryById(
+            productId = editProductId,
+            listId = groceryListId,
+        ).first() ?: return
+        println("IconPickerViewModel onPickIcon grocery: $grocery")
+
+        if (grocery.productIsDefault) {
+            // Default products should not be changed so we create a new custom one
+            val newProductId = UUID.randomUUID().toString()
+            groceryRepository.insertProductAndGrocery(
+                name = grocery.name,
+                iconId = iconId,
+                productId = newProductId,
+                categoryId = grocery.category?.id,
+                groceryListId = groceryListId,
+                description = grocery.description,
+                purchased = grocery.purchased,
+                purchasedLastModified = grocery.purchasedLastModified,
+                isDefault = false,
+            )
+            groceryRepository.removeGroceryFromList(
+                productId = editProductId,
+                listId = groceryListId,
+            )
+            savedStateHandle[PRODUCT_ID_ARG] = newProductId
+        } else {
+            productRepository.updateProductIcon(
+                productId = editProductId,
+                iconId = iconId,
+            )
         }
     }
 }

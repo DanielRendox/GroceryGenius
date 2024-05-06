@@ -124,7 +124,7 @@ fun GroceryListRoute(
     addGroceryViewModel: AddGroceryViewModel = hiltViewModel(),
     navigateBack: () -> Unit,
     navigateToCategoryScreen: () -> Unit,
-    navigateToIconPicker: (String) -> Unit,
+    navigateToIconPicker: (String, String) -> Unit,
 ) {
     val groceryGroups by groceryListViewModel.groceryGroupsFlow.collectAsStateWithLifecycle()
     val closeGroceryListScreenEvent by groceryListViewModel.closeGroceryListScreenEvent.collectAsStateWithLifecycle()
@@ -213,7 +213,9 @@ fun GroceryListRoute(
                 editGroceryScreenIsVisible = false
             },
             onIntent = editGroceryViewModel::onIntent,
-            navigateToIconPicker = navigateToIconPicker,
+            navigateToIconPicker = { groceryId ->
+                navigateToIconPicker(groceryId, openedGroceryListId)
+            },
         )
     }
 }
@@ -236,7 +238,7 @@ private fun GroceryListScreen(
     onGroceryListUiIntent: (GroceryListsUiIntent) -> Unit = {},
     onAddGroceryUiIntent: (AddGroceryUiIntent) -> Unit = {},
     showEditGroceryBottomSheet: (String) -> Unit = {},
-    navigateToCategoryScreen: (String) -> Unit = {},
+    navigateToCategoryScreen: (String?) -> Unit = {},
 ) {
     val toolbarHeightRange = with(LocalDensity.current) {
         TopAppBarSmallHeight.roundToPx()..TopAppBarMediumHeight.roundToPx()
@@ -545,7 +547,7 @@ private fun GroceryGrid(
     categories: List<Category>,
     onGroceryClick: (Grocery) -> Unit,
     onGroceryLongClick: (Grocery) -> Unit,
-    onCategoryItemClick: (String) -> Unit,
+    onCategoryItemClick: (String?) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -603,12 +605,27 @@ private fun GroceryGrid(
                             shape = RoundedCornerShape(
                                 topStart = if (index == 0) GroceryItemRounding else 0.dp,
                                 topEnd = if (index == 0) GroceryItemRounding else 0.dp,
-                                bottomStart = if (index == categories.lastIndex) GroceryItemRounding else 0.dp,
-                                bottomEnd = if (index == categories.lastIndex) GroceryItemRounding else 0.dp,
                             )
                         )
                         .clickable { onCategoryItemClick(categories[index].id) },
                     name = categories[index].name,
+                )
+            }
+            item(
+                key = "CustomCategory",
+                span = { GridItemSpan(maxLineSpan) },
+                contentType = { categoryContentType },
+            ) {
+                CategoryItem(
+                    modifier = Modifier
+                        .clip(
+                            shape = RoundedCornerShape(
+                                bottomStart = GroceryItemRounding,
+                                bottomEnd = GroceryItemRounding,
+                            )
+                        )
+                        .clickable { onCategoryItemClick(null) },
+                    name = stringResource(R.string.custom_category_title),
                 )
             }
         }
