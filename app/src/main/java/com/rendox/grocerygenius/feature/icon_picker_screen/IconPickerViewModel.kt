@@ -68,14 +68,12 @@ class IconPickerViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            iconRepository.getIconsGroupedByCategory().collectLatest { icons ->
-                _uiStateFlow.update { uiState ->
-                    uiState.copy(
-                        groupedIcons = icons.toSortedMap(
-                            comparator = compareBy { category -> category.sortingPriority }
-                        )
+            _uiStateFlow.update { uiState ->
+                uiState.copy(
+                    groupedIcons = iconRepository.getIconsGroupedByCategory().first().toSortedMap(
+                        comparator = compareBy { category -> category.sortingPriority }
                     )
-                }
+                )
             }
         }
         viewModelScope.launch {

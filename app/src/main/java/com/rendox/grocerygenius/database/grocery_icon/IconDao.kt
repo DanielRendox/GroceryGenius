@@ -32,6 +32,7 @@ abstract class IconDao {
         FROM IconEntity i
         INNER JOIN ProductEntity p ON i.uniqueFileName = p.iconFileName
         INNER JOIN CategoryEntity c ON p.categoryId = c.id
+        WHERE p.isDefault IS 1
         GROUP BY i.uniqueFileName
     """
     )
