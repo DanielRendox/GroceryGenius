@@ -100,8 +100,12 @@ class GroceryListViewModel @AssistedInject constructor(
     private val _navigateToCategoryScreenEvent = MutableStateFlow<UiEvent<Unit>?>(null)
     val navigateToCategoryScreenEvent = _navigateToCategoryScreenEvent.asStateFlow()
 
-    private val _groceryListPurchaseStateFlow = MutableStateFlow(GroceryListPurchaseState.LIST_IS_FULL)
+    private val _groceryListPurchaseStateFlow =
+        MutableStateFlow(GroceryListPurchaseState.LIST_IS_FULL)
     val groceryListPurchaseStateFlow = _groceryListPurchaseStateFlow.asStateFlow()
+
+    private val _scrollUpEventFlow = MutableStateFlow<UiEvent<Unit>?>(null)
+    val scrollUpEventFlow = _scrollUpEventFlow.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -151,12 +155,23 @@ class GroceryListViewModel @AssistedInject constructor(
                         .toSortedMap()
                 }
                 .onEach { groups ->
-                    _groceryListPurchaseStateFlow.update {
-                        when {
-                            groups.isEmpty() -> GroceryListPurchaseState.LIST_IS_EMPTY
-                            groups.size == 1 && groups.firstKey() -> GroceryListPurchaseState.SHOPPING_DONE
-                            else -> GroceryListPurchaseState.LIST_IS_FULL
+                    val groceryListPurchaseState = when {
+                        groups.isEmpty() -> GroceryListPurchaseState.LIST_IS_EMPTY
+                        groups.size == 1 && groups.firstKey() -> GroceryListPurchaseState.SHOPPING_DONE
+                        else -> GroceryListPurchaseState.LIST_IS_FULL
+                    }
+                    _groceryListPurchaseStateFlow.update { groceryListPurchaseState }
+                    when (groceryListPurchaseState) {
+                        GroceryListPurchaseState.LIST_IS_EMPTY,
+                        GroceryListPurchaseState.SHOPPING_DONE -> _scrollUpEventFlow.update {
+                            object : UiEvent<Unit> {
+                                override val data = Unit
+                                override fun onConsumed() {
+                                    _scrollUpEventFlow.update { null }
+                                }
+                            }
                         }
+                        else -> {}
                     }
                 }
                 .map { groups ->

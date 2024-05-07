@@ -111,6 +111,7 @@ import com.rendox.grocerygenius.ui.components.grocery_list.GroupedLazyGroceryGri
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGridItem
 import com.rendox.grocerygenius.ui.components.grocery_list.groceryListItemColors
 import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
+import com.rendox.grocerygenius.ui.helpers.UiEvent
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import com.rendox.grocerygenius.ui.theme.GroceryItemRounding
 import com.rendox.grocerygenius.ui.theme.TopAppBarMediumHeight
@@ -134,6 +135,7 @@ fun GroceryListRoute(
     val categories by groceryListViewModel.categoriesFlow.collectAsStateWithLifecycle()
     val navigateToCategoryScreenEvent by groceryListViewModel.navigateToCategoryScreenEvent.collectAsStateWithLifecycle()
     val groceryListPurchaseState by groceryListViewModel.groceryListPurchaseStateFlow.collectAsStateWithLifecycle()
+    val scrollUpEvent by groceryListViewModel.scrollUpEventFlow.collectAsStateWithLifecycle()
 
     ObserveUiEvent(closeGroceryListScreenEvent) {
         navigateBack()
@@ -174,6 +176,7 @@ fun GroceryListRoute(
             editGroceryIdState.value = it
             editGroceryScreenIsVisible = true
         },
+        scrollUpEvent = scrollUpEvent,
         scrimIsShown = addGroceryBottomSheetState.sheetIsExpanding ||
                 editBottomSheetState.targetValue == SheetValue.Expanded,
         toolbarIsHidden = addGroceryBottomSheetState.sheetIsExpanding ||
@@ -237,6 +240,7 @@ private fun GroceryListScreen(
     toolbarIsHidden: Boolean = false,
     categories: List<Category>? = emptyList(),
     groceryListPurchaseState: GroceryListPurchaseState,
+    scrollUpEvent: UiEvent<Unit>? = null,
     navigateBack: () -> Unit = {},
     onGroceryListUiIntent: (GroceryListsUiIntent) -> Unit = {},
     onAddGroceryUiIntent: (AddGroceryUiIntent) -> Unit = {},
@@ -379,6 +383,7 @@ private fun GroceryListScreen(
                     lazyGridState = lazyGridState,
                     onCategoryItemClick = navigateToCategoryScreen,
                     groceryListPurchaseState = groceryListPurchaseState,
+                    scrollUpEvent = scrollUpEvent,
                 )
             }
         }
@@ -558,11 +563,16 @@ private fun GroceryGrid(
     lazyGridState: LazyGridState,
     categories: List<Category>,
     groceryListPurchaseState: GroceryListPurchaseState,
+    scrollUpEvent: UiEvent<Unit>?,
     onGroceryClick: (Grocery) -> Unit,
     onGroceryLongClick: (Grocery) -> Unit,
     onCategoryItemClick: (String?) -> Unit,
 ) {
     val context = LocalContext.current
+
+    ObserveUiEvent(scrollUpEvent) {
+        lazyGridState.animateScrollToItem(0)
+    }
 
     GroupedLazyGroceryGrid(
         modifier = modifier,

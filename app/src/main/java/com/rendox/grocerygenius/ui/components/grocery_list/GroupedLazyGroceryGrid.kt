@@ -24,7 +24,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,14 +66,6 @@ fun GroupedLazyGroceryGrid(
     val scrollbarState = lazyGridState.scrollbarState(
         itemsAvailable = itemsAvailable,
     )
-
-    LaunchedEffect(groceryListPurchaseState) {
-        when(groceryListPurchaseState) {
-            GroceryListPurchaseState.SHOPPING_DONE, GroceryListPurchaseState.LIST_IS_EMPTY ->
-                lazyGridState.animateScrollToItem(index = 0)
-            else -> {}
-        }
-    }
 
     BoxWithConstraints(modifier = modifier) {
         val density = LocalDensity.current

@@ -1,7 +1,7 @@
 <h1 align="center" line-height:1"><b>Grocery Genius</b></h1>
 
 <div align="center">
-  <img alt="Grocery Genius logo" src="images/app_logo_rounded_corners.png" height="150px">
+  <img alt="Grocery Genius logo" src="images/app_logo_rounded_corners.svg" height="150px">
 </div>
 
 <br />

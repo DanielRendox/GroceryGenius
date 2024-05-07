@@ -1,5 +1,7 @@
 package com.rendox.grocerygenius
 
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -38,6 +40,7 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainActivityViewModel by viewModels()
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -57,6 +60,11 @@ class MainActivity : ComponentActivity() {
         }
 
         enableEdgeToEdge()
+
+        // app's UI has bottom sheets that don't look good in landscape mode on small screen sizes
+        if (resources.configuration.smallestScreenWidthDp < 600) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
 
         setContent {
             val darkTheme = shouldUseDarkTheme(uiState)
