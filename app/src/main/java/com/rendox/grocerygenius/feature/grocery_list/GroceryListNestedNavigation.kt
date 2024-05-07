@@ -51,14 +51,13 @@ fun NavGraphBuilder.groceryListNestedNavigation(
         route = GROCERY_LIST_ROUTE,
         enterTransition = {
             when (initialState.destination.route) {
-                GROCERY_LISTS_DASHBOARD_ROUTE -> GroceryGeniusTransition.SlideInHorizontallyEnterForward
+                GROCERY_LISTS_DASHBOARD_ROUTE -> GroceryGeniusTransition.SharedZAxisEnterForward
                 CATEGORY_ROUTE -> GroceryGeniusTransition.SlideInHorizontallyEnterBackward
                 else -> EnterTransition.None
             }
         },
         exitTransition = {
             when (targetState.destination.route) {
-                GROCERY_LISTS_DASHBOARD_ROUTE -> GroceryGeniusTransition.SlideOutHorizontallyExitForward
                 CATEGORY_ROUTE -> GroceryGeniusTransition.SlideOutHorizontallyExitBackward
                 else -> ExitTransition.None
             }

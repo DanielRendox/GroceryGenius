@@ -9,6 +9,7 @@ import com.rendox.grocerygenius.feature.dashboard_screen.GROCERY_LISTS_DASHBOARD
 import com.rendox.grocerygenius.feature.dashboard_screen.groceryListsDashboardScreen
 import com.rendox.grocerygenius.feature.dashboard_screen.navigateToGroceryListsDashboard
 import com.rendox.grocerygenius.feature.grocery_list.GROCERY_LIST_CATEGORY_NESTED_NAV_ROUTE_WITH_ARGS
+import com.rendox.grocerygenius.feature.grocery_list.GROCERY_LIST_ROUTE
 import com.rendox.grocerygenius.feature.grocery_list.groceryListNestedNavigation
 import com.rendox.grocerygenius.feature.grocery_list.navigateToGroceryList
 import com.rendox.grocerygenius.feature.icon_picker_screen.iconPickerScreen
@@ -30,22 +31,28 @@ fun GroceryGeniusNavHost(
     ) {
         groceryListsDashboardScreen(
             navigateToGroceryListScreen = { groceryListId ->
-                navController.navigateToGroceryList(groceryListId)
+                if (navController.currentDestination?.route == GROCERY_LISTS_DASHBOARD_ROUTE) {
+                    navController.navigateToGroceryList(groceryListId)
+                }
             },
             navigateToSettingsScreen = {
-                navController.navigateToSettings()
+                if (navController.currentDestination?.route == GROCERY_LISTS_DASHBOARD_ROUTE) {
+                    navController.navigateToSettings()
+                }
             },
         )
         groceryListNestedNavigation(
             navController = navController,
             defaultGroceryListId = defaultGroceryListId,
             navigateBack = {
-                if (navController.previousBackStackEntry != null) {
-                    navController.popBackStack()
-                } else {
-                    navController.navigateToGroceryListsDashboard {
-                        popUpTo(route = GROCERY_LIST_CATEGORY_NESTED_NAV_ROUTE_WITH_ARGS) {
-                            inclusive = true
+                if (navController.currentDestination?.route == GROCERY_LIST_ROUTE) {
+                    if (navController.previousBackStackEntry != null) {
+                        navController.popBackStack()
+                    } else {
+                        navController.navigateToGroceryListsDashboard {
+                            popUpTo(route = GROCERY_LIST_CATEGORY_NESTED_NAV_ROUTE_WITH_ARGS) {
+                                inclusive = true
+                            }
                         }
                     }
                 }

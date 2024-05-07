@@ -90,13 +90,11 @@ fun EditGroceryBottomSheet(
                 categoryPickerIsVisible = true
             },
             onChangeIconClick = {
-                screenState.editGrocery?.productId?.let {
+                screenState.editGrocery?.productId?.let { productId ->
                     coroutineScope
                         .launch {
                             editBottomSheetState.hide()
-                            navigateToIconPicker(it)
-                        }
-                        .invokeOnCompletion {
+                            navigateToIconPicker(productId)
                             hideBottomSheetOnCompletion()
                         }
                 }

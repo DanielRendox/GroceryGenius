@@ -28,15 +28,12 @@ fun NavGraphBuilder.groceryListsDashboardScreen(
         route = GROCERY_LISTS_DASHBOARD_ROUTE,
         enterTransition = {
             when (initialState.destination.route) {
-                GROCERY_LIST_ROUTE -> GroceryGeniusTransition.SlideInHorizontallyEnterBackward
+                GROCERY_LIST_ROUTE -> GroceryGeniusTransition.SharedZAxisEnterBackward
                 else -> EnterTransition.None
             }
         },
         exitTransition = {
-            when (targetState.destination.route) {
-                GROCERY_LIST_ROUTE -> GroceryGeniusTransition.SlideOutHorizontallyExitBackward
-                else -> ExitTransition.None
-            }
+            ExitTransition.None
         },
     ) {
         GroceryListsDashboardRoute(

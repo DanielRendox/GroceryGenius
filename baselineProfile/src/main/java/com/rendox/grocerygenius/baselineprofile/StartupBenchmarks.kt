@@ -74,8 +74,8 @@ fun MacrobenchmarkScope.criticalUserJourney() {
     lazyGroceryList.setGestureMargin(device.displayWidth / 5)
     lazyGroceryList.fling(Direction.DOWN)
 
-    device.wait(Until.hasObject(By.text("Fruits & Vegetables")), 1000)
-    val categoryItem = device.findObject(By.text("Fruits & Vegetables"))
+    device.wait(Until.hasObject(By.text("Sauces & Spices")), 1000)
+    val categoryItem = device.findObject(By.text("Sauces & Spices"))
     categoryItem.click()
     device.waitForIdle()
 }
