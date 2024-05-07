@@ -5,7 +5,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
@@ -28,11 +27,6 @@ object GroceryGeniusTransition {
         initialScale = 1.1f,
         animationSpec = tween(300)
     )
-    val SharedZAxisExitBackward = scaleOut(
-        targetScale = 0.8f,
-        animationSpec = tween(durationMillis = 300),
-    ) + fadeOut(animationSpec = tween(durationMillis = 60, delayMillis = 60, easing = LinearEasing))
-
     val SlideInVertically = slideInVertically(
         initialOffsetY = { it / 10 },
         animationSpec = tween(durationMillis = 200),
