@@ -2,6 +2,25 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="AssetToFileSaverTest">
+        <State>
+          <runningDeviceTargetSelectedWithDropDown>
+            <Target>
+              <type value="RUNNING_DEVICE_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\danie\.android\avd\Pixel_5_API_33.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </runningDeviceTargetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-05-09T12:44:28.946557300Z" />
+        </State>
+      </entry>
+      <entry key="ChangeListVersionsDataSourceTest">
+        <State />
+      </entry>
       <entry key="Generate Baseline Profile for app">
         <State>
           <targetSelectedWithDropDown>
@@ -21,13 +40,10 @@
       <entry key="IconPickerScreenPreview">
         <State />
       </entry>
+      <entry key="SyncWorkerTest">
+        <State />
+      </entry>
       <entry key="app">
-        <State />
-      </entry>
-      <entry key="criticalUserJourney()">
-        <State />
-      </entry>
-      <entry key="generate()">
         <State>
           <targetSelectedWithDropDown>
             <Target>
@@ -40,23 +56,7 @@
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-04-29T17:10:22.949948500Z" />
-        </State>
-      </entry>
-      <entry key="startup()">
-        <State>
-          <runningDeviceTargetSelectedWithDropDown>
-            <Target>
-              <type value="RUNNING_DEVICE_TARGET" />
-              <deviceKey>
-                <Key>
-                  <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\danie\.android\avd\Pixel_5_API_33.avd" />
-                </Key>
-              </deviceKey>
-            </Target>
-          </runningDeviceTargetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-04-29T09:45:23.051245800Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-05-09T12:43:29.531711400Z" />
         </State>
       </entry>
     </value>
