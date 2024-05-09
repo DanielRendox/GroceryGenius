@@ -8,9 +8,9 @@ import com.rendox.grocerygenius.file_storage.UnzipUtils
 import com.rendox.grocerygenius.model.IconReference
 import com.rendox.grocerygenius.network.di.Dispatcher
 import com.rendox.grocerygenius.network.di.GroceryGeniusDispatchers
+import com.rendox.grocerygenius.network.listAdapter
 import com.rendox.grocerygenius.network.model.NetworkChangeList
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -26,7 +26,7 @@ class OfflineIconNetworkDataSource @Inject constructor(
 
     override suspend fun downloadIcons(): List<IconReference> = withContext(ioDispatcher) {
         val iconsArchive =
-            assetToFileSaver.copyAssetToInternalStorage("grocery/icons/all_icons_v1.zip")
+            assetToFileSaver.copyAssetToInternalStorage("icons/all_icons_v1.zip")
         if (iconsArchive == null) {
             throw IllegalStateException(
                 "Failed to copy icons archive to internal storage because iconsArchive is null"
@@ -37,7 +37,7 @@ class OfflineIconNetworkDataSource @Inject constructor(
             )
         }
         val extractedFiles = UnzipUtils.unzip(
-            iconsArchive, appContext.filesDir.absolutePath + "/grocery/icons"
+            iconsArchive, appContext.filesDir.absolutePath + "/icons"
         ).map { file ->
             IconReference(
                 uniqueFileName = file.name,
@@ -55,7 +55,7 @@ class OfflineIconNetworkDataSource @Inject constructor(
     override suspend fun downloadIconsByIds(
         ids: List<String>
     ): List<IconReference> = ids.mapNotNull { fileName ->
-        val assetFilePath = "grocery/icons/$fileName"
+        val assetFilePath = "icons/$fileName"
         val file = assetToFileSaver.copyAssetToInternalStorage(assetFilePath)
         file?.let {
             IconReference(
@@ -66,11 +66,9 @@ class OfflineIconNetworkDataSource @Inject constructor(
     }
 
     override suspend fun getIconChangeList(after: Int): List<NetworkChangeList> {
-        val type = Types.newParameterizedType(List::class.java, NetworkChangeList::class.java)
-        val adapter = moshi.adapter<List<NetworkChangeList>>(type)
         return jsonAssetDecoder.decodeFromFile(
-            adapter = adapter,
-            fileName = "icon/icons_change_list.json",
+            adapter = moshi.listAdapter<NetworkChangeList>(),
+            fileName = "icons/icons_change_list.json",
         )?.filter { it.changeListVersion > after } ?: emptyList()
     }
 }

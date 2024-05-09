@@ -114,6 +114,10 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    implementation(libs.com.squareup.retrofit.core)
+    implementation(libs.com.squareup.retrofit.moshi)
+    implementation(libs.com.squareup.okhttp.logging)
+
     testImplementation(platform(libs.org.junit.bom))
     testImplementation(libs.org.junit.jupiter.api)
     testImplementation(libs.org.junit.jupiter.engine)

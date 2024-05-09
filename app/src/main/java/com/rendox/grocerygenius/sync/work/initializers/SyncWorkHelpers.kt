@@ -22,11 +22,18 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.work.Constraints
 import androidx.work.ForegroundInfo
+import androidx.work.NetworkType
 import com.rendox.grocerygenius.R
 
 private const val SYNC_NOTIFICATION_ID = 0
 private const val SYNC_NOTIFICATION_CHANNEL_ID = "SyncNotificationChannel"
+
+val SyncConstraints
+    get() = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .build()
 
 /**
  * Foreground information for sync on lower API levels when sync workers are being
