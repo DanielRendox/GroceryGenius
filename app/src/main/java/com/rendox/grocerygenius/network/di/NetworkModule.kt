@@ -1,6 +1,6 @@
 package com.rendox.grocerygenius.network.di
 
-import androidx.multidex.BuildConfig
+import com.rendox.grocerygenius.BuildConfig
 import com.rendox.grocerygenius.network.GitHubApi
 import com.rendox.grocerygenius.network.category.CategoryNetworkDataSource
 import com.rendox.grocerygenius.network.category.OfflineFirstCategoryNetworkDataSource
@@ -18,6 +18,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -54,7 +55,7 @@ abstract class NetworkModule {
                 if (BuildConfig.DEBUG) {
                     this.addNetworkInterceptor(
                         HttpLoggingInterceptor().apply {
-                            level = HttpLoggingInterceptor.Level.BODY
+                            level = HttpLoggingInterceptor.Level.HEADERS
                         },
                     )
                 }
@@ -66,6 +67,8 @@ abstract class NetworkModule {
                     .build()
                 chain.proceed(requestWithHeaders)
             }
+            .readTimeout(20, TimeUnit.SECONDS)
+            .connectTimeout(20, TimeUnit.SECONDS)
             .build()
 
         @Provides
