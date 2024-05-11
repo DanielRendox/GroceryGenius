@@ -67,21 +67,21 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val darkTheme = shouldUseDarkTheme(uiState)
-            DisposableEffect(darkTheme) {
+            val useDarkTheme = shouldUseDarkTheme(uiState)
+            DisposableEffect(useDarkTheme) {
                 enableEdgeToEdge(
                     statusBarStyle = SystemBarStyle.auto(
                         Color.TRANSPARENT,
                         Color.TRANSPARENT,
-                    ) { darkTheme },
+                    ) { useDarkTheme },
                     navigationBarStyle = SystemBarStyle.auto(
                         lightScrim,
                         darkScrim,
-                    ) { darkTheme },
+                    ) { useDarkTheme },
                 )
                 onDispose {}
             }
-            LaunchedEffect(Unit) {
+            LaunchedEffect(useDarkTheme) {
                 if (Build.VERSION.SDK_INT >= 29) {
                     window.isNavigationBarContrastEnforced = false
                 }
@@ -89,7 +89,7 @@ class MainActivity : ComponentActivity() {
 
             uiState?.let { uiState ->
                 GroceryGeniusTheme(
-                    useDarkTheme = darkTheme,
+                    useDarkTheme = useDarkTheme,
                     disableDynamicColor = !uiState.useSystemAccentColor,
                     requestedColorScheme = uiState.selectedTheme,
                 ) {

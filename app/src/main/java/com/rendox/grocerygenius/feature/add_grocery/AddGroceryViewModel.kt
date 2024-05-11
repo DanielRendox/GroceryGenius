@@ -198,6 +198,7 @@ class AddGroceryViewModel @Inject constructor(
                 groceryListId = groceryListId,
                 description = customProduct.description,
                 purchased = purchased,
+                iconId = customProduct.iconReference?.uniqueFileName,
             )
             _uiStateFlow.update {
                 it.copy(

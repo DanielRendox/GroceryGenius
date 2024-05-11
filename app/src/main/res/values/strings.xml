@@ -41,7 +41,7 @@
     <string name="settings_use_system_accent_color">Use System Accent Color</string>
     <string name="settings_preferences">Preferences</string>
     <string name="settings_open_last_viewed_list">Open Last Viewed List</string>
-    <string name="settings_default_list">Default List</string>
+    <string name="settings_default_list">Open Default List</string>
     <string name="settings_default_list_unspecified">None</string>
     <string name="settings_reorder_categories_title">Reorder categories</string>
     <string name="settings_reorder_categories_description">Grocery Genius sorts items by their categories. You can arrange them to match your favorite store.</string>
