@@ -59,7 +59,7 @@ suspend fun Synchronizer.changeListSync(
     val networkChangeList = changeListFetcher(localVersion)
     val latestVersion = networkChangeList.lastOrNull()?.changeListVersion
 
-    if (localVersion < 0) {
+    if (checkFirstTimeSync(localVersion)) {
         prepopulateWithInitialData()
         updateChangeListVersions {
             versionUpdater(latestVersion ?: 0)
@@ -76,3 +76,5 @@ suspend fun Synchronizer.changeListSync(
         versionUpdater(latestVersion)
     }
 }.isSuccess
+
+fun checkFirstTimeSync(localVersion: Int) = localVersion < 0

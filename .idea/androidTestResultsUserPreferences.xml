@@ -30,6 +30,20 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="-1126537707">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Pixel_5_API_33_HAXM_" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="Xiaomi Redmi Note 7" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="-769919483">
           <value>
             <AndroidTestResultsTableState>

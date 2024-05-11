@@ -37,9 +37,6 @@
           <timeTargetWasSelectedWithDropDown value="2024-04-29T18:10:55.565944300Z" />
         </State>
       </entry>
-      <entry key="IconPickerScreenPreview">
-        <State />
-      </entry>
       <entry key="SyncWorkerTest">
         <State />
       </entry>
@@ -56,8 +53,11 @@
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-05-09T12:43:29.531711400Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-05-10T17:08:00.610295800Z" />
         </State>
+      </entry>
+      <entry key="generate()">
+        <State />
       </entry>
     </value>
   </component>

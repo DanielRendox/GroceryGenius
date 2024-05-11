@@ -2,6 +2,8 @@ package com.rendox.grocerygenius.feature.dashboard_screen
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
@@ -28,12 +30,15 @@ fun NavGraphBuilder.groceryListsDashboardScreen(
         route = GROCERY_LISTS_DASHBOARD_ROUTE,
         enterTransition = {
             when (initialState.destination.route) {
-                GROCERY_LIST_ROUTE -> GroceryGeniusTransition.SharedZAxisEnterBackward
+                GROCERY_LIST_ROUTE -> slideInHorizontally(initialOffsetX = { -it })
                 else -> EnterTransition.None
             }
         },
         exitTransition = {
-            ExitTransition.None
+            when (targetState.destination.route) {
+                GROCERY_LIST_ROUTE -> slideOutHorizontally(targetOffsetX = { -it })
+                else -> ExitTransition.None
+            }
         },
     ) {
         GroceryListsDashboardRoute(

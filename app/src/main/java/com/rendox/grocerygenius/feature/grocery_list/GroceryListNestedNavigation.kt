@@ -2,6 +2,9 @@ package com.rendox.grocerygenius.feature.grocery_list
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -51,15 +54,14 @@ fun NavGraphBuilder.groceryListNestedNavigation(
         route = GROCERY_LIST_ROUTE,
         enterTransition = {
             when (initialState.destination.route) {
-                GROCERY_LISTS_DASHBOARD_ROUTE -> GroceryGeniusTransition.SharedZAxisEnterForward
-                CATEGORY_ROUTE -> GroceryGeniusTransition.SlideInHorizontallyEnterBackward
-                else -> EnterTransition.None
+                CATEGORY_ROUTE -> slideInHorizontally(initialOffsetX = { -it })
+                else -> slideInHorizontally(initialOffsetX = { it })
             }
         },
         exitTransition = {
             when (targetState.destination.route) {
-                CATEGORY_ROUTE -> GroceryGeniusTransition.SlideOutHorizontallyExitBackward
-                else -> ExitTransition.None
+                CATEGORY_ROUTE -> slideOutHorizontally(targetOffsetX = { -it })
+                else -> slideOutHorizontally(targetOffsetX = { it })
             }
         },
     ) { backStackEntry ->
@@ -76,10 +78,10 @@ fun NavGraphBuilder.groceryListNestedNavigation(
     composable(
         route = CATEGORY_ROUTE,
         enterTransition = {
-            GroceryGeniusTransition.SlideInHorizontallyEnterForward
+            slideInHorizontally(initialOffsetX = { it })
         },
         exitTransition = {
-            GroceryGeniusTransition.SlideOutHorizontallyExitForward
+            slideOutHorizontally(targetOffsetX = { it })
         },
     ) { backStackEntry ->
         CategoryRoute(

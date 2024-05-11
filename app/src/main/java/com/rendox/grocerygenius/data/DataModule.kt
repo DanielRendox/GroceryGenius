@@ -12,6 +12,8 @@ import com.rendox.grocerygenius.data.product.ProductRepository
 import com.rendox.grocerygenius.data.product.ProductRepositoryImpl
 import com.rendox.grocerygenius.data.user_preferences.UserPreferencesRepository
 import com.rendox.grocerygenius.data.user_preferences.UserPreferencesRepositoryImpl
+import com.rendox.grocerygenius.data.util.ConnectivityManagerNetworkMonitor
+import com.rendox.grocerygenius.data.util.NetworkMonitor
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -57,4 +59,10 @@ abstract class DataModule {
     abstract fun bindUserPreferencesRepository(
         userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl
     ): UserPreferencesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindNetworkMonitor(
+        networkMonitor: ConnectivityManagerNetworkMonitor
+    ): NetworkMonitor
 }
