@@ -1,6 +1,7 @@
 package com.rendox.grocerygenius.network.product
 
 import com.rendox.grocerygenius.network.GitHubApi
+import com.rendox.grocerygenius.network.data_sources.ProductNetworkDataSource
 import com.rendox.grocerygenius.network.model.NetworkChangeList
 import com.rendox.grocerygenius.network.model.ProductNetwork
 import javax.inject.Inject

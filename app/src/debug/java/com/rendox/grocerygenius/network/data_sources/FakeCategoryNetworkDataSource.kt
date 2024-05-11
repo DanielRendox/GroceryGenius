@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.network.category
+package com.rendox.grocerygenius.network.data_sources
 
 import com.rendox.grocerygenius.file_storage.JsonAssetDecoder
 import com.rendox.grocerygenius.network.listAdapter
@@ -7,7 +7,7 @@ import com.rendox.grocerygenius.network.model.NetworkChangeList
 import com.squareup.moshi.Moshi
 import javax.inject.Inject
 
-class OfflineCategoryNetworkDataSource @Inject constructor(
+class FakeCategoryNetworkDataSource @Inject constructor(
     private val jsonAssetDecoder: JsonAssetDecoder,
     private val moshi: Moshi,
 ) : CategoryNetworkDataSource {

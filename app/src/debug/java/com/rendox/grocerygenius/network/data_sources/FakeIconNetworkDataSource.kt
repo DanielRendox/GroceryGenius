@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.network.icons
+package com.rendox.grocerygenius.network.data_sources
 
 import android.content.Context
 import android.util.Log
@@ -16,7 +16,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class OfflineIconNetworkDataSource @Inject constructor(
+class FakeIconNetworkDataSource @Inject constructor(
     @ApplicationContext private val appContext: Context,
     private val jsonAssetDecoder: JsonAssetDecoder,
     private val moshi: Moshi,

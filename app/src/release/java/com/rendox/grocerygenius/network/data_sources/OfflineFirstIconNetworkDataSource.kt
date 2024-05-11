@@ -4,6 +4,7 @@ import android.content.Context
 import com.rendox.grocerygenius.file_storage.UnzipUtils
 import com.rendox.grocerygenius.model.IconReference
 import com.rendox.grocerygenius.network.GitHubApi
+import com.rendox.grocerygenius.network.data_sources.IconNetworkDataSource
 import com.rendox.grocerygenius.network.model.NetworkChangeList
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject

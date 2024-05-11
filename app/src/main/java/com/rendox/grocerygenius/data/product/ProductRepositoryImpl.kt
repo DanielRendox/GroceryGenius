@@ -6,7 +6,7 @@ import com.rendox.grocerygenius.data.model.asEntity
 import com.rendox.grocerygenius.data.model.asExternalModel
 import com.rendox.grocerygenius.database.product.ProductDao
 import com.rendox.grocerygenius.model.Product
-import com.rendox.grocerygenius.network.product.ProductNetworkDataSource
+import com.rendox.grocerygenius.network.data_sources.ProductNetworkDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

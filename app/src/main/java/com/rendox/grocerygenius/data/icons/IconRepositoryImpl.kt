@@ -6,7 +6,7 @@ import com.rendox.grocerygenius.data.model.asEntity
 import com.rendox.grocerygenius.database.grocery_icon.IconDao
 import com.rendox.grocerygenius.model.Category
 import com.rendox.grocerygenius.model.IconReference
-import com.rendox.grocerygenius.network.icons.IconNetworkDataSource
+import com.rendox.grocerygenius.network.data_sources.IconNetworkDataSource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.network.product
+package com.rendox.grocerygenius.network.data_sources
 
 import com.rendox.grocerygenius.file_storage.JsonAssetDecoder
 import com.rendox.grocerygenius.network.listAdapter
@@ -7,7 +7,7 @@ import com.rendox.grocerygenius.network.model.ProductNetwork
 import com.squareup.moshi.Moshi
 import javax.inject.Inject
 
-class OfflineProductNetworkDataSource @Inject constructor(
+class FakeProductNetworkDataSource @Inject constructor(
     private val jsonAssetDecoder: JsonAssetDecoder,
     private val moshi: Moshi,
 ): ProductNetworkDataSource {
