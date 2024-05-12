@@ -1,11 +1,11 @@
 package com.rendox.grocerygenius.network.di
 
-import com.rendox.grocerygenius.network.category.CategoryNetworkDataSource
-import com.rendox.grocerygenius.network.category.OfflineFirstCategoryNetworkDataSource
-import com.rendox.grocerygenius.network.icons.IconNetworkDataSource
-import com.rendox.grocerygenius.network.icons.OfflineFirstIconNetworkDataSource
-import com.rendox.grocerygenius.network.product.OfflineFirstProductNetworkDataSource
-import com.rendox.grocerygenius.network.product.ProductNetworkDataSource
+import com.rendox.grocerygenius.network.data_sources.OfflineFirstCategoryNetworkDataSource
+import com.rendox.grocerygenius.network.data_sources.CategoryNetworkDataSource
+import com.rendox.grocerygenius.network.data_sources.IconNetworkDataSource
+import com.rendox.grocerygenius.network.data_sources.ProductNetworkDataSource
+import com.rendox.grocerygenius.network.data_sources.OfflineFirstIconNetworkDataSource
+import com.rendox.grocerygenius.network.data_sources.OfflineFirstProductNetworkDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
