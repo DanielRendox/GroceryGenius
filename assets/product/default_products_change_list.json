@@ -1,3 +1,7 @@
 [
-
+  {
+    "id": "default-product-apple",
+    "changeListVersion": "John Doe",
+    "isDeleted": false
+  }
 ]

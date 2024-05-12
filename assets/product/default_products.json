@@ -8,7 +8,7 @@
   },
   {
     "id": "default-product-apple",
-    "name": "Apple",
+    "name": "Apples",
     "iconId": "apple_v1.png",
     "categoryId": "default-category-fruits-and-vegetables",
     "isDefault": true
