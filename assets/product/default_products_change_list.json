@@ -1,3 +1,7 @@
 [
-
+  {
+    "id": "default-product-apple",
+    "changeListVersion": 1,
+    "isDeleted": false
+  }
 ]
