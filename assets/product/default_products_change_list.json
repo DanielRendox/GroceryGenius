@@ -3,5 +3,35 @@
     "id": "default-product-apple",
     "changeListVersion": 1,
     "isDeleted": false
+  },
+  {
+    "id": "default-product-barbecue-sauce",
+    "changeListVersion": 2,
+    "isDeleted": true
+  },
+  {
+    "id": "default-product-lamb",
+    "changeListVersion": 2,
+    "isDeleted": false
+  },
+  {
+    "id": "default-product-mayonnaise",
+    "changeListVersion": 2,
+    "isDeleted": false
+  },
+  {
+    "id": "default-product-sauce",
+    "changeListVersion": 2,
+    "isDeleted": false
+  },
+  {
+    "id": "default-product-sour-cream",
+    "changeListVersion": 2,
+    "isDeleted": false
+  },
+  {
+    "id": "default-product-tomatoes",
+    "changeListVersion": 2,
+    "isDeleted": false
   }
 ]
