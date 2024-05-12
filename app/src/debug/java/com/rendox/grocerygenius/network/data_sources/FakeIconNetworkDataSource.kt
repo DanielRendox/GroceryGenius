@@ -26,7 +26,7 @@ class FakeIconNetworkDataSource @Inject constructor(
 
     override suspend fun downloadIcons(): List<IconReference> = withContext(ioDispatcher) {
         val iconsArchive =
-            assetToFileSaver.copyAssetToInternalStorage("icons/all_icons_v1.zip")
+            assetToFileSaver.copyAssetToInternalStorage("icons/all_icons.zip")
         if (iconsArchive == null) {
             throw IllegalStateException(
                 "Failed to copy icons archive to internal storage because iconsArchive is null"
