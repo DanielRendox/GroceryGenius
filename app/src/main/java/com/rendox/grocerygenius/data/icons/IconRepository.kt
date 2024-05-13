@@ -8,5 +8,4 @@ import kotlinx.coroutines.flow.Flow
 interface IconRepository : Syncable {
     fun getIconsGroupedByCategory(): Flow<Map<Category, List<IconReference>>>
     suspend fun getGroceryIconsByName(name: String): List<IconReference>
-    suspend fun getGroceryIconsByKeywords(keywords: List<String>): List<IconReference>
 }

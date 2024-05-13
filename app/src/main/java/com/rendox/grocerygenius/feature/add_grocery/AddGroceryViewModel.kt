@@ -7,10 +7,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rendox.grocerygenius.data.grocery.GroceryRepository
-import com.rendox.grocerygenius.data.icons.IconRepository
 import com.rendox.grocerygenius.data.product.ProductRepository
-import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.model.Grocery
+import com.rendox.grocerygenius.model.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +21,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -30,7 +28,6 @@ import javax.inject.Inject
 class AddGroceryViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val groceryRepository: GroceryRepository,
-    private val iconRepository: IconRepository,
 ) : ViewModel() {
     private val _uiStateFlow = MutableStateFlow(AddGroceryUiState())
     val uiStateFlow = _uiStateFlow.asStateFlow()
@@ -59,7 +56,7 @@ class AddGroceryViewModel @Inject constructor(
                     _uiStateFlow.update {
                         it.copy(
                             grocerySearchResults = emptyList(),
-                            customProduct = null,
+                            customProducts = emptyList(),
                         )
                     }
                 }
@@ -111,7 +108,7 @@ class AddGroceryViewModel @Inject constructor(
             resetAddGroceryBottomSheet(intent.groceryListId)
 
         is AddGroceryUiIntent.OnCustomProductClick ->
-            _uiStateFlow.value.customProduct?.let { addCustomProduct(it) }
+            addCustomProduct(intent.customProduct)
     }
 
     private fun updateSearchResults(searchQuery: String) {
@@ -133,7 +130,7 @@ class AddGroceryViewModel @Inject constructor(
                 Grocery(
                     productId = product.id,
                     name = product.name,
-                    purchased = correspondingGroceryInTheList?.purchased ?: false,
+                    purchased = correspondingGroceryInTheList?.purchased ?: true,
                     description = correspondingGroceryInTheList?.description,
                     category = product.category,
                     purchasedLastModified = correspondingGroceryInTheList?.purchasedLastModified
@@ -142,15 +139,29 @@ class AddGroceryViewModel @Inject constructor(
                 )
             }
 
-            val customProduct = if (!isPerfectMatch) CustomProduct(
-                name = searchQuery,
-                iconReference = iconRepository.getGroceryIconsByKeywords(
-                    keywords = searchQuery.split(" ")
-                ).firstOrNull(), // assuming that the best matching result is first
-            ) else null
-            _uiStateFlow.update {
-                it.copy(
-                    customProduct = customProduct,
+            // A product that does not exist in the database created from the search query
+            // with undefined category and icon
+            val customProduct = if (!isPerfectMatch) Product(name = searchQuery) else null
+
+            // A product that is derived from existing products in the
+            // database, but not entirely the same as any of them. For example there is a product
+            // "sauce" in the database, but the user searches for "tomato sauce", which is not
+            // there. In this case, the custom product "tomato sauce" will get the icon
+            // and category of the existing product "sauce".
+            val derivedProduct = if (isPerfectMatch) null else productRepository
+                .getProductsByKeywords(keywords = searchQuery.split(" "))
+                .firstOrNull() // assuming that the best matching result is first
+                ?.let { product ->
+                    Product(
+                        name = searchQuery,
+                        category = product.category,
+                        icon = product.icon,
+                    )
+                }
+
+            _uiStateFlow.update { uiState ->
+                uiState.copy(
+                    customProducts = listOf(derivedProduct, customProduct).mapNotNull { it },
                     grocerySearchResults = newResults,
                 )
             }
@@ -173,7 +184,7 @@ class AddGroceryViewModel @Inject constructor(
                     productId = grocery.productId,
                     listId = groceryListId,
                     description = grocery.description,
-                    purchased = grocery.purchased,
+                    purchased = !grocery.purchased,
                 )
             }
             _uiStateFlow.update {
@@ -186,26 +197,25 @@ class AddGroceryViewModel @Inject constructor(
         searchQuery = ""
     }
 
-    private fun addCustomProduct(customProduct: CustomProduct) {
+    private fun addCustomProduct(customProduct: Product) {
         val groceryListId = groceryListIdFlow.value ?: return
         viewModelScope.launch {
-            val productId = UUID.randomUUID().toString()
             val purchased = false
             groceryRepository.insertProductAndGrocery(
-                productId = productId,
+                productId = customProduct.id,
                 name = customProduct.name,
                 categoryId = customProduct.category?.id,
                 groceryListId = groceryListId,
-                description = customProduct.description,
+                description = null,
                 purchased = purchased,
-                iconId = customProduct.iconReference?.uniqueFileName,
+                iconId = customProduct.icon?.uniqueFileName,
             )
             _uiStateFlow.update {
                 it.copy(
                     previouslyAddedGrocery = Grocery(
-                        productId = productId,
+                        productId = customProduct.id,
                         name = customProduct.name,
-                        description = customProduct.description,
+                        description = null,
                         category = customProduct.category,
                         purchased = purchased,
                     ),
@@ -235,7 +245,7 @@ class AddGroceryViewModel @Inject constructor(
     }
 
     private fun onSearchFieldKeyboardDone() {
-        val customProduct = _uiStateFlow.value.customProduct
+        val customProduct = _uiStateFlow.value.customProducts.lastOrNull()
         if (customProduct != null) {
             addCustomProduct(customProduct)
         } else {
