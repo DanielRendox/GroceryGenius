@@ -10,8 +10,10 @@ import retrofit2.http.Streaming
 
 interface GitHubApi {
 
-    @GET("category/categories.json")
-    suspend fun getCategories(): List<CategoryNetwork>
+    @GET("category/categories_{languageCode}.json")
+    suspend fun getCategories(
+        @Path("languageCode") languageCode: String = "en",
+    ): List<CategoryNetwork>
 
     @GET("category/categories_change_list.json")
     suspend fun getCategoriesChangeList(): List<NetworkChangeList>
@@ -28,8 +30,10 @@ interface GitHubApi {
     @GET("icons/icons_change_list.json")
     suspend fun getIconChangeList(): List<NetworkChangeList>
 
-    @GET("product/default_products.json")
-    suspend fun getProducts(): List<ProductNetwork>
+    @GET("product/default_products_{languageCode}.json")
+    suspend fun getProducts(
+        @Path("languageCode") languageCode: String = "en",
+    ): List<ProductNetwork>
 
     @GET("product/default_products_change_list.json")
     suspend fun getProductsChangeList(): List<NetworkChangeList>

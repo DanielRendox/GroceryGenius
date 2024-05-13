@@ -15,7 +15,7 @@ class FakeProductNetworkDataSource @Inject constructor(
     override suspend fun getAllProducts(): List<ProductNetwork> {
         return jsonAssetDecoder.decodeFromFile(
             adapter = moshi.listAdapter<ProductNetwork>(),
-            fileName = "product/default_products.json",
+            fileName = "product/default_products_en.json",
         ) ?: emptyList()
     }
 
