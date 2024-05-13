@@ -45,6 +45,7 @@
     <string name="settings_default_list_unspecified">None</string>
     <string name="settings_reorder_categories_title">Reorder categories</string>
     <string name="settings_reorder_categories_description">Grocery Genius sorts items by their categories. You can arrange them to match your favorite store.</string>
+    <string name="settings_dynamic_color_not_supported_message">Your device does not support dynamic color</string>
 
     <!-- IconPickerScreen -->
     <string name="icon_picker_screen_title">Choose icon</string>

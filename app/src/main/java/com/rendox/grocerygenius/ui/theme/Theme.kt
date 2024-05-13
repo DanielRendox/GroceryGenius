@@ -30,10 +30,7 @@ fun GroceryGeniusTheme(
     requestedColorScheme: GroceryGeniusColorScheme? = null,
     content: @Composable () -> Unit,
 ) {
-
-    val dynamicColorIsSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val dynamicColor = dynamicColorIsSupported && !disableDynamicColor
-
     val extendedColors =
         if (useDarkTheme) DarkExtendedColors else LightExtendedColors
     val dynamicColorScheme = when {
@@ -91,3 +88,6 @@ fun GroceryGeniusColorScheme.deriveColorScheme(
         else YellowLightColorScheme
     }
 }
+
+val dynamicColorIsSupported: Boolean
+    get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S

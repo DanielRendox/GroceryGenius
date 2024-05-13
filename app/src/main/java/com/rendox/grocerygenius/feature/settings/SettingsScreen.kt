@@ -34,6 +34,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -79,6 +81,8 @@ import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolb
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbarScaffoldScrollableState
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.CollapsingToolbarNestedScrollConnection
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.rememberExitUntilCollapsedToolbarState
+import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
+import com.rendox.grocerygenius.ui.helpers.UiEvent
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import com.rendox.grocerygenius.ui.theme.TopAppBarMediumHeight
 import com.rendox.grocerygenius.ui.theme.TopAppBarSmallHeight
@@ -91,9 +95,11 @@ fun SettingsRoute(
     navigateBack: () -> Unit = {},
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val showDynamicColorNotSupportedMessage by viewModel.showDynamicColorNotSupportedMessage.collectAsStateWithLifecycle()
     SettingsScreen(
         modifier = Modifier.fillMaxSize(),
         uiState = uiState,
+        showDynamicColorNotSupportedMessage = showDynamicColorNotSupportedMessage,
         onIntent = viewModel::onIntent,
         navigateBack = navigateBack,
     )
@@ -103,6 +109,7 @@ fun SettingsRoute(
 private fun SettingsScreen(
     modifier: Modifier = Modifier,
     uiState: SettingsScreenState,
+    showDynamicColorNotSupportedMessage: UiEvent<Unit>?,
     onIntent: (SettingsScreenIntent) -> Unit,
     navigateBack: () -> Unit,
 ) {
@@ -133,9 +140,19 @@ private fun SettingsScreen(
         )
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val dynamicColorNotSupportedMessage =
+        stringResource(R.string.settings_dynamic_color_not_supported_message)
+    ObserveUiEvent(showDynamicColorNotSupportedMessage) {
+        snackbarHostState.showSnackbar(message = dynamicColorNotSupportedMessage)
+    }
+
     Scaffold(
         modifier = modifier,
         contentWindowInsets = WindowInsets.navigationBars,
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
     ) { contentPadding ->
         Column(
             modifier = Modifier
@@ -606,7 +623,8 @@ fun PreviewSettingsScreen() {
                     )
                 },
                 onIntent = {},
-                navigateBack = {}
+                navigateBack = {},
+                showDynamicColorNotSupportedMessage = null,
             )
         }
     }

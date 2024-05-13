@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.rendox.grocerygenius.data.category.CategoryRepository
 import com.rendox.grocerygenius.data.grocery_list.GroceryListRepository
 import com.rendox.grocerygenius.data.user_preferences.UserPreferencesRepository
+import com.rendox.grocerygenius.ui.helpers.UiEvent
+import com.rendox.grocerygenius.ui.theme.dynamicColorIsSupported
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,6 +27,9 @@ class SettingsScreenViewModel @Inject constructor(
     private val _uiStateFlow = MutableStateFlow(SettingsScreenState())
     val uiStateFlow = _uiStateFlow.asStateFlow()
 
+    private val _showDynamicColorNotSupportedMessage = MutableStateFlow<UiEvent<Unit>?>(null)
+    val showDynamicColorNotSupportedMessage = _showDynamicColorNotSupportedMessage.asStateFlow()
+
     init {
         viewModelScope.launch {
             _uiStateFlow.update {
@@ -36,9 +41,11 @@ class SettingsScreenViewModel @Inject constructor(
                 )
             }
             userPreferencesRepository.userPreferencesFlow.collectLatest { userPreferences ->
+                val useSystemAccentColor =
+                    if (dynamicColorIsSupported) userPreferences.useSystemAccentColor else false
                 _uiStateFlow.update { uiState ->
                     uiState.copy(
-                        userPreferences = userPreferences,
+                        userPreferences = userPreferences.copy(useSystemAccentColor = useSystemAccentColor),
                         isLoading = false,
                     )
                 }
@@ -54,8 +61,20 @@ class SettingsScreenViewModel @Inject constructor(
             is SettingsScreenIntent.OnChangeDefaultList ->
                 userPreferencesRepository.updateDefaultListId(intent.listId)
 
-            is SettingsScreenIntent.ChangeUseSystemAccentColor ->
-                userPreferencesRepository.updateUseSystemAccentColor(intent.use)
+            is SettingsScreenIntent.ChangeUseSystemAccentColor -> {
+                if (dynamicColorIsSupported) {
+                    userPreferencesRepository.updateUseSystemAccentColor(intent.use)
+                } else {
+                    _showDynamicColorNotSupportedMessage.update {
+                        object : UiEvent<Unit> {
+                            override val data = Unit
+                            override fun onConsumed() {
+                                _showDynamicColorNotSupportedMessage.update { null }
+                            }
+                        }
+                    }
+                }
+            }
 
             is SettingsScreenIntent.ChangeColorScheme ->
                 userPreferencesRepository.updateSelectedTheme(intent.scheme)
