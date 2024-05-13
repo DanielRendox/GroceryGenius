@@ -1,5 +1,7 @@
 package com.rendox.grocerygenius.feature.settings
 
+import android.content.Intent
+import android.net.Uri
 import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -49,9 +51,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -197,6 +200,7 @@ private fun SettingsScreen(
                     }
                     item {
                         DarkThemeConfigSetting(
+                            modifier = Modifier.padding(vertical = 16.dp),
                             darkThemeConfig = uiState.userPreferences.darkThemeConfig,
                             isThemeDropdownExpanded = isThemeDropdownExpanded,
                             onChangeDarkThemeConfig = {
@@ -276,6 +280,27 @@ private fun SettingsScreen(
                             }
                         )
                     }
+                    item {
+                        SettingsTitle(
+                            modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                            title = stringResource(R.string.settings_feedback)
+                        )
+                    }
+                    item {
+                        GitHubLink()
+                    }
+                    item {
+                        EmailLink()
+                    }
+                    item {
+                        SettingsTitle(
+                            modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                            title = stringResource(R.string.settings_credits)
+                        )
+                    }
+                    item {
+                        FreepikAttribution()
+                    }
                 }
             }
         }
@@ -297,12 +322,14 @@ fun SettingsTitle(
 
 @Composable
 fun DarkThemeConfigSetting(
+    modifier: Modifier = Modifier,
     darkThemeConfig: DarkThemeConfig,
     isThemeDropdownExpanded: Boolean,
     onChangeDarkThemeConfig: (DarkThemeConfig) -> Unit,
     onThemeDropdownExpandedChanged: (Boolean) -> Unit
 ) {
     CustomIconSetting(
+        modifier = modifier,
         title = stringResource(R.string.settings_theme_mode),
         icon = {
             Icon(
@@ -407,7 +434,7 @@ fun ColorSchemePicker(
                     Icon(
                         imageVector = Icons.Default.Done,
                         contentDescription = null,
-                        tint = Color(0xFF231B00),
+                        tint = colors.onPrimaryContainer,
                     )
                 }
             }
@@ -422,9 +449,9 @@ private fun OpenLastViewedListSetting(
     onChangeOpenLastViewedListConfig: (Boolean) -> Unit
 ) {
     CustomIconSetting(
-        modifier = modifier.clickable {
-            onChangeOpenLastViewedListConfig(!openLastViewedList)
-        },
+        modifier = modifier
+            .padding(vertical = 6.dp)
+            .clickable { onChangeOpenLastViewedListConfig(!openLastViewedList) },
         title = stringResource(R.string.settings_open_last_viewed_list),
         icon = {
             Icon(
@@ -443,6 +470,7 @@ private fun OpenLastViewedListSetting(
 
 @Composable
 fun DefaultListSetting(
+    modifier: Modifier = Modifier,
     groceryLists: List<GroceryList>,
     defaultListId: String? = null,
     isDefaultListDropdownExpanded: Boolean,
@@ -450,6 +478,7 @@ fun DefaultListSetting(
     onDefaultListDropdownExpandedChanged: (Boolean) -> Unit
 ) {
     CustomIconSetting(
+        modifier = modifier.padding(vertical = 6.dp),
         title = stringResource(R.string.settings_default_list),
         icon = {
             Icon(
@@ -531,6 +560,7 @@ fun DefaultListSetting(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoriesOrderSetting(
+    modifier: Modifier = Modifier,
     categories: List<Category>,
     updateCategories: (List<Category>) -> Unit,
     onResetCategoriesOrder: () -> Unit,
@@ -545,7 +575,8 @@ private fun CategoriesOrderSetting(
     }
 
     CustomIconSetting(
-        modifier = Modifier
+        modifier = modifier
+            .padding(vertical = 6.dp)
             .fillMaxWidth()
             .clickable { bottomSheetIsVisible = true },
         title = stringResource(R.string.settings_reorder_categories_title),
@@ -604,6 +635,74 @@ private fun CategoriesOrderSetting(
             }
         }
     }
+}
+
+@Composable
+private fun GitHubLink(
+    modifier: Modifier = Modifier
+) {
+    val uriHandler = LocalUriHandler.current
+    CustomIconSetting(
+        modifier = modifier
+            .padding(top = 16.dp)
+            .clickable { uriHandler.openUri("https://github.com/DanielRendox/GroceryGenius") },
+        title = stringResource(R.string.github_link_title),
+        description = stringResource(R.string.github_link_description),
+        icon = {
+            Icon(
+                painter = painterResource(R.drawable.github_mark),
+                contentDescription = null,
+            )
+        },
+    )
+}
+
+@Composable
+private fun EmailLink(
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val title = stringResource(R.string.email_link_title)
+    val developerEmail = "daniel.rendox@gmail.com"
+    CustomIconSetting(
+        modifier = modifier
+            .padding(top = 16.dp)
+            .clickable {
+                val intent = Intent(
+                    Intent.ACTION_SENDTO,
+                    Uri.parse("mailto:" + Uri.encode(developerEmail))
+                )
+                context.startActivity(Intent.createChooser(intent, title))
+            },
+        title = title,
+        description = stringResource(R.string.email_link_description),
+        icon = {
+            Icon(
+                painterResource(R.drawable.mail),
+                contentDescription = null,
+            )
+        },
+    )
+}
+
+@Composable
+private fun FreepikAttribution(
+    modifier: Modifier = Modifier
+) {
+    val uriHandler = LocalUriHandler.current
+    CustomIconSetting(
+        modifier = modifier
+            .padding(top = 16.dp)
+            .clickable { uriHandler.openUri("https://www.freepik.com/free-vector/tiny-family-grocery-bag-with-healthy-food-parents-kids-fresh-vegetables-flat-illustration_12291304.htm") },
+        title = stringResource(R.string.settings_image_by_freepik_title),
+        description = stringResource(R.string.settings_image_by_freepik_description),
+        icon = {
+            Icon(
+                painterResource(R.drawable.image_icon),
+                contentDescription = null,
+            )
+        },
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)
