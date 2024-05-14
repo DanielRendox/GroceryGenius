@@ -2,25 +2,6 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="AssetToFileSaverTest">
-        <State>
-          <runningDeviceTargetSelectedWithDropDown>
-            <Target>
-              <type value="RUNNING_DEVICE_TARGET" />
-              <deviceKey>
-                <Key>
-                  <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\danie\.android\avd\Pixel_5_API_33.avd" />
-                </Key>
-              </deviceKey>
-            </Target>
-          </runningDeviceTargetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-05-09T12:44:28.946557300Z" />
-        </State>
-      </entry>
-      <entry key="ChangeListVersionsDataSourceTest">
-        <State />
-      </entry>
       <entry key="Generate Baseline Profile for app">
         <State>
           <targetSelectedWithDropDown>
@@ -37,9 +18,6 @@
           <timeTargetWasSelectedWithDropDown value="2024-04-29T18:10:55.565944300Z" />
         </State>
       </entry>
-      <entry key="SyncWorkerTest">
-        <State />
-      </entry>
       <entry key="app">
         <State>
           <targetSelectedWithDropDown>
@@ -48,12 +26,12 @@
               <deviceKey>
                 <Key>
                   <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\danie\.android\avd\Pixel_5_API_33.avd" />
+                  <value value="C:\Users\danie\.android\avd\7.6_Fold-in_with_outer_display_API_33.avd" />
                 </Key>
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-05-13T17:24:00.806903700Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-05-14T17:38:23.326158900Z" />
         </State>
       </entry>
       <entry key="generate()">

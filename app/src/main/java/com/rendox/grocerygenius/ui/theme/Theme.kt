@@ -9,6 +9,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
+import com.rendox.grocerygenius.model.DEFAULT_USER_PREFERENCES
 import com.rendox.grocerygenius.model.GroceryGeniusColorScheme
 import com.rendox.grocerygenius.ui.theme.color_schemes.BeigeDarkColorScheme
 import com.rendox.grocerygenius.ui.theme.color_schemes.BeigeLightColorScheme
@@ -40,7 +41,7 @@ fun GroceryGeniusTheme(
 
         else -> null
     }
-    val staticColorScheme = requestedColorScheme ?: GroceryGeniusColorScheme.PurpleColorScheme
+    val staticColorScheme = requestedColorScheme ?: DEFAULT_USER_PREFERENCES.selectedTheme
     val resultingColorScheme =
         dynamicColorScheme ?: staticColorScheme.deriveColorScheme(useDarkTheme)
 
