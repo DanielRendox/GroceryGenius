@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.text.style.TextOverflow
@@ -118,6 +119,7 @@ fun CategoryScreen(
             },
         )
         LazyGroceryGrid(
+            modifier = Modifier.testTag("LazyGroceryGrid"),
             groceries = groceries,
             lazyGridState = lazyGridState,
             groceryItem = { grocery ->

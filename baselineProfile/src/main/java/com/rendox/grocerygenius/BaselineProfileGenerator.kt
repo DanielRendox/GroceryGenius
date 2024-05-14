@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.baselineprofile
+package com.rendox.grocerygenius
 
 import androidx.benchmark.macro.junit4.BaselineProfileRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -44,17 +44,23 @@ class BaselineProfileGenerator {
         rule.collect(
             packageName = InstrumentationRegistry.getArguments().getString("targetAppId")
                 ?: throw Exception("targetAppId not passed as instrumentation runner arg"),
-
-            // See: https://d.android.com/topic/performance/baselineprofiles/dex-layout-optimizations
-            includeInStartupProfile = true
+            maxIterations = 8,
         ) {
-            // This block defines the app's critical user journey. Here we are interested in
-            // optimizing for app startup. But you can also navigate and scroll through your most important UI.
-
-            // Start default activity for your app
             pressHome()
             startActivityAndWait()
-            criticalUserJourney()
+            val groceryListName = "TestGroceryList"
+            createNewGroceryList(groceryListName)
+            navigateToCategory()
+            addGroceries()
+            device.pressBack()
+            device.waitForIdle()
+            device.pressBack()
+            navigateToSettings()
+            device.pressBack()
+            navigateToGroceryList(groceryListName)
+            device.waitForIdle()
+            deleteGroceryList()
+            device.waitForIdle()
         }
     }
 }

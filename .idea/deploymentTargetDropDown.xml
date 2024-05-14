@@ -21,7 +21,32 @@
       <entry key="app">
         <State />
       </entry>
+      <entry key="benchmark()">
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\danie\.android\avd\Pixel_5_API_33.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-05-14T07:05:18.589233600Z" />
+        </State>
+      </entry>
+      <entry key="benchmark() (1)">
+        <State />
+      </entry>
       <entry key="generate()">
+        <State />
+      </entry>
+      <entry key="generate() (1)">
+        <State />
+      </entry>
+      <entry key="navigateToCategory() (2)">
         <State />
       </entry>
     </value>

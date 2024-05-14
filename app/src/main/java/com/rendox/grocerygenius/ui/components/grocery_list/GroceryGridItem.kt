@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,7 +39,7 @@ fun GroceryGridItem(
     color: Color,
 ) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.testTag("GroceryGridItem"),
         color = color,
     ) {
         BoxWithConstraints(modifier = Modifier.padding(8.dp)) {
