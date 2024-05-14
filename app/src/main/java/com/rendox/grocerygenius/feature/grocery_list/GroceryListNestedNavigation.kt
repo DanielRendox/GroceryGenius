@@ -2,9 +2,6 @@ package com.rendox.grocerygenius.feature.grocery_list
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.slideIn
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,14 +51,16 @@ fun NavGraphBuilder.groceryListNestedNavigation(
         route = GROCERY_LIST_ROUTE,
         enterTransition = {
             when (initialState.destination.route) {
-                CATEGORY_ROUTE -> slideInHorizontally(initialOffsetX = { -it })
-                else -> slideInHorizontally(initialOffsetX = { it })
+                CATEGORY_ROUTE -> GroceryGeniusTransition.SlideInHorizontallyEnterBackward
+                GROCERY_LISTS_DASHBOARD_ROUTE -> GroceryGeniusTransition.SlideInHorizontallyEnterForward
+                else -> EnterTransition.None
             }
         },
         exitTransition = {
             when (targetState.destination.route) {
-                CATEGORY_ROUTE -> slideOutHorizontally(targetOffsetX = { -it })
-                else -> slideOutHorizontally(targetOffsetX = { it })
+                CATEGORY_ROUTE -> GroceryGeniusTransition.SlideOutHorizontallyExitBackward
+                GROCERY_LISTS_DASHBOARD_ROUTE -> GroceryGeniusTransition.SlideOutHorizontallyExitForward
+                else -> ExitTransition.None
             }
         },
     ) { backStackEntry ->
@@ -78,10 +77,10 @@ fun NavGraphBuilder.groceryListNestedNavigation(
     composable(
         route = CATEGORY_ROUTE,
         enterTransition = {
-            slideInHorizontally(initialOffsetX = { it })
+            GroceryGeniusTransition.SlideInHorizontallyEnterForward
         },
         exitTransition = {
-            slideOutHorizontally(targetOffsetX = { it })
+            GroceryGeniusTransition.SlideOutHorizontallyExitForward
         },
     ) { backStackEntry ->
         CategoryRoute(
