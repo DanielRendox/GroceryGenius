@@ -49,13 +49,6 @@
     "isDefault": true
   },
   {
-    "id": "default-product-barbecue-sauce",
-    "name": "Barbecue Sauce",
-    "iconId": "ketchup.png",
-    "categoryId": "default-category-sauces-and-spices",
-    "isDefault": true
-  },
-  {
     "id": "default-product-batteries",
     "name": "Batteries",
     "iconId": "batteries.png",
@@ -429,7 +422,7 @@
   {
     "id": "default-product-lamb",
     "name": "Lamb",
-    "iconId": "lamb.png",
+    "iconId": "sheep.png",
     "categoryId": "default-category-meat-and-fish",
     "isDefault": true
   },
@@ -464,7 +457,7 @@
   {
     "id": "default-product-mayonnaise",
     "name": "Mayonnaise",
-    "iconId": "mayonnaise.png",
+    "iconId": "sauce.png",
     "categoryId": "default-category-sauces-and-spices",
     "isDefault": true
   },
@@ -730,7 +723,7 @@
   {
     "id": "default-product-sauce",
     "name": "Sauce",
-    "iconId": "sauce.png",
+    "iconId": "ketchup.png",
     "categoryId": "default-category-sauces-and-spices",
     "isDefault": true
   },
@@ -793,7 +786,7 @@
   {
     "id": "default-product-sour-cream",
     "name": "Sour cream",
-    "iconId": "sour_cream.png",
+    "iconId": "sauce.png",
     "categoryId": "default-category-dairy-and-eggs",
     "isDefault": true
   },
@@ -877,7 +870,7 @@
   {
     "id": "default-product-tomatoes",
     "name": "Tomatoes",
-    "iconId": "tomato.png",
+    "iconId": "tomatoes.png",
     "categoryId": "default-category-fruits-and-vegetables",
     "isDefault": true
   },
