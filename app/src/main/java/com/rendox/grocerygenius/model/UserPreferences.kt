@@ -15,5 +15,5 @@ val DEFAULT_USER_PREFERENCES = UserPreferences(
     darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
     useSystemAccentColor = true,
     openLastViewedList = true,
-    selectedTheme = GroceryGeniusColorScheme.PurpleColorScheme,
+    selectedTheme = GroceryGeniusColorScheme.CyanColorScheme,
 )

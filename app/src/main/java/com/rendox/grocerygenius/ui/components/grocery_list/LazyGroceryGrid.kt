@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.rendox.grocerygenius.model.Grocery
+import com.rendox.grocerygenius.model.Product
 import com.rendox.grocerygenius.ui.components.scrollbar.DecorativeScrollbar
 import com.rendox.grocerygenius.ui.components.scrollbar.scrollbarState
 import kotlin.math.roundToInt
@@ -33,7 +34,8 @@ fun LazyGroceryGrid(
     groceries: List<Grocery>,
     showScrollbar: Boolean = true,
     groceryItem: @Composable (Grocery) -> Unit,
-    customProduct: (@Composable () -> Unit)? = null,
+    customProducts: List<Product> = emptyList(),
+    customProduct: (@Composable (Product) -> Unit)? = null,
 ) {
     val scrollbarState = lazyGridState.scrollbarState(itemsAvailable = groceries.size)
     BoxWithConstraints(modifier = modifier) {
@@ -73,7 +75,7 @@ fun LazyGroceryGrid(
                         modifier = Modifier.groceryGridItemCornerRounding(
                             itemIndex = index,
                             numOfColumns = numOfColumns,
-                            lastIndex = groceries.lastIndex + if (customProduct != null) 1 else 0,
+                            lastIndex = groceries.lastIndex + customProducts.size,
                         )
                     ) {
                         groceryItem(groceries[index])
@@ -81,10 +83,11 @@ fun LazyGroceryGrid(
                 }
             }
             if (customProduct != null) {
-                item(
-                    key = "CustomProduct",
+                items(
+                    count = customProducts.size,
+                    key = { index -> customProducts[index].id },
                     contentType = { "Grocery" },
-                ) {
+                ) { index ->
                     BoxWithConstraints(modifier = Modifier.aspectRatio(1F)) {
                         val cellWidth = this.maxWidth
                         val cellWidthPx = with(density) { cellWidth.roundToPx() }
@@ -92,12 +95,12 @@ fun LazyGroceryGrid(
                             ((gridWidthPx + spacing) / (cellWidthPx + spacing).toFloat()).roundToInt()
                         Box(
                             modifier = Modifier.groceryGridItemCornerRounding(
-                                itemIndex = groceries.lastIndex + 1,
+                                itemIndex = groceries.size + index,
                                 numOfColumns = numOfColumns,
-                                lastIndex = groceries.lastIndex + 1,
+                                lastIndex = groceries.lastIndex + customProducts.size,
                             )
                         ) {
-                            customProduct()
+                            customProduct(customProducts[index])
                         }
                     }
                 }

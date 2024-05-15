@@ -47,6 +47,10 @@ class ProductRepositoryImpl @Inject constructor(
         productDao.deleteProductById(productId)
     }
 
+    override suspend fun getProductsByKeywords(keywords: List<String>): List<Product> {
+        return productDao.getProductsByKeywords(keywords).map { it.asExternalModel() }
+    }
+
     override suspend fun syncWith(synchronizer: Synchronizer) = synchronizer.changeListSync(
         prepopulateWithInitialData = {
             val products = productNetworkDataSource.getAllProducts()

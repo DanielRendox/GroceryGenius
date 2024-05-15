@@ -24,7 +24,7 @@ interface GroceryListDao {
              groceryList.sortingPriority, 
              COUNT(grocery.productId) as numOfGroceries
          FROM GroceryListEntity groceryList
-         LEFT JOIN GroceryEntity grocery ON grocery.groceryListId = groceryList.id
+         LEFT JOIN GroceryEntity grocery ON grocery.groceryListId = groceryList.id AND grocery.purchased = 0
          WHERE groceryList.id = :id
          GROUP BY groceryList.id HAVING groceryList.id IS NOT NULL
     """
@@ -39,7 +39,7 @@ interface GroceryListDao {
             groceryList.sortingPriority, 
             COUNT(grocery.productId) as numOfGroceries
         FROM GroceryListEntity groceryList
-        LEFT JOIN GroceryEntity grocery ON grocery.groceryListId = groceryList.id
+        LEFT JOIN GroceryEntity grocery ON grocery.groceryListId = groceryList.id AND grocery.purchased = 0
         GROUP BY groceryList.id HAVING groceryList.id IS NOT NULL
     """
     )
