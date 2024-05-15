@@ -11,6 +11,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement.SpaceEvenly
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -191,6 +192,7 @@ private fun SettingsScreen(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     state = lazyListState,
+                    contentPadding = PaddingValues(bottom = 16.dp),
                 ) {
                     item {
                         SettingsTitle(
