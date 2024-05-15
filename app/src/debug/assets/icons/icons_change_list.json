@@ -1,3 +1,42 @@
 [
-
+  {
+    "id": "chicken.png",
+    "changeListVersion": 1,
+    "isDeleted": false
+  },
+  {
+    "id": "lamb.png",
+    "changeListVersion": 1,
+    "isDeleted": true
+  },
+  {
+    "id": "mayonnaise.png",
+    "changeListVersion": 1,
+    "isDeleted": true
+  },
+  {
+    "id": "salami.png",
+    "changeListVersion": 1,
+    "isDeleted": false
+  },
+  {
+    "id": "sheep.png",
+    "changeListVersion": 1,
+    "isDeleted": false
+  },
+  {
+    "id": "tomatoes.png",
+    "changeListVersion": 1,
+    "isDeleted": false
+  },
+  {
+    "id": "pork.png",
+    "changeListVersion": 1,
+    "isDeleted": false
+  },
+  {
+    "id": "kiwi.png",
+    "changeListVersion": 1,
+    "isDeleted": false
+  }
 ]
