@@ -14,7 +14,7 @@ class OfflineFirstIconNetworkDataSource @Inject constructor(
 ) : IconNetworkDataSource {
 
     override suspend fun downloadIcons(): List<IconReference> {
-        val iconsArchive = appContext.filesDir.resolve("icons/all_icons_v1.zip")
+        val iconsArchive = appContext.filesDir.resolve("icons/all_icons.zip")
             .apply { parentFile?.mkdirs() }
         gitHubApi.getIconsArchive().byteStream().use { input ->
             iconsArchive.outputStream().use { output ->
