@@ -14,7 +14,7 @@ class FakeCategoryNetworkDataSource @Inject constructor(
     override suspend fun getAllCategories(): List<CategoryNetwork> {
         return jsonAssetDecoder.decodeFromFile(
             adapter = moshi.listAdapter<CategoryNetwork>(),
-            fileName = "category/categories.json",
+            fileName = "category/categories_en.json",
         ) ?: emptyList()
     }
 

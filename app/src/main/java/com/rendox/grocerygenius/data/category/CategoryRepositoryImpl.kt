@@ -36,7 +36,6 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun syncWith(synchronizer: Synchronizer) = synchronizer.changeListSync(
         prepopulateWithInitialData = {
-            println("prepopulatingCategories")
             val categories = categoryNetworkDataSource.getAllCategories()
             categoryDao.insertCategories(categories.map { it.asEntity() })
         },

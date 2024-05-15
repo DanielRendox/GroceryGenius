@@ -1,5 +1,7 @@
 package com.rendox.grocerygenius.feature.settings
 
+import android.content.Intent
+import android.net.Uri
 import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -9,6 +11,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement.SpaceEvenly
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,6 +37,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -47,9 +52,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -79,6 +85,8 @@ import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolb
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.CollapsingToolbarScaffoldScrollableState
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.CollapsingToolbarNestedScrollConnection
 import com.rendox.grocerygenius.ui.components.collapsing_toolbar.scroll_behavior.rememberExitUntilCollapsedToolbarState
+import com.rendox.grocerygenius.ui.helpers.ObserveUiEvent
+import com.rendox.grocerygenius.ui.helpers.UiEvent
 import com.rendox.grocerygenius.ui.theme.GroceryGeniusTheme
 import com.rendox.grocerygenius.ui.theme.TopAppBarMediumHeight
 import com.rendox.grocerygenius.ui.theme.TopAppBarSmallHeight
@@ -91,9 +99,11 @@ fun SettingsRoute(
     navigateBack: () -> Unit = {},
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val showDynamicColorNotSupportedMessage by viewModel.showDynamicColorNotSupportedMessage.collectAsStateWithLifecycle()
     SettingsScreen(
         modifier = Modifier.fillMaxSize(),
         uiState = uiState,
+        showDynamicColorNotSupportedMessage = showDynamicColorNotSupportedMessage,
         onIntent = viewModel::onIntent,
         navigateBack = navigateBack,
     )
@@ -103,6 +113,7 @@ fun SettingsRoute(
 private fun SettingsScreen(
     modifier: Modifier = Modifier,
     uiState: SettingsScreenState,
+    showDynamicColorNotSupportedMessage: UiEvent<Unit>?,
     onIntent: (SettingsScreenIntent) -> Unit,
     navigateBack: () -> Unit,
 ) {
@@ -133,9 +144,19 @@ private fun SettingsScreen(
         )
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val dynamicColorNotSupportedMessage =
+        stringResource(R.string.settings_dynamic_color_not_supported_message)
+    ObserveUiEvent(showDynamicColorNotSupportedMessage) {
+        snackbarHostState.showSnackbar(message = dynamicColorNotSupportedMessage)
+    }
+
     Scaffold(
         modifier = modifier,
         contentWindowInsets = WindowInsets.navigationBars,
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
     ) { contentPadding ->
         Column(
             modifier = Modifier
@@ -171,6 +192,7 @@ private fun SettingsScreen(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     state = lazyListState,
+                    contentPadding = PaddingValues(bottom = 16.dp),
                 ) {
                     item {
                         SettingsTitle(
@@ -180,6 +202,7 @@ private fun SettingsScreen(
                     }
                     item {
                         DarkThemeConfigSetting(
+                            modifier = Modifier.padding(vertical = 16.dp),
                             darkThemeConfig = uiState.userPreferences.darkThemeConfig,
                             isThemeDropdownExpanded = isThemeDropdownExpanded,
                             onChangeDarkThemeConfig = {
@@ -259,6 +282,27 @@ private fun SettingsScreen(
                             }
                         )
                     }
+                    item {
+                        SettingsTitle(
+                            modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                            title = stringResource(R.string.settings_feedback)
+                        )
+                    }
+                    item {
+                        GitHubLink()
+                    }
+                    item {
+                        EmailLink()
+                    }
+                    item {
+                        SettingsTitle(
+                            modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                            title = stringResource(R.string.settings_credits)
+                        )
+                    }
+                    item {
+                        FreepikAttribution()
+                    }
                 }
             }
         }
@@ -280,12 +324,14 @@ fun SettingsTitle(
 
 @Composable
 fun DarkThemeConfigSetting(
+    modifier: Modifier = Modifier,
     darkThemeConfig: DarkThemeConfig,
     isThemeDropdownExpanded: Boolean,
     onChangeDarkThemeConfig: (DarkThemeConfig) -> Unit,
     onThemeDropdownExpandedChanged: (Boolean) -> Unit
 ) {
     CustomIconSetting(
+        modifier = modifier,
         title = stringResource(R.string.settings_theme_mode),
         icon = {
             Icon(
@@ -390,7 +436,7 @@ fun ColorSchemePicker(
                     Icon(
                         imageVector = Icons.Default.Done,
                         contentDescription = null,
-                        tint = Color(0xFF231B00),
+                        tint = colors.onPrimaryContainer,
                     )
                 }
             }
@@ -405,9 +451,9 @@ private fun OpenLastViewedListSetting(
     onChangeOpenLastViewedListConfig: (Boolean) -> Unit
 ) {
     CustomIconSetting(
-        modifier = modifier.clickable {
-            onChangeOpenLastViewedListConfig(!openLastViewedList)
-        },
+        modifier = modifier
+            .padding(vertical = 6.dp)
+            .clickable { onChangeOpenLastViewedListConfig(!openLastViewedList) },
         title = stringResource(R.string.settings_open_last_viewed_list),
         icon = {
             Icon(
@@ -426,6 +472,7 @@ private fun OpenLastViewedListSetting(
 
 @Composable
 fun DefaultListSetting(
+    modifier: Modifier = Modifier,
     groceryLists: List<GroceryList>,
     defaultListId: String? = null,
     isDefaultListDropdownExpanded: Boolean,
@@ -433,6 +480,7 @@ fun DefaultListSetting(
     onDefaultListDropdownExpandedChanged: (Boolean) -> Unit
 ) {
     CustomIconSetting(
+        modifier = modifier.padding(vertical = 6.dp),
         title = stringResource(R.string.settings_default_list),
         icon = {
             Icon(
@@ -514,6 +562,7 @@ fun DefaultListSetting(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoriesOrderSetting(
+    modifier: Modifier = Modifier,
     categories: List<Category>,
     updateCategories: (List<Category>) -> Unit,
     onResetCategoriesOrder: () -> Unit,
@@ -528,7 +577,8 @@ private fun CategoriesOrderSetting(
     }
 
     CustomIconSetting(
-        modifier = Modifier
+        modifier = modifier
+            .padding(vertical = 6.dp)
             .fillMaxWidth()
             .clickable { bottomSheetIsVisible = true },
         title = stringResource(R.string.settings_reorder_categories_title),
@@ -589,6 +639,74 @@ private fun CategoriesOrderSetting(
     }
 }
 
+@Composable
+private fun GitHubLink(
+    modifier: Modifier = Modifier
+) {
+    val uriHandler = LocalUriHandler.current
+    CustomIconSetting(
+        modifier = modifier
+            .padding(top = 16.dp)
+            .clickable { uriHandler.openUri("https://github.com/DanielRendox/GroceryGenius") },
+        title = stringResource(R.string.github_link_title),
+        description = stringResource(R.string.github_link_description),
+        icon = {
+            Icon(
+                painter = painterResource(R.drawable.github_mark),
+                contentDescription = null,
+            )
+        },
+    )
+}
+
+@Composable
+private fun EmailLink(
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val title = stringResource(R.string.email_link_title)
+    val developerEmail = "daniel.rendox@gmail.com"
+    CustomIconSetting(
+        modifier = modifier
+            .padding(top = 16.dp)
+            .clickable {
+                val intent = Intent(
+                    Intent.ACTION_SENDTO,
+                    Uri.parse("mailto:" + Uri.encode(developerEmail))
+                )
+                context.startActivity(Intent.createChooser(intent, title))
+            },
+        title = title,
+        description = stringResource(R.string.email_link_description),
+        icon = {
+            Icon(
+                painterResource(R.drawable.mail),
+                contentDescription = null,
+            )
+        },
+    )
+}
+
+@Composable
+private fun FreepikAttribution(
+    modifier: Modifier = Modifier
+) {
+    val uriHandler = LocalUriHandler.current
+    CustomIconSetting(
+        modifier = modifier
+            .padding(top = 16.dp)
+            .clickable { uriHandler.openUri("https://www.freepik.com/free-vector/tiny-family-grocery-bag-with-healthy-food-parents-kids-fresh-vegetables-flat-illustration_12291304.htm") },
+        title = stringResource(R.string.settings_image_by_freepik_title),
+        description = stringResource(R.string.settings_image_by_freepik_description),
+        icon = {
+            Icon(
+                painterResource(R.drawable.image_icon),
+                contentDescription = null,
+            )
+        },
+    )
+}
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewSettingsScreen() {
@@ -606,7 +724,8 @@ fun PreviewSettingsScreen() {
                     )
                 },
                 onIntent = {},
-                navigateBack = {}
+                navigateBack = {},
+                showDynamicColorNotSupportedMessage = null,
             )
         }
     }

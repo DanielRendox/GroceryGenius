@@ -1,4 +1,4 @@
-package com.rendox.grocerygenius.network.category
+package com.rendox.grocerygenius.network.data_sources
 
 import com.rendox.grocerygenius.network.GitHubApi
 import com.rendox.grocerygenius.network.model.CategoryNetwork

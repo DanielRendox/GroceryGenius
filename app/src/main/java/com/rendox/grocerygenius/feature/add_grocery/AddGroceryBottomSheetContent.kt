@@ -38,8 +38,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rendox.grocerygenius.R
 import com.rendox.grocerygenius.model.Category
-import com.rendox.grocerygenius.model.CustomProduct
 import com.rendox.grocerygenius.model.Grocery
+import com.rendox.grocerygenius.model.Product
 import com.rendox.grocerygenius.ui.components.SearchField
 import com.rendox.grocerygenius.ui.components.grocery_list.LazyGroceryGrid
 import com.rendox.grocerygenius.ui.components.grocery_list.GroceryGridItem
@@ -57,7 +57,7 @@ fun AddGroceryBottomSheetContent(
     searchQuery: String,
     clearSearchQueryButtonIsShown: Boolean,
     contentType: AddGroceryBottomSheetContentType,
-    customProduct: CustomProduct?,
+    customProducts: List<Product>,
     previousGrocery: Grocery?,
     grocerySearchResults: List<Grocery>,
     showExtendedContent: Boolean,
@@ -71,7 +71,7 @@ fun AddGroceryBottomSheetContent(
     onSearchQueryChanged: (String) -> Unit,
     onClearSearchQuery: () -> Unit,
     onGrocerySearchResultClick: (Grocery) -> Unit,
-    onCustomProductClick: (CustomProduct) -> Unit,
+    onCustomProductClick: (Product) -> Unit,
     onEditGroceryClicked: () -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -112,7 +112,7 @@ fun AddGroceryBottomSheetContent(
                         SearchResults(
                             grocerySearchResults = grocerySearchResults,
                             onGrocerySearchResultClick = onGrocerySearchResultClick,
-                            customProduct = customProduct,
+                            customProducts = customProducts,
                             onCustomProductClick = onCustomProductClick,
                         )
                     }
@@ -184,9 +184,9 @@ private fun BottomSheetHeader(
 private fun SearchResults(
     modifier: Modifier = Modifier,
     grocerySearchResults: List<Grocery>,
-    customProduct: CustomProduct?,
+    customProducts: List<Product>,
     onGrocerySearchResultClick: (Grocery) -> Unit,
-    onCustomProductClick: (CustomProduct) -> Unit,
+    onCustomProductClick: (Product) -> Unit,
 ) {
     val context = LocalContext.current
     LazyGroceryGrid(
@@ -211,22 +211,21 @@ private fun SearchResults(
                 }
             )
         },
-        customProduct = customProduct?.let { product ->
-            {
-                GroceryGridItem(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickable { onCustomProductClick(product) },
-                    groceryName = product.name,
-                    groceryDescription = product.description,
-                    color = MaterialTheme.colorScheme.groceryListItemColors.defaultBackgroundColor,
-                    iconFile = remember(product.iconReference?.filePath) {
-                        product.iconReference?.filePath?.let { filePath ->
-                            File(context.filesDir, filePath)
-                        }
+        customProducts = customProducts,
+        customProduct = { product ->
+            GroceryGridItem(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable { onCustomProductClick(product) },
+                groceryName = product.name,
+                groceryDescription = null,
+                color = MaterialTheme.colorScheme.groceryListItemColors.purchasedBackgroundColor,
+                iconFile = remember(product.icon?.filePath) {
+                    product.icon?.filePath?.let { filePath ->
+                        File(context.filesDir, filePath)
                     }
-                )
-            }
+                }
+            )
         },
         showScrollbar = false,
     )
@@ -293,7 +292,7 @@ private fun SearchResultsPreview() {
             SearchResults(
                 grocerySearchResults = searchResults,
                 onGrocerySearchResultClick = {},
-                customProduct = null,
+                customProducts = emptyList(),
                 onCustomProductClick = {},
             )
         }

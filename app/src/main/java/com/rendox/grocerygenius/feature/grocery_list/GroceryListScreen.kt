@@ -306,7 +306,7 @@ private fun GroceryListScreen(
                 searchQuery = searchQuery,
                 contentType = addGroceryUiState.bottomSheetContentType,
                 clearSearchQueryButtonIsShown = addGroceryUiState.clearSearchQueryButtonIsShown,
-                customProduct = addGroceryUiState.customProduct,
+                customProducts = addGroceryUiState.customProducts,
                 grocerySearchResults = addGroceryUiState.grocerySearchResults,
                 previousGrocery = addGroceryUiState.previouslyAddedGrocery,
                 showExtendedContent = addGroceryBottomSheetState.showExtendedContent,
@@ -330,7 +330,7 @@ private fun GroceryListScreen(
                     onAddGroceryUiIntent(AddGroceryUiIntent.OnGrocerySearchResultClick(it))
                 },
                 onCustomProductClick = {
-                    onAddGroceryUiIntent(AddGroceryUiIntent.OnCustomProductClick)
+                    onAddGroceryUiIntent(AddGroceryUiIntent.OnCustomProductClick(it))
                 },
                 onEditGroceryClicked = {
                     addGroceryUiState.previouslyAddedGrocery?.let {

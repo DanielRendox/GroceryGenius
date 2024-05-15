@@ -35,10 +35,14 @@ object NetworkApiModule {
         }
         .addInterceptor { chain ->
             val originalRequest = chain.request()
-            val requestWithHeaders = originalRequest.newBuilder()
-                .header("Accept", "application/vnd.github.raw+json")
+            val urlWithQueryParam = originalRequest.url.newBuilder()
+                .addQueryParameter("ref", "production")
                 .build()
-            chain.proceed(requestWithHeaders)
+            val requestWithHeadersAndQueryParam = originalRequest.newBuilder()
+                .header("Accept", "application/vnd.github.raw+json")
+                .url(urlWithQueryParam)
+                .build()
+            chain.proceed(requestWithHeadersAndQueryParam)
         }
         .readTimeout(20, TimeUnit.SECONDS)
         .connectTimeout(20, TimeUnit.SECONDS)

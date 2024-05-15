@@ -41,11 +41,20 @@
     <string name="settings_use_system_accent_color">Use System Accent Color</string>
     <string name="settings_preferences">Preferences</string>
     <string name="settings_open_last_viewed_list">Open Last Viewed List</string>
-    <string name="settings_default_list">Default List</string>
+    <string name="settings_default_list">Open Default List</string>
     <string name="settings_default_list_unspecified">None</string>
-    <string name="settings_reorder_categories_title">Reorder categories</string>
+    <string name="settings_reorder_categories_title">Reorder Categories</string>
     <string name="settings_reorder_categories_description">Grocery Genius sorts items by their categories. You can arrange them to match your favorite store.</string>
-
+    <string name="settings_dynamic_color_not_supported_message">Your device does not support dynamic color</string>
+    <string name="settings_feedback">Feedback</string>
+    <string name="github_link_title">GitHub</string>
+    <string name="github_link_description">View the source code, contribute, report bugs, and request features.</string>
+    <string name="email_link_title">Email Developer</string>
+    <string name="email_link_description">Reach out to the developer for friendly feedback, suggestions, or any other input you have in mind.</string>
+    <string name="settings_credits">Credits</string>
+    <string name="settings_image_by_freepik_title">Image by pch.vector on Freepik</string>
+    <string name="settings_image_by_freepik_description">The image displayed on grocery list screen was created by pch.vector</string>
+    
     <!-- IconPickerScreen -->
     <string name="icon_picker_screen_title">Choose icon</string>
     <string name="icon_picker_search_field_placeholder">Search an icon</string>

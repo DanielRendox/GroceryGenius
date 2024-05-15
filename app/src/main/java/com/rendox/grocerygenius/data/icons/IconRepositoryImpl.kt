@@ -25,10 +25,6 @@ class IconRepositoryImpl @Inject constructor(
         return iconDao.getIconsGroupedByCategory()
     }
 
-    override suspend fun getGroceryIconsByKeywords(keywords: List<String>): List<IconReference> {
-        return iconDao.getGroceryIconsByKeywords(keywords)
-    }
-
     override suspend fun getGroceryIconsByName(name: String): List<IconReference> {
         return iconDao.getGroceryIconsByName(name)
     }
