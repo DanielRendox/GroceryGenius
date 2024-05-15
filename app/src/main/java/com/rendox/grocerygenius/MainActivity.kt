@@ -24,7 +24,9 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -59,7 +61,15 @@ class MainActivity : ComponentActivity() {
             uiState == null
         }
 
-        enableEdgeToEdge()
+        val statusBarLightScrim = ContextCompat.getColor(this, R.color.status_bar_light_scrim)
+
+        if (Build.VERSION.SDK_INT < 23) {
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            window.statusBarColor = statusBarLightScrim
+            window.navigationBarColor = navBarDarkScrim
+        } else {
+            enableEdgeToEdge()
+        }
 
         // app's UI has bottom sheets that don't look good in landscape mode on small screen sizes
         if (resources.configuration.smallestScreenWidthDp < 600) {
@@ -69,21 +79,29 @@ class MainActivity : ComponentActivity() {
         setContent {
             val useDarkTheme = shouldUseDarkTheme(uiState)
             DisposableEffect(useDarkTheme) {
-                enableEdgeToEdge(
-                    statusBarStyle = SystemBarStyle.auto(
-                        Color.TRANSPARENT,
-                        Color.TRANSPARENT,
-                    ) { useDarkTheme },
-                    navigationBarStyle = SystemBarStyle.auto(
-                        lightScrim,
-                        darkScrim,
-                    ) { useDarkTheme },
-                )
+                if (Build.VERSION.SDK_INT >= 23) {
+                    enableEdgeToEdge(
+                        statusBarStyle = SystemBarStyle.auto(
+                            Color.TRANSPARENT,
+                            Color.TRANSPARENT,
+                        ) { useDarkTheme },
+                        navigationBarStyle = SystemBarStyle.auto(
+                            navBarLightScrim,
+                            navBarDarkScrim,
+                        ) { useDarkTheme },
+                    )
+                }
                 onDispose {}
             }
             LaunchedEffect(useDarkTheme) {
                 if (Build.VERSION.SDK_INT >= 29) {
                     window.isNavigationBarContrastEnforced = false
+                }
+            }
+            LaunchedEffect(useDarkTheme) {
+                if (Build.VERSION.SDK_INT < 23) {
+                    window.statusBarColor =
+                        if (useDarkTheme) Color.TRANSPARENT else statusBarLightScrim
                 }
             }
 
@@ -125,10 +143,10 @@ private fun shouldUseDarkTheme(
  * The default light scrim, as defined by androidx and the platform:
  * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:activity/activity/src/main/java/androidx/activity/EdgeToEdge.kt;l=35-38;drc=27e7d52e8604a080133e8b842db10c89b4482598
  */
-private val lightScrim = Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
+private val navBarLightScrim = Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
 
 /**
  * The default dark scrim, as defined by androidx and the platform:
  * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:activity/activity/src/main/java/androidx/activity/EdgeToEdge.kt;l=40-44;drc=27e7d52e8604a080133e8b842db10c89b4482598
  */
-private val darkScrim = Color.argb(0x80, 0x1b, 0x1b, 0x1b)
+private val navBarDarkScrim = Color.argb(0x80, 0x1b, 0x1b, 0x1b)
