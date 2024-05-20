@@ -1,5 +1,6 @@
 package com.rendox.grocerygenius
 
+import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.FrameTimingMetric
 import androidx.benchmark.macro.StartupMode
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
@@ -14,15 +15,24 @@ class GroceryGeniusBenchmark {
     val benchmarkRule = MacrobenchmarkRule()
 
     @Test
-    fun benchmark() = benchmarkRule.measureRepeated(
+    fun groceryGeniusBenchmarkCompilationNone() = benchmark(CompilationMode.None())
+
+    @Test
+    fun groceryGeniusBenchmarkCompilationBaselineProfile() = benchmark(CompilationMode.Partial())
+
+    @Test
+    fun groceryGeniusBenchmarkCompilationFull() = benchmark(CompilationMode.Full())
+
+    private fun benchmark(compilationMode: CompilationMode) = benchmarkRule.measureRepeated(
         packageName = "com.rendox.grocerygenius",
         metrics = listOf(FrameTimingMetric()),
-        iterations = 1,
+        iterations = 8,
         startupMode = StartupMode.WARM,
         setupBlock = {
             pressHome()
             startActivityAndWait()
         },
+        compilationMode = compilationMode,
     ) {
         val groceryListName = "TestGroceryList"
         createNewGroceryList(groceryListName)

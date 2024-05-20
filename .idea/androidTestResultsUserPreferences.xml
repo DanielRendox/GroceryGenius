@@ -135,6 +135,21 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="-473351981">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="7.6_Fold-in_with_outer_display_API_33" value="120" />
+                  <entry key="Duration" value="90" />
+                  <entry key="Pixel_5_API_33_HAXM_" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="Xiaomi Redmi Note 7" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="-338830808">
           <value>
             <AndroidTestResultsTableState>
@@ -149,6 +164,19 @@
           </value>
         </entry>
         <entry key="-266871988">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="Xiaomi Redmi Note 7" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="-131182414">
           <value>
             <AndroidTestResultsTableState>
               <option name="preferredColumnWidths">
