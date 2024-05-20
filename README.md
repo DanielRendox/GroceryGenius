@@ -1,10 +1,25 @@
-<h1 align="center" line-height:1"><b>Grocery Genius</b></h1>
+<h1 align="center" style="font-size:28px; line-height:1"><b>Grocery Genius</b></h1>
 
 <div align="center">
   <img alt="Grocery Genius logo" src="images/app_logo_rounded_corners.svg" height="150px">
 </div>
 
 <br />
+
+<div align="center">
+  <a href="https://github.com/DanielRendox/GroceryGenius/releases">
+    <img alt="GitHub Badge" src="images/banners/banner_github.png" height="60">
+  </a>
+</div>
+
+<br />
+<br />
+
+![Routine Tracker GitHub cover image](images/readme/readme_cover_image.png)
+
+|                                                 |                                               |                                              |
+|-------------------------------------------------|-----------------------------------------------|----------------------------------------------|
+| ![](images/readme/feature_search_groceries.png) | ![](images/readme/feature_separate_lists.png) | ![](images/readme/feature_customization.png) |
 
 Grocery Genius is a reliable shopping list Android app for your grocery needs. It offers a visually appealing interface featuring grocery images, autocomplete suggestions, and an intuitive user experience.
 
