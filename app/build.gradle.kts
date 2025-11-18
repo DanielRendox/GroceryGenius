@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId = "com.rendox.grocerygenius"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 6
         versionName = "0.1.3"
 
