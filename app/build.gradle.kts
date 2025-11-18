@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.rendox.grocerygenius"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.rendox.grocerygenius"
