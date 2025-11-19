@@ -1,9 +1,12 @@
 files:
   - source: app/src/main/res/values/strings.xml
     translation: /app/src/main/res/values-%android_code%/strings.xml
+    export_approved_only: false
     translate_attributes: 0
     content_segmentation: 0
   - source: /assets/category/categories.json
     translation: /assets/category/%locale_with_underscore%/categories.json
+    export_approved_only: false
   - source: /assets/product/default_products.json
     translation: /assets/product/%locale_with_underscore%/default_products.json
+    export_approved_only: false
