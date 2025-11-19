@@ -23,8 +23,8 @@
     <string name="delete_grocery_list_dialog_text">¿Está seguro que quiere borrar esta lista?</string>
     <!-- GroceryListsDashboardScreen -->
     <plurals name="dashboard_item_num_of_groceries_title">
-        <item quantity="one">artículo</item>
-        <item quantity="other">artículos</item>
+        <item quantity="one">%d artículo</item>
+        <item quantity="other">%d artículos</item>
     </plurals>
     <string name="add_grocery_list_button_description">Crear nueva lista de supermercados</string>
     <!-- SettingsScreen -->
@@ -32,17 +32,17 @@
     <string name="settings_dark_theme_config_light">Claro</string>
     <string name="settings_dark_theme_config_dark">Oscuro</string>
     <string name="settings_theme">Tema</string>
-    <string name="settings_theme_mode">Theme Mode</string>
+    <string name="settings_theme_mode"></string>
     <string name="settings_use_system_accent_color">Usar la configuración de color del sistema</string>
     <string name="settings_preferences">Preferencias</string>
     <string name="settings_open_last_viewed_list">Abrir la última lista utilizada</string>
     <string name="settings_default_list">Abrir lista por defecto</string>
     <string name="settings_default_list_unspecified">Sin definir</string>
     <string name="settings_reorder_categories_title">Reordenar categorías</string>
-    <string name="settings_reorder_categories_description">Grocery Genius ordena artículos por sus categorías. Puedes organizarlos para que coincidan con tu tienda favorita</string>
+    <string name="settings_reorder_categories_description">Grocery Genius ordena artículos por sus categorías. Puedes organizarlos para que coincidan con tu tienda favorita.</string>
     <string name="settings_dynamic_color_not_supported_message">Tu dispositivo no soporta color dinámico</string>
     <string name="settings_feedback">Comentarios</string>
-    <string name="github_link_description">Ver el código fuente, contribuir, reportar fallos o sugerir características</string>
+    <string name="github_link_description">Ver el código fuente, contribuir, reportar fallos o sugerir características.</string>
     <string name="email_link_title">Correo del desarrollador</string>
     <string name="email_link_description">Ponte en contacto con el desarrollador para hacerle llegar tus comentarios, sugerencias o cualquier otra aportación.</string>
     <string name="settings_credits">Créditos</string>
@@ -52,11 +52,11 @@
     <string name="icon_picker_screen_title">Elegir icono</string>
     <string name="icon_picker_search_field_placeholder">Buscar un icono</string>
     <!-- OnboardingSyncScreen -->
-    <string name="onboarding_sync_status_running_title">Espere un momento</string>
+    <string name="onboarding_sync_status_running_title">Espere un momento...</string>
     <string name="onboarding_sync_status_succeeded_title">¡Listo!</string>
     <string name="onboarding_sync_status_failed_title">Error en la solicitud de red</string>
     <string name="onboarding_sync_status_offline_title">¿Puede conectarse a internet?</string>
-    <string name="onboarding_sync_description">Es necesario descargar algunas tiendas para no tener que ser creadas manualmente</string>
+    <string name="onboarding_sync_description">Es necesario descargar algunas tiendas para no tener que ser creadas manualmente.</string>
     <string name="onboarding_skip_sync_button_title">Continuar sin buscar</string>
     <!-- General -->
     <string name="done">Hecho</string>
@@ -74,6 +74,6 @@
     <string name="drag_handle">Cambiar tamaño</string>
     <!-- Notifications -->
     <string name="sync_work_notification_channel_name">Sincronización</string>
-    <string name="sync_work_notification_channel_description">Sincronización periódica de la base de datos de supermercados</string>
+    <string name="sync_work_notification_channel_description">Sincronización periódica de la base de datos de supermercados.</string>
     <string name="sync_work_notification_title">Sincronizando los supermercados</string>
 </resources>
