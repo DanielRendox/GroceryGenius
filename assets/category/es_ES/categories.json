@@ -1,47 +1,47 @@
 [
   {
     "id": "default-category-dairy-and-eggs",
-    "name": "Dairy & Eggs",
+    "name": "Lácteos y Huevos",
     "sortingPriority": 2
   },
   {
     "id": "default-category-drinks",
-    "name": "Drinks",
+    "name": "Bebidas",
     "sortingPriority": 7
   },
   {
     "id": "default-category-fruits-and-vegetables",
-    "name": "Fruits & Vegetables",
+    "name": "Fruta y Verdura",
     "sortingPriority": 1
   },
   {
     "id": "default-category-grain-products",
-    "name": "Grain Products",
+    "name": "Cereales",
     "sortingPriority": 5
   },
   {
     "id": "default-category-health-and-beauty",
-    "name": "Health & Beauty",
+    "name": "Salud y Belleza",
     "sortingPriority": 9
   },
   {
     "id": "default-category-household",
-    "name": "Household",
+    "name": "Hogar",
     "sortingPriority": 8
   },
   {
     "id": "default-category-meat-and-fish",
-    "name": "Meat & Fish",
+    "name": "Carne y Pescado",
     "sortingPriority": 3
   },
   {
     "id": "default-category-pet-supplies",
-    "name": "Pet Supplies",
+    "name": "Productos para mascotas",
     "sortingPriority": 10
   },
   {
     "id": "default-category-sauces-and-spices",
-    "name": "Sauces & Spices",
+    "name": "Salsas y Especias",
     "sortingPriority": 4
   },
   {

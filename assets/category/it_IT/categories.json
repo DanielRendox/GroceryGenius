@@ -1,52 +1,52 @@
 [
   {
     "id": "default-category-dairy-and-eggs",
-    "name": "Dairy & Eggs",
+    "name": "Latticini E Uova",
     "sortingPriority": 2
   },
   {
     "id": "default-category-drinks",
-    "name": "Drinks",
+    "name": "Bevande",
     "sortingPriority": 7
   },
   {
     "id": "default-category-fruits-and-vegetables",
-    "name": "Fruits & Vegetables",
+    "name": "Frutta e verdura",
     "sortingPriority": 1
   },
   {
     "id": "default-category-grain-products",
-    "name": "Grain Products",
+    "name": "Prodotti a base di cereali",
     "sortingPriority": 5
   },
   {
     "id": "default-category-health-and-beauty",
-    "name": "Health & Beauty",
+    "name": "Salute e Bellezza",
     "sortingPriority": 9
   },
   {
     "id": "default-category-household",
-    "name": "Household",
+    "name": "Casa",
     "sortingPriority": 8
   },
   {
     "id": "default-category-meat-and-fish",
-    "name": "Meat & Fish",
+    "name": "Carne e pesce",
     "sortingPriority": 3
   },
   {
     "id": "default-category-pet-supplies",
-    "name": "Pet Supplies",
+    "name": "Animali domestici",
     "sortingPriority": 10
   },
   {
     "id": "default-category-sauces-and-spices",
-    "name": "Sauces & Spices",
+    "name": "Salse E Spezie",
     "sortingPriority": 4
   },
   {
     "id": "default-category-snacks-and-bakery",
-    "name": "Snacks & Bakery",
+    "name": "Snack E Panetteria",
     "sortingPriority": 6
   }
 ]
