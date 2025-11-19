@@ -18,7 +18,7 @@
     <string name="edit_grocery_remove_item_button_title">Remove item from the list</string>
     <string name="edit_grocery_delete_grocery_button_title">Delete custom grocery</string>
     <string name="select_category_dialog_title">Choose category</string>
-    <string name="select_icon_dialog_title">Choose icon</string>
+    <string name="select_icon_dialog_title">Vyberte ikonu</string>
     <string name="delete_product_dialog_text">This item will be removed from all your grocery lists</string>
     <string name="delete_grocery_list_dialog_text">Are you sure you want to delete this list?</string>
     <!-- GroceryListsDashboardScreen -->
