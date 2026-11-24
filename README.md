@@ -68,39 +68,6 @@ You can install the app from the [GitHub releases](https://github.com/DanielRend
 - MVI pattern
 - CLEAN architecture with data and presentation layer
 
-## Some Technical Stuff
-
-1. The app has predefined groceries that the database should be prepopulated with after installation. Grocery Genius aims to further scale towards online grocery list sharing, so this data has to be fetched from the server, rather than being bundled in the APK. Since there is currently no backend for this app, the data is fetched directly from the top-level "assets" folder in this GitHub repository (production branch) using GitHub REST API. While GitHub may not be very suitable for file hosting, this is convenient as it only takes to update the data here and it will be reflected on all devices. Here is how it works:
-    - A WorkManager task gets executed on each app startup and synchronizes each repository's data sequentially. The synchronization logic for each repository is defined in its sync function. Some helper functions are used to unify the sync process and catch exceptions that may happen. 
-    - During the synchronization process each repository checks for updates by fetching change list versions and comparing the latest version with the local one, which is saved in Preferences DataStore. If the local data is outdated, it fetches the latest data from the network and then caches it in the local database.
-    - The app doesn't use Coil to fetch images from the server directly. That's because although Coil can store images permanently on the device's internal storage, it loads images on demand. This means that if we relied solely on Coil, some grocery images might not have been displayed when the user's device went offline because they hadn't been fetched previously. Since the app is designed to be fully functional without an internet connection, we instead manually fetch all images from the network, save them to the app's internal storage, and then use Coil to load them in the UI performantly.
-    - If the sync is happening for the first time, the app detects that and fetches the archive of grocery images instead of making an HTTP request for each of them.
-
-2. Drag and drop functionality in the Dashboard and Settings screens is achieved by integrating RecyclerView and ItemTouchHelper with Jetpack Compose. In this setup, composables are items in the RecyclerView, which is in turn a child view in the composable hierarchy. RecyclerView is used because Jetpack Compose doesn't have an official drag-and-drop feature yet.
-
-## Let’s work together!
-
-Grocery Genius is an open-source project that welcomes contributions! If you're inclined to offer support in any of the following areas:
-
-- Building a backend for this app to introduce real-time grocery list-sharing
-- Developing features in the [Roadmap](https://github.com/DanielRendox/GroceryGenius/tree/develop#roadmap)
-- Porting to iOS
-- Design enhancements,
-- Translation to different languages,
-- Promotion, and spreading the word about the app
-- Identifying and reporting bugs,
-- Or any other contributions you might have in mind,
-
-and are willing to do so **voluntarily**, please don't hesitate to open an issue, submit a PR, or reach out to [me](https://github.com/DanielRendox) directly.
-
-Whether you're a seasoned developer or just looking to hone your skills, your contributions are much appreciated.
-
-Please note, as per the [GitHub Terms of Service](https://help.github.com/articles/github-terms-of-service/#6-contributions-under-repository-license), any code contributions will be licensed under the GPL v3, as it is the license of the original project.
-
-### 🌍 Translations
-
-If you’d like to help translate the app into different languages, please join the [translation project](https://crowdin.com/project/grocery-genius). Start by translating grocery item names in `default_products.json`, as it is the most important part, then move on to category names, app strings, and the remaining content. If a translation is already completed, you're welcome to vote on the strings or suggest your own version if you feel the existing one could be improved.
-
 ## License
 
 The project is licensed under the GPL, which means that you can freely build on top of it for commercial and non-commercial purposes alike. But should you choose to incorporate its code, you must open-source your project and apply the GPL license to it as well. Check out the [LICENSE](https://github.com/DanielRendox/GroceryGenius/blob/develop/LICENSE) file for more details.
